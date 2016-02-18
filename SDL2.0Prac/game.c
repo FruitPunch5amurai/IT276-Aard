@@ -1,25 +1,33 @@
 //Using SDL, SDL_image, standard IO, and strings
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_ttf.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <string>
+#include "player.h"
 #include "graphics.h"
+#include "gamepad.h"
 #include "entity.h"
 #include "sprite.h"
 #include "gamepad.h"
 #include "game.h"
-#include <string>
+
 
 
 SDL_Event* mainEvent = NULL;
-Sprite* temp;
-extern SDL_Renderer *renderer;
+Sprite* temp = NULL;
 
+/**
+*@brief The Entry Point
+*/
 int main(int arc,char *argv[])
 {
 	Init();
 	Loop();
 	return 0;
 }
+/**
+*@brief Initialize all the Lists,Screens, etc
+*/
 void Init()
 {
 	float bgcolor[] = {1,1,1,1};
@@ -31,43 +39,49 @@ void Init()
     800,
     600,
     bgcolor);
-	temp = LoadSprite("images/Sonic.png",32,42);
-	temp->animation[0]->maxFrames = 5;
-	temp->animation[0]->oscillate = true;
-	gameState = Game;
-	//InitEntityList();
-	//Entity *ent = CreateEntity();
-	//ent->update = &UpdateNone;
+	InitEntityList();
 
 }
+/**
+*@brief Main game loop
+*/
 void Loop()
 {
+	gameState = Game;
+	Player* player;
+	player = CreatePlayer();
 	int quit = 0;	
 	do
 	{
 		quit = gameState();
 		SDL_PollEvent(mainEvent);
-		//handleInput(mainEvent);
-		//Animate(temp->animation[0],0);
-		SDL_RenderClear(renderer);
-		Animate(temp->animation[0],0);
-		DrawSprite(temp,0,0,GetCurrentFrame(temp->animation[0]));
-		//UpdateEntities();	
-		SDL_RenderPresent(renderer);
+		SDL_RenderClear(GetRenderer());
+		handleInput(gameState);
+		ThinkEntities();
+		UpdateEntities();
+		DrawEntities();
+		NextFrame();
+		SDL_RenderPresent(GetRenderer());
+		//FreePlayer(player);
+		//CloseEntityList();
 		}
 	while(!quit && mainEvent->type != SDL_QUIT);
 	exit(0);
 	delete mainEvent;
 	return;
 }
-
+/**
+*@brief Draws the Title Screen
+*/
 int Title()
 {
 	printf("In title screen\n");
 	//DrawTitle();
 	return 0;
 }
-
+/**
+*@brief Draws the main game
+*/
 int Game()
 {
 	printf("In game\n");

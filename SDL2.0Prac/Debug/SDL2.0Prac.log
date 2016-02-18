@@ -1,26 +1,17 @@
-﻿Build started 2/15/2016 9:53:02 AM.
-     1>Project "C:\Users\Jason\Desktop\Aard\SDL2.0Prac\SDL2.0Prac.vcxproj" on node 2 (build target(s)).
+﻿Build started 2/17/2016 8:53:59 PM.
+     1>Project "C:\Users\Jason\Desktop\Aard-GTS\SDL2.0Prac\SDL2.0Prac.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\Aard.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt game.c
-         game.c
+         All outputs are up-to-date.
        Link:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jason\Desktop\Aard\Debug\Aard.exe" /NOLOGO SDL2.lib SDL2main.lib SDL2_image.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\Aard.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\Jason\Desktop\Aard\Debug\Aard.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jason\Desktop\Aard\Debug\Aard.lib" /MACHINE:X86 Debug\entity.obj
-         Debug\game.obj
-         Debug\gamepad.obj
-         Debug\graphics.obj
-         Debug\sprite.obj
-         Debug\vector.obj
-         LINK : C:\Users\Jason\Desktop\Aard\Debug\Aard.exe not found or not built by the last incremental link; performing full link
-         SDL2.0Prac.vcxproj -> C:\Users\Jason\Desktop\Aard\Debug\Aard.exe
-       Manifest:
-         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\Jason\Desktop\Aard\Debug\Aard.exe;#1" /manifest Debug\Aard.exe.intermediate.manifest
+         All outputs are up-to-date.
+         SDL2.0Prac.vcxproj -> C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.exe
        FinalizeBuildStatus:
          Deleting file "Debug\Aard.unsuccessfulbuild".
          Touching "Debug\Aard.lastbuildstate".
-     1>Done Building Project "C:\Users\Jason\Desktop\Aard\SDL2.0Prac\SDL2.0Prac.vcxproj" (build target(s)).
+     1>Done Building Project "C:\Users\Jason\Desktop\Aard-GTS\SDL2.0Prac\SDL2.0Prac.vcxproj" (build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:02.74
+Time Elapsed 00:00:00.23

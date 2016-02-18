@@ -1,6 +1,7 @@
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_ttf.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include "vectors.h"
 #include <math.h>
 #include <string>
 #include <stdlib.h>
@@ -8,7 +9,7 @@
 
 
 static SDL_Window* window = NULL;
-SDL_Renderer *renderer = NULL;
+static SDL_Renderer *renderer = NULL;
 static SDL_Texture  * texture = NULL;
 static SDL_Surface  * surface = NULL;
 static SDL_Surface  * temp_buffer = NULL;
@@ -17,14 +18,21 @@ SDL_Surface *buffer; /*pointer to the background image buffer*/
 SDL_Surface *videobuffer; /*pointer to the draw buffer*/
 SDL_Rect Camera; /*x & y are the coordinates for the background map, w and h are of the screen*/
 
-Uint32 NOW;		
+/*timing*/
+static Uint32 Delay = 45;
+static Uint32 NOW = 0;
+static Uint32 THEN = 0;
+static Uint8 PrintFps = false;
+static Uint32 FPS = 0; 
 
 static int bitdepth;
 static Uint32 rmask;
 static Uint32 gmask;
 static Uint32 bmask;
 static Uint32 amask;
-
+/**
+*@brief Initialized Main window
+*/
 void Init_Graphics(
 	char *windowName,
     int viewWidth,
@@ -33,7 +41,6 @@ void Init_Graphics(
     int renderHeight,
     float bgcolor[4])
 {
-	SDL_Rect grass_rect;
 	bool quit = false;
 	
 
@@ -79,27 +86,31 @@ void Init_Graphics(
     printf("graphics initialized\n");
 	*/
 }
-SDL_Renderer* getRenderer()
+/**
+*@brief Returns Renderer	
+*/
+SDL_Renderer* GetRenderer()
 {
 	return renderer;
 }
 
+void FrameDelay()
+{
+    Uint32 diff;
+    THEN = NOW;
+    NOW = SDL_GetTicks();
+    diff = (NOW - THEN);
+    if (diff < Delay)
+    {
+        SDL_Delay(Delay - diff);
+    }
+    FPS = 1000.0/MAX(SDL_GetTicks() - THEN,0.001);
+}
+
 void NextFrame()
 {
-  Uint32 Then;
-  SDL_RenderPresent(renderer);
-  Then = NOW;									/*these next few lines  are refCount to show how long each frame takes to update.  */
-  NOW = SDL_GetTicks();
-/*  fprintf(stdout,"Ticks passed this frame: %i\n", NOW - Then);*/
-  FrameDelay(33); /*this will make your frame rate about 30 frames per second.  If you want 60 fps then set it to about 15 or 16*/
-}
-void FrameDelay(Uint32 delay)
-{
-    static Uint32 pass = 100;
-    Uint32 dif;
-    dif = SDL_GetTicks() - pass;
-    if(dif < delay)SDL_Delay( delay - dif);
-    pass = SDL_GetTicks();
+	SDL_RenderPresent(renderer);
+    FrameDelay();
 }
 /*
 void graphics_render_to_screen(SDL_Surface *surface,SDL_Rect srcRect,int x,int y)
@@ -152,6 +163,9 @@ void graphics_render_to_screen(SDL_Surface *surface,SDL_Rect srcRect,int x,int y
                      &dstRect);
 }
 */
+/**
+*@brief Closes all windows and textures
+*/
 void graphics_close()
 {
     if (texture)
@@ -179,4 +193,8 @@ void graphics_close()
     renderer = NULL;
     texture = NULL;
     temp_buffer = NULL;
+}
+Uint32 GetSystemTime()
+{
+	return NOW;
 }

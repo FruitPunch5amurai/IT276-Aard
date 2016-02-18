@@ -2,7 +2,12 @@
 #ifndef _SPRITE_H_
 #define _SPRITE_H_
 
+
+#define MAX_SPRITES 255
+#define MAX_ANIMATIONS 20
+
 typedef struct AnimationData{
+	int startFrame;
 	int currentFrame;
 	int frameInc;
 	int frameRate;
@@ -19,7 +24,7 @@ typedef struct AnimationData{
 
 typedef struct SpriteData{
   SDL_Texture *image;		/*pointer to the actual image in memory*/
-  Animation* animation[20];	/*Array of animations for sprite*/
+  Animation* animation[MAX_ANIMATIONS];	/*Array of animations for sprite*/
   char filename[30];			/*the name of the file, keep them short*/
   int w, h;					/*the width and height of the frames of the sprites, not the file itself*/
   int fpl;			/*default is 16*/
@@ -29,6 +34,7 @@ typedef struct SpriteData{
 
 void InitSpriteList();
 void FreeSprite(Sprite *img);
+void FreeAnimations(Sprite *sprite);
 Sprite *LoadSprite(char *filename,int sizex, int sizey);	
-void DrawSprite(Sprite *sprite,int sx,int sy, int frame);
+void DrawSprite(Sprite *sprite,int sx,int sy, int frame,SDL_Renderer *renderer,SDL_RendererFlip flip);
 #endif

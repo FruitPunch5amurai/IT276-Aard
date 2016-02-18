@@ -2,7 +2,13 @@
 #define _GAMEPAD_H_
 
 
-void handleInput(SDL_Event *e);
+typedef struct{
+	Uint8 ArrowKeyRight;
+	Uint8 ArrowKeyLeft;
+	Uint8 ArrowKeyUp;
+	Uint8 ArrowKeyDown;
+}ArrowKeyData;
 
+void handleInput(int (*gameState)());
 
 #endif

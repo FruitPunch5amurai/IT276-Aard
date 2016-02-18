@@ -1,18 +1,24 @@
 #include <math.h>
 #include <string>
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_ttf.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 #include "graphics.h"
 #include "sprite.h"
 
-#define MAX_SPRITES 255
-extern SDL_Renderer *renderer;
-Sprite SpriteList[MAX_SPRITES];
+//Stack is were all the core parts of a program go to
+
+
+static Sprite *SpriteList = NULL;
 int Num_Sprites;
+void CloseSpriteSystem();
+/**
+*@brief Initializes Sprite List
+*/
 void InitSpriteList()
 {
 	int x,j;
+	SpriteList = (Sprite*)malloc(sizeof(Sprite) * MAX_SPRITES);
 	memset(SpriteList,0,sizeof(Sprite) * MAX_SPRITES);
 	for(x = 0;x < MAX_SPRITES;x++){
 		for(j = 0;j < 20;j++)
@@ -27,20 +33,68 @@ void InitSpriteList()
 	}
 	SpriteList[x].image = NULL;
 	}
+	atexit(CloseSpriteSystem);
 }
+/**
+*@brief Deallocates memory used for sprites
+*/
+void CloseSpriteSystem()
+{
+	int i,j;
+	if(!SpriteList)
+	{
+		return;
+	}
+	for (i = 0;i < MAX_SPRITES;i++)
+	{
+		if(SpriteList[i].image != 0)
+		{
+			SDL_DestroyTexture(SpriteList[i].image);
+		}
+		if(SpriteList[i].animation != 0)
+		{
+			for(j = 0;j < 20;j++)
+			SpriteList[i].animation[j] = NULL;
+		}
+	}
+	free(SpriteList);
+	SpriteList = NULL;
+}
+
+/**
+*@brief Deallocates and frees up a sprite
+*/
 void FreeSprite(Sprite *sprite)
 {
   /*first lets check to see if the sprite is still being used.*/
-  sprite->refCount--;
-  if(sprite->refCount == 0)
+  if(sprite->refCount > 0)
+  {
+	sprite->refCount--;
+  }
+if(sprite->refCount <= 0)
   {
   strcpy(sprite->filename,"\0");
      /*just to be anal retentive, check to see if the image is already freed*/
   if(sprite->image != NULL)SDL_DestroyTexture(sprite->image);
   sprite->image = NULL;
+  FreeAnimations(sprite);
   }
+  sprite = NULL;
 }
-
+/**
+*@brief Free Animations
+*/
+void FreeAnimations(Sprite *sprite)
+{
+	int i;
+	for(i = 0;i < MAX_ANIMATIONS;i++)
+	{
+		sprite->animation[i] = NULL;
+	}
+}
+/**
+*@brief Load in data for a sprite
+*/
 Sprite *LoadSprite(char *filename,int sizex, int sizey)
 {
 	
@@ -71,7 +125,7 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey)
     fprintf(stderr,"unable to load a vital sprite: %s\n",SDL_GetError());
     exit(0);
   }
-  temp2 = SDL_CreateTextureFromSurface(renderer,temp);
+  temp2 = SDL_CreateTextureFromSurface(GetRenderer(),temp);
   if(temp2 == NULL)
   {
 	  fprintf(stderr,"CREATE TEXTURE FROM SURFACE HAS FAILED: %s\n",SDL_GetError());
@@ -89,7 +143,10 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey)
   SpriteList[i].refCount++;
   return &SpriteList[i];
 }
-void DrawSprite(Sprite *sprite,int sx,int sy, int frame)
+/**
+*@brief Draws specified sprite
+*/
+void DrawSprite(Sprite *sprite,int sx,int sy, int frame,SDL_Renderer *renderer,SDL_RendererFlip flip)
 {
 	SDL_Rect dest,src;
 	src.x = frame%sprite->fpl * sprite->w;
@@ -100,10 +157,12 @@ void DrawSprite(Sprite *sprite,int sx,int sy, int frame)
     dest.y = sy;
     dest.w = sprite->w;
     dest.h = sprite->h;
-	SDL_RenderCopy(renderer, sprite->image, &src,&dest);
+	SDL_RenderCopyEx(renderer, sprite->image, &src,&dest,0,0,flip);
 	
 }
- 
+ /**
+*@brief Increases or decrease the current frame of the animation
+*/
 void Animate(Animation* animation,int startFrame) {
     if(animation->oldTime + animation->frameRate > SDL_GetTicks()) {
         return;
@@ -127,21 +186,27 @@ void Animate(Animation* animation,int startFrame) {
         }
     }else{
         if(animation->currentFrame >= animation->maxFrames) {
-            animation->currentFrame = 0;
+            animation->currentFrame = startFrame;
         }
     }
 }
- 
+/**
+*@brief Set framerate of specified animation
+*/
 void SetFrameRate(Animation* animation,int Rate) {
     animation->frameRate = Rate;
 }
- 
+/**
+*@brief Set current frame of animation
+*/
 void SetCurrentFrame(Animation* animation,int Frame) {
     if(Frame < 0 || Frame >= animation->maxFrames) return;
  
     animation->currentFrame = Frame;
 }
- 
+/**
+*@brief Returns current frame of specified animation
+*/
 int GetCurrentFrame(Animation* animation) {
     return animation->currentFrame;
 }

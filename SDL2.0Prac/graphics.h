@@ -2,6 +2,7 @@
 #ifndef _GRAPHICS_H_
 #define _GRAPHICS_H_
 
+
 void Init_Graphics(
 	char *windowName,
     int viewWidth,
@@ -11,10 +12,11 @@ void Init_Graphics(
     float bgcolor[4]);
 void graphics_close();
 void graphics_render_to_screen(SDL_Surface *surface,SDL_Rect srcRect,int x,int y);
-void FrameDelay(Uint32 delay);
+void FrameDelay();
 void ResetBuffer();
 void NextFrame();
-SDL_Renderer* getRenderer();
+Uint32 GetSystemTime();
+SDL_Renderer* GetRenderer();
 
 
 #endif
