@@ -4,7 +4,7 @@
 
 
 
-
+	void SetCamera(SDL_Rect &camera);
 	void DrawTitle();
 	void DrawGame();
 	void Init();

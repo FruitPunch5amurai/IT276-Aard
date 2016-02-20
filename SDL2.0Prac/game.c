@@ -7,9 +7,16 @@
 #include "graphics.h"
 #include "gamepad.h"
 #include "entity.h"
+#include "level.h"
+#include "tile.h"
 #include "sprite.h"
 #include "gamepad.h"
 #include "game.h"
+
+Map* map;
+
+const int AREA_WIDTH = 1600;
+const int AREA_HEIGHT = 1200;
 
 
 
@@ -32,6 +39,7 @@ void Init()
 {
 	float bgcolor[] = {1,1,1,1};
 	mainEvent = new SDL_Event();
+	InitTileList(20);
 	InitSpriteList();
 		Init_Graphics("Game Test",
     800,
@@ -40,7 +48,8 @@ void Init()
     600,
     bgcolor);
 	InitEntityList();
-
+	map = CreateMap(32,32);
+	Load("level.map",map,"images/Resources.png");
 }
 /**
 *@brief Main game loop
@@ -57,6 +66,7 @@ void Loop()
 		SDL_PollEvent(mainEvent);
 		SDL_RenderClear(GetRenderer());
 		handleInput(gameState);
+		DrawMap(map,25,19);
 		ThinkEntities();
 		UpdateEntities();
 		DrawEntities();
@@ -71,6 +81,34 @@ void Loop()
 	return;
 }
 /**
+*@brief Sets camera
+*/
+void SetCamera(SDL_Rect &camera)
+{
+//Center the camera over the dot
+    camera.w = 800;
+    camera.h = 600;
+
+    //Keep the camera in bounds
+    if( camera.x < 0 )
+    { 
+        camera.x = 0;
+    }
+    if( camera.y < 0 )
+    {
+        camera.y = 0;
+    }
+    if( camera.x > AREA_WIDTH - camera.w )
+    {
+        camera.x = AREA_WIDTH - camera.w;
+    }
+    if( camera.y > AREA_HEIGHT - camera.h )
+    {
+        camera.y = AREA_HEIGHT - camera.h;
+    }
+}
+
+/**
 *@brief Draws the Title Screen
 */
 int Title()
@@ -84,7 +122,7 @@ int Title()
 */
 int Game()
 {
-	printf("In game\n");
+	//printf("In game\n");
 	//DrawGame();
 	return 0;
 }

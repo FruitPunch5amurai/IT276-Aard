@@ -73,6 +73,7 @@
     <ClCompile Include="game.c" />
     <ClCompile Include="gamepad.c" />
     <ClCompile Include="graphics.c" />
+    <ClCompile Include="level.c" />
     <ClCompile Include="player.c" />
     <ClCompile Include="sprite.c" />
     <ClCompile Include="vectors.c" />
@@ -82,6 +83,7 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="gamepad.h" />
     <ClInclude Include="graphics.h" />
+    <ClInclude Include="level.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="vectors.h" />

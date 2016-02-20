@@ -1,12 +1,37 @@
-﻿Build started 2/17/2016 8:53:59 PM.
+﻿Build started 2/19/2016 7:24:03 PM.
      1>Project "C:\Users\Jason\Desktop\Aard-GTS\SDL2.0Prac\SDL2.0Prac.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Creating "Debug\Aard.unsuccessfulbuild" because "AlwaysCreate" was specified.
+         Touching "Debug\Aard.unsuccessfulbuild".
        ClCompile:
-         All outputs are up-to-date.
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt player.c
+         player.c
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(22): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(234) : see declaration of 'fopen'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(31): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(33): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(35): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(37): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(78): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(78): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(117): warning C4715: 'GetPlayer' : not all control paths return a value
        Link:
-         All outputs are up-to-date.
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.exe" /NOLOGO SDL2.lib SDL2main.lib SDL2_image.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\Aard.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.lib" /MACHINE:X86 Debug\entity.obj
+         Debug\game.obj
+         Debug\gamepad.obj
+         Debug\graphics.obj
+         Debug\level.obj
+         Debug\player.obj
+         Debug\sprite.obj
+         Debug\tile.obj
+         Debug\vectors.obj
+         LINK : C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.exe not found or not built by the last incremental link; performing full link
          SDL2.0Prac.vcxproj -> C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.exe;#1" /manifest Debug\Aard.exe.intermediate.manifest
        FinalizeBuildStatus:
          Deleting file "Debug\Aard.unsuccessfulbuild".
          Touching "Debug\Aard.lastbuildstate".
@@ -14,4 +39,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.23
+Time Elapsed 00:00:02.82

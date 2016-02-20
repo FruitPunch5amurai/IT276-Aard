@@ -20,6 +20,7 @@ typedef struct PlayerData{
 	Ability abilities[4];
 }Player;
 Player* CreatePlayer();
+Player *GetPlayer();
 void DrawPlayer(Entity* ent);
 void UpdatePlayer(Entity* ent);
 void ThinkPlayer(Entity *ent);

@@ -14,6 +14,7 @@ static SDL_Texture  * texture = NULL;
 static SDL_Surface  * surface = NULL;
 static SDL_Surface  * temp_buffer = NULL;
 
+
 SDL_Surface *buffer; /*pointer to the background image buffer*/
 SDL_Surface *videobuffer; /*pointer to the draw buffer*/
 SDL_Rect Camera; /*x & y are the coordinates for the background map, w and h are of the screen*/

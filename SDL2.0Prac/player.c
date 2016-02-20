@@ -1,12 +1,41 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <string>
 #include "sprite.h"
 #include "vectors.h"
 #include "player.h"
 
-Player *player;
+Player *player = NULL;
 
+/**
+*@brief Loads in Data for AnimationData for the player from a .txt
+*/
+void LoadPlayerAnimations(Player* player)
+{
+	int j,i=0;
+	FILE *file;
+	file = fopen("AnimationData.txt","r");
+
+	if(!file)
+	{
+		printf("Unable to read AnimationData.txt");
+		return;
+	}
+	while(!feof(file))
+	{
+		fscanf(file,"%d",&j);
+		player->self->sprite->animation[i]->currentFrame = j;
+		fscanf(file,"%d",&j);
+		player->self->sprite->animation[i]->startFrame = j;
+		fscanf(file,"%d",&j);
+		player->self->sprite->animation[i]->maxFrames = j;
+		fscanf(file,"%d",&j);
+		player->self->sprite->animation[i]->oscillate = j;
+
+		i++;
+	}
+}
 /**
 *@brief Creates and Allocates memory for the player. Then initializes all the
 *@brief data members for Player
@@ -17,8 +46,11 @@ Player* CreatePlayer()
 	memset(player,0,sizeof(player));
 	player->self = CreateEntity();
 	
+
 	//Data for Idle Animation
 	player->self->sprite= LoadSprite("images/Sonic.png",32,42);
+	LoadPlayerAnimations(player);
+	/*
 	player->self->sprite->animation[0]->startFrame = 5;
 	player->self->sprite->animation[0]->maxFrames = 5;
 	player->self->sprite->animation[0]->oscillate = true;
@@ -28,7 +60,7 @@ Player* CreatePlayer()
 	player->self->sprite->animation[1]->oscillate = true;
 	player->self->sprite->animation[1]->startFrame = 17;
 	player->self->sprite->animation[1]->currentFrame = 17;
-
+	*/
 	
 	player->playerSpeed = 2;
 	player->self->update = &UpdatePlayer;
@@ -71,10 +103,16 @@ void FreePlayer(Player* player)
 	free(player);
 	player = NULL;
 }
+
 /**
-*@brief Loads in Data for AnimationData for the player from a .txt
+*@brief Returns player if not null
 */
-void LoadPlayerAnimations(Player* player)
+Player *GetPlayer()
 {
-	
+	if(!player)
+	{
+		return player;
+	}
+	printf("Player does not exist.");
+	return;
 }

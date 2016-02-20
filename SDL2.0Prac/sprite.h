@@ -13,7 +13,7 @@ typedef struct AnimationData{
 	int frameRate;
 	long oldTime;
 	int maxFrames;
-	bool oscillate;
+	int oscillate;
 
 }Animation;
 	void Animate(Animation* animation,int startFrame);
