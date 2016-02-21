@@ -113,57 +113,6 @@ void NextFrame()
 	SDL_RenderPresent(renderer);
     FrameDelay();
 }
-/*
-void graphics_render_to_screen(SDL_Surface *surface,SDL_Rect srcRect,int x,int y)
-{
-	SDL_Rect dstRect;
-    SDL_Point point = {1,1};
-    int w,h;
-    if (!texture)
-    {
-        printf("gt_graphics_render_surface_to_screen: no texture available");
-        return;
-    }
-    if (!surface)
-    {
-        printf("gt_graphics_render_surface_to_screen: no surface provided");
-        return;
-    }
-    SDL_QueryTexture(texture,
-                     NULL,
-                     NULL,
-                     &w,
-                     &h);
-    /*check if resize is needed
-    if ((surface->w > w)||(surface->h > h))
-    {
-        SDL_DestroyTexture(texture);
-        texture = SDL_CreateTexture(renderer,
-                                                   surface->format->format,
-                                                   SDL_TEXTUREACCESS_STREAMING, 
-                                                   surface->w,
-                                                   surface->h);
-        if (!texture)
-        {
-            printf("render_to_screen: failed to allocate more space for the screen texture!");
-            return;
-        }
-    }
-    SDL_SetTextureBlendMode(texture,SDL_BLENDMODE_BLEND);        
-    SDL_UpdateTexture(texture,
-                      &srcRect,
-                      surface->pixels,
-                      surface->pitch);
-    dstRect.x = x;
-    dstRect.y = y;
-    dstRect.w = srcRect.w;
-    dstRect.h = srcRect.h;
-    SDL_RenderCopy(renderer,
-                   texture,
-                     &srcRect,
-                     &dstRect);
-}
-*/
 /**
 *@brief Closes all windows and textures
 */

@@ -114,5 +114,4 @@ Player *GetPlayer()
 		return player;
 	}
 	printf("Player does not exist.");
-	return;
 }

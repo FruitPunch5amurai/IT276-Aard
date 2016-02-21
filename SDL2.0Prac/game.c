@@ -8,7 +8,6 @@
 #include "gamepad.h"
 #include "entity.h"
 #include "level.h"
-#include "tile.h"
 #include "sprite.h"
 #include "gamepad.h"
 #include "game.h"
@@ -18,7 +17,7 @@ Map* map;
 const int AREA_WIDTH = 1600;
 const int AREA_HEIGHT = 1200;
 
-
+SDL_Rect *camera;
 
 SDL_Event* mainEvent = NULL;
 Sprite* temp = NULL;
@@ -39,7 +38,10 @@ void Init()
 {
 	float bgcolor[] = {1,1,1,1};
 	mainEvent = new SDL_Event();
-	InitTileList(20);
+	camera = (SDL_Rect*)malloc(sizeof(camera));
+	memset(camera,0,sizeof(SDL_Rect));
+	camera->x = 0;
+	camera->y = 0;
 	InitSpriteList();
 		Init_Graphics("Game Test",
     800,
@@ -48,8 +50,10 @@ void Init()
     600,
     bgcolor);
 	InitEntityList();
-	map = CreateMap(32,32);
+
+	map = CreateMap(32,32,25,19);
 	Load("level.map",map,"images/Resources.png");
+
 }
 /**
 *@brief Main game loop
@@ -59,6 +63,7 @@ void Loop()
 	gameState = Game;
 	Player* player;
 	player = CreatePlayer();
+	player->camera = GetCamera();
 	int quit = 0;	
 	do
 	{
@@ -66,7 +71,10 @@ void Loop()
 		SDL_PollEvent(mainEvent);
 		SDL_RenderClear(GetRenderer());
 		handleInput(gameState);
-		DrawMap(map,25,19);
+		DrawMap(map,1,0,0);
+		DrawMap(map,2,0,0);
+		DrawMap(map,3,0,0);
+		SetCamera(*camera,player);
 		ThinkEntities();
 		UpdateEntities();
 		DrawEntities();
@@ -83,12 +91,15 @@ void Loop()
 /**
 *@brief Sets camera
 */
-void SetCamera(SDL_Rect &camera)
+
+void SetCamera(SDL_Rect &camera,Player* player)
 {
-//Center the camera over the dot
     camera.w = 800;
     camera.h = 600;
+	printf("x:%d\ny:%d\n",camera.x,camera.y);
 
+	camera.x = (player->self->position.x + player->self->dimensions.x/2) - 800/2;
+	camera.y = (player->self->position.y + player->self->dimensions.y/2) - 600/2;
     //Keep the camera in bounds
     if( camera.x < 0 )
     { 
@@ -107,7 +118,6 @@ void SetCamera(SDL_Rect &camera)
         camera.y = AREA_HEIGHT - camera.h;
     }
 }
-
 /**
 *@brief Draws the Title Screen
 */
@@ -125,4 +135,8 @@ int Game()
 	//printf("In game\n");
 	//DrawGame();
 	return 0;
+}
+SDL_Rect* GetCamera()
+{
+	return camera;
 }

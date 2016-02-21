@@ -21,6 +21,7 @@ typedef struct EntityData
 	int entityListNum;
 	SDL_RendererFlip flipped;
 	int amIFlipped;
+	SDL_Rect* camera;
 
 	void (*update)(struct EntityData *ent);
 	void (*think)(struct EntityData *ent);

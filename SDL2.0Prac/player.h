@@ -18,6 +18,8 @@ typedef struct PlayerData{
 	int abandonSpirits;
 	int playerSpeed;
 	Ability abilities[4];
+	SDL_Rect* camera;
+
 }Player;
 Player* CreatePlayer();
 Player *GetPlayer();

@@ -8,7 +8,7 @@
 
 //Stack is were all the core parts of a program go to
 
-
+extern SDL_Rect * camera;
 static Sprite *SpriteList = NULL;
 int Num_Sprites;
 void CloseSpriteSystem();
@@ -141,6 +141,7 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey)
   SpriteList[i].w = sizex;
   SpriteList[i].h = sizey;
   SpriteList[i].refCount++;
+  SpriteList[i].camera = camera;
   return &SpriteList[i];
 }
 /**
@@ -153,13 +154,17 @@ void DrawSprite(Sprite *sprite,int sx,int sy, int frame,SDL_Renderer *renderer,S
     src.y = frame/sprite->fpl * sprite->h;
     src.w =sprite->w;
     src.h =sprite->h;
-	dest.x = sx;
-    dest.y = sy;
+	dest.x = sx - sprite->camera->x;
+    dest.y = sy - sprite->camera->y;
     dest.w = sprite->w;
     dest.h = sprite->h;
-	SDL_RenderCopyEx(renderer, sprite->image, &src,&dest,0,0,flip);
+	sprite->camera->w = sprite->w;
+	sprite->camera->h = sprite->h;
+	SDL_RenderCopyEx(renderer, sprite->image,&src,&dest,0,0,flip);
+
 	
 }
+
  /**
 *@brief Increases or decrease the current frame of the animation
 */
