@@ -29,7 +29,6 @@ typedef struct SpriteData{
   int w, h;					/*the width and height of the frames of the sprites, not the file itself*/
   int fpl;			/*default is 16*/
   int refCount;					/*used by the maintanenc functions to keep track of how many times a single sprite is being used*/
-  SDL_Rect* camera;
 }Sprite;
 
 

@@ -2,6 +2,8 @@
 #define __VECTORS_H_
 
 
+
+
 typedef struct
 {
 	float x , y;
@@ -73,8 +75,8 @@ void Vec3CrossProduct(Vec3D * out, Vec3D vec1,Vec3D vec2);
 /**
  * @brief Macro to get the dot product from a vector.
  *
- * @param a MglVect3D component of the dot product
- * @param b MglVect3D component of the dot product
+ * @param a Vect3D component of the dot product
+ * @param b Vect3D component of the dot product
  *
  * @return the calculated dot product
  */
@@ -93,12 +95,12 @@ void Vec3CrossProduct(Vec3D * out, Vec3D vec1,Vec3D vec2);
 
 /**
  * @brief Macro to subtract two vectors
- * varient ending in p takes a pointer to MglVect3D instead.
+ * varient ending in p takes a pointer to Vect3D instead.
  * Varients ending with 2D only operate on the x an y components of vectors
  *
- * @param dst result MglVect3D output
- * @param a MglVect3D input
- * @param b MglVect3D input
+ * @param dst result Vect3D output
+ * @param a Vect3D input
+ * @param b Vect3D input
  */
 #define Vec2DSub(dst,a,b)     (dst.x=a.x-b.x,dst.y=a.y-b.y)
 #define Vec3DSub(dst,a,b)     (dst.x=a.x-b.x,dst.y=a.y-b.y,dst.z=a.z-b.z)
@@ -106,12 +108,12 @@ void Vec3CrossProduct(Vec3D * out, Vec3D vec1,Vec3D vec2);
 
 /**
  * @brief Macro to add two vectors
- * varient ending in p takes a pointer to MglVect3D instead.
+ * varient ending in p takes a pointer to Vect3D instead.
  * Varients ending with 2D only operate on the x an y components of vectors
  *
- * @param dst result MglVect3D output
- * @param a MglVect3D input
- * @param b MglVect3D input
+ * @param dst result Vect3D output
+ * @param a Vect3D input
+ * @param b Vect3D input
  */
 
 #define Vec2DAdd(dst,a,b)   (dst.x = a.x+b.x,dst.y = a.y+b.y)
@@ -121,11 +123,11 @@ void Vec3CrossProduct(Vec3D * out, Vec3D vec1,Vec3D vec2);
 
 /**
  * @brief Macro to scale a vector by a scalar value
- * varient ending in p takes a pointer to MglVect3D instead.
+ * varient ending in p takes a pointer to Vect3D instead.
  * Varients ending with 2D only operate on the x an y components of vectors
  *
- * @param dst result MglVect3D output
- * @param src MglVect3D input
+ * @param dst result Vect3D output
+ * @param src Vect3D input
  * @Param factpr the scalar value to scale the vector by.
  */
 #define Vec2DScale(dst,src,factor) (dst.x = src.x *factor,\
@@ -139,7 +141,7 @@ void Vec3CrossProduct(Vec3D * out, Vec3D vec1,Vec3D vec2);
                                          dst.w = src.w *factor)
 /**
  * @brief Macro that sets vector to zero.
- * @param a MglVect[2D|3D|4D] input
+ * @param a Vect[2D|3D|4D] input
  */
 
 #define Vec2DClear(a)       (a.x=a.y=0)
@@ -149,11 +151,11 @@ void Vec3CrossProduct(Vec3D * out, Vec3D vec1,Vec3D vec2);
 /**
  * @brief Macro to set the components of the vector
  *
- * @param v MglVect3D output
- * @param a MglFloat x component
- * @param b MglFloat y component
- * @param c MglFloat z component (only in 3D & 4D version)
- * @param d MglFloat w component (only in 4D version)
+ * @param v Vect3D output
+ * @param a Float x component
+ * @param b Float y component
+ * @param c Float z component (only in 3D & 4D version)
+ * @param d Float w component (only in 4D version)
  */
 #define Vec2DSet(v, a, b)  (v.x=(a), v.y=(b))
 #define Vec3DSet(v, a, b, c)  (v.x=(a), v.y=(b), v.z=(c))
@@ -162,8 +164,8 @@ void Vec3CrossProduct(Vec3D * out, Vec3D vec1,Vec3D vec2);
 /**
  * @brief Macro to get the negative of a vector
  *
- * @param src MglVect[2D|3D|4D] input
- * @param dst MglVect[2D|3D|4D] negated output
+ * @param src Vect[2D|3D|4D] input
+ * @param dst Vect[2D|3D|4D] negated output
  */
 #define Vec2DNegate(dst,src)      (dst.x = -src.x,dst.y = -src.y)
 #define Vec3DNegate(dst,src)      (dst.x = -src.x,dst.y = -src.y,dst.z = -src.z)
@@ -206,7 +208,7 @@ void Vec4DSetMagnitude(Vec4D * V,float magnitude);
  * @param p1 one point for the distance check
  * @param p2 another point for the distance check
  * @param size the value to check against
- * @return MglTrue if the distance between P1 and P2 is less than size, false otherwise
+ * @return True if the distance between P1 and P2 is less than size, false otherwise
  */
 bool DistanceBetweenLessThan2D(Vec3D p1,Vec3D p2,float size);
 bool DistanceBetweenLessThan3D(Vec3D p1,Vec3D p2,float size);

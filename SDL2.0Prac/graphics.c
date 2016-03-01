@@ -62,6 +62,7 @@ void Init_Graphics(
 		graphics_close();
 		return;
 	}
+	buffer = SDL_GetWindowSurface(window);
 
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED
 											| SDL_RENDERER_TARGETTEXTURE);
@@ -147,4 +148,26 @@ void graphics_close()
 Uint32 GetSystemTime()
 {
 	return NOW;
+}
+void DrawRect(int x, int y, int width, int height, int r, int g, int b)
+{
+    FillRect(x, y, width, 1, r, g, b);
+    FillRect(x, y+height-1, width, 1, r, g, b);
+    FillRect(x, y, 1, height, r, g, b);
+    FillRect(x+width-1, y, 1, height, r, g, b);
+}
+
+void FillRect(int x, int y, int width, int height, int r, int g, int b)
+{
+    Uint32 color;
+
+    color = SDL_MapRGB(buffer->format, r, g, b );
+
+    SDL_Rect rect;
+    rect.x = x;
+    rect.y = y;
+    rect.w = width;
+    rect.h = height;
+
+    SDL_FillRect(buffer, &rect, color);
 }

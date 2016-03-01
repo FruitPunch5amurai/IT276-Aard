@@ -1,22 +1,28 @@
-﻿Build started 2/20/2016 7:20:59 PM.
+﻿Build started 3/1/2016 9:54:01 AM.
      1>Project "C:\Users\Jason\Desktop\Aard-GTS\SDL2.0Prac\SDL2.0Prac.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\Aard.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt sprite.c
-         sprite.c
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\sprite.c(76): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(105) : see declaration of 'strcpy'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\sprite.c(138): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(188) : see declaration of 'strncpy'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\sprite.c(172): warning C4018: '>' : signed/unsigned mismatch
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt spirit.c
+         spirit.c
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\spirit.c(21): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\spirit.c(22): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\spirit.c(59): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\spirit.c(59): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\spirit.c(66): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\spirit.c(70): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\spirit.c(74): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\spirit.c(78): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
        Link:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.exe" /NOLOGO SDL2.lib SDL2main.lib SDL2_image.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\Aard.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.lib" /MACHINE:X86 Debug\entity.obj
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.exe" /NOLOGO SDL2.lib SDL2main.lib SDL2_image.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\Aard.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.lib" /MACHINE:X86 Debug\collision.obj
+         Debug\entity.obj
          Debug\game.obj
          Debug\gamepad.obj
          Debug\graphics.obj
          Debug\level.obj
          Debug\player.obj
+         Debug\spawn.obj
+         Debug\spirit.obj
          Debug\sprite.obj
          Debug\vectors.obj
          LINK : C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.exe not found or not built by the last incremental link; performing full link
@@ -30,4 +36,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.83
+Time Elapsed 00:00:02.82

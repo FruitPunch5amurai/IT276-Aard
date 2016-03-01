@@ -4,6 +4,7 @@
 #include <SDL_ttf.h>
 #include <string>
 #include "player.h"
+#include "spirit.h"
 #include "graphics.h"
 #include "gamepad.h"
 #include "entity.h"
@@ -14,10 +15,13 @@
 
 Map* map;
 
-const int AREA_WIDTH = 1600;
-const int AREA_HEIGHT = 1200;
-
+const int AREA_WIDTH = 2400;
+const int AREA_HEIGHT = 1800;
+const int SCROLL_SPEED = 10;
 SDL_Rect *camera;
+
+extern Entity* playerEnt;
+extern Player *playerData;
 
 SDL_Event* mainEvent = NULL;
 Sprite* temp = NULL;
@@ -50,9 +54,11 @@ void Init()
     600,
     bgcolor);
 	InitEntityList();
-
-	map = CreateMap(32,32,25,19);
-	Load("level.map",map,"images/Resources.png");
+	CreatePlayer();
+	playerData->camera = GetCamera();
+	CreateSpirit(300,300);
+	map = CreateMap(32,32,75,57);
+	Load("level.map",map,"images/Resources1.png");
 
 }
 /**
@@ -61,20 +67,18 @@ void Init()
 void Loop()
 {
 	gameState = Game;
-	Player* player;
-	player = CreatePlayer();
-	player->camera = GetCamera();
 	int quit = 0;	
 	do
 	{
 		quit = gameState();
 		SDL_PollEvent(mainEvent);
 		SDL_RenderClear(GetRenderer());
-		handleInput(gameState);
+		handleInput(gameState);			
 		DrawMap(map,1,0,0);
 		DrawMap(map,2,0,0);
 		DrawMap(map,3,0,0);
-		SetCamera(*camera,player);
+		DrawMap(map,0,0,0);
+		SetCamera(*camera,playerEnt);
 		ThinkEntities();
 		UpdateEntities();
 		DrawEntities();
@@ -92,14 +96,14 @@ void Loop()
 *@brief Sets camera
 */
 
-void SetCamera(SDL_Rect &camera,Player* player)
+void SetCamera(SDL_Rect &camera,Entity* ent)
 {
     camera.w = 800;
     camera.h = 600;
-	printf("x:%d\ny:%d\n",camera.x,camera.y);
-
-	camera.x = (player->self->position.x + player->self->dimensions.x/2) - 800/2;
-	camera.y = (player->self->position.y + player->self->dimensions.y/2) - 600/2;
+	//printf("x:%d\ny:%d\n",camera.x,camera.y);
+	playerData->camera = &camera;
+	camera.x = (ent->position.x + ent->dimensions.x/2) - 800/2;
+	camera.y = (ent->position.y + ent->dimensions.y/2) - 600/2;
     //Keep the camera in bounds
     if( camera.x < 0 )
     { 
@@ -140,3 +144,19 @@ SDL_Rect* GetCamera()
 {
 	return camera;
 }
+/*
+Vec2D GetCameraPosition()
+{
+	return CreateVec2D(camera.x,camera.y);
+}
+Vec2D GetCameraSize()
+{
+	return CreateVec2D(camera.w,camera.h);
+}
+
+void SetCameraSize(Vec2D size)
+{
+	camera.w = size.x;
+	camera.y = size.y;
+}
+*/

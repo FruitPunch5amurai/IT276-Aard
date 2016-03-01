@@ -1,8 +1,12 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <assert.h>
 #include <math.h>
 #include "vectors.h"
+
+
+
 
 /**
 *@brief Creates a 2D Vector

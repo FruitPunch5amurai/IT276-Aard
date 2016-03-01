@@ -10,19 +10,17 @@ typedef struct{
 }Ability;
 
 typedef struct PlayerData{
-	Entity *self;
 	int confidence;
 	int maxConfidence;
 	int rescuedSpirits;
 	int guidingSpirits;
 	int abandonSpirits;
-	int playerSpeed;
 	Ability abilities[4];
 	SDL_Rect* camera;
 
 }Player;
-Player* CreatePlayer();
-Player *GetPlayer();
+void CreatePlayer();
+Entity *GetPlayer();
 void DrawPlayer(Entity* ent);
 void UpdatePlayer(Entity* ent);
 void ThinkPlayer(Entity *ent);

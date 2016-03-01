@@ -1,9 +1,9 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <string>
 #include "graphics.h"
 #include "entity.h"
-#include <string>
 
 //Study pass by reference
 //Study pass by value
@@ -96,8 +96,21 @@ void DrawEntities()
 */
 void DrawEntity(Entity *ent,int animationNum,int x, int y)
 {
+	/*
+	Vec2D position;
+	SDL_Rec camera;
+	camera = GetCamera();
+	if(!entity_intersect_rect(ent,camera))
+	{
+		return
+	}
+	*/
+
+
 	Animate(ent->sprite->animation[animationNum],ent->sprite->animation[animationNum]->startFrame);
-	DrawSprite(ent->sprite,x,y,GetCurrentFrame(ent->sprite->animation[animationNum]),GetRenderer(),ent->flipped);
+	DrawSprite(ent->sprite,x
+		,y,GetCurrentFrame(ent->sprite->animation[animationNum]),
+		GetRenderer(),ent->flipped);
 }
 /**
 *@brief Returns a spot in the Entity list thats not in use
@@ -130,6 +143,47 @@ void FreeEntity(Entity* ent)
 		ent = NULL;
 	}
 }
+/**
+*@brief Checks to see if entity has stepped on a solid tile
+*@param Map poiner, Entity to check against  
+*/
+bool OverlapsMap(Map *map,Entity *ent)
+{
+
+	int x,y,
+		x2 = ent->position.x+ent->dimensions.x-1,
+		y2 = ent->position.y+ent->dimensions.y-1;
+	for(x = ent->position.x; x < x2;x+=map->tileW)
+	{
+		for( y = ent->position.y; y < y2;y+=map->tileH)
+		{
+			if(CheckSolid(map,x/map->tileW,y/map->tileH))
+				return true;
+		}
+		if(CheckSolid(map,x/map->tileW,y2/map->tileH))
+			return true;
+	}
+	for(y = ent->position.y;y < y2;y+=map->tileH)
+	{
+		if(CheckSolid(map,x2/map->tileW,y/map->tileH))
+			return true;
+	}
+		return false;//CheckSolid(map,x2/map->tileW,y2/map->h);
+}
+/*
+Entity* EntityIntersectAll(Entity *a)
+{
+
+}
+*/
+/*
+int EntityIntersect(Entity *a, Entity *b)
+{
+
+
+
+}
+*/
 /**
 *@brief Practice with Function pointers
 */
