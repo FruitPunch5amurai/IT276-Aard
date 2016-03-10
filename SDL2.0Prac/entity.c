@@ -2,6 +2,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <string>
+#include "collision.h"
 #include "graphics.h"
 #include "entity.h"
 
@@ -9,6 +10,7 @@
 //Study pass by value
 
 #define MAX_ENTITIES		500
+extern SDL_Rect *camera;
 
 Entity* EntityList = NULL;
 /**
@@ -87,8 +89,16 @@ void DrawEntities()
 		{
 			continue;
 		}
-		if(EntityList[i].draw != NULL)
-			(*EntityList[i].draw)(&EntityList[i]);
+		//Draw Only what the Camera can see
+		if(EntityList[i].position.x  - camera->x > 0 && 
+			EntityList[i].position.x < camera->x + camera->w
+			&& EntityList[i].position.y  - camera->y > 0 
+			&& EntityList[i].position.y < camera->y + camera->h
+			)
+			{
+			if(EntityList[i].draw != NULL)
+				(*EntityList[i].draw)(&EntityList[i]);
+			}
 	}
 }
 /**
@@ -126,7 +136,7 @@ Entity* CreateEntity()
 		}
 		memset(&EntityList[i],0,sizeof(Entity));
 		EntityList[i].inuse = 1;
-		EntityList[i].entityListNum = i;
+		EntityList[i].id = i;
 		return &EntityList[i];
 		}
 	printf("Reached Max number of Entities.");
@@ -147,9 +157,10 @@ void FreeEntity(Entity* ent)
 *@brief Checks to see if entity has stepped on a solid tile
 *@param Map poiner, Entity to check against  
 */
-bool OverlapsMap(Map *map,Entity *ent)
+Vec2D OverlapsMap(Map *map,Entity *ent)
 {
-
+	Vec2D dir;
+	dir.x = dir.y = 0;
 	int x,y,
 		x2 = ent->position.x+ent->dimensions.x-1,
 		y2 = ent->position.y+ent->dimensions.y-1;
@@ -157,37 +168,61 @@ bool OverlapsMap(Map *map,Entity *ent)
 	{
 		for( y = ent->position.y; y < y2;y+=map->tileH)
 		{
-			if(CheckSolid(map,x/map->tileW,y/map->tileH))
-				return true;
+			if(CheckSolid(map,x/map->tileW,y/map->tileH)){
+				dir.x = 1;
+				dir.y = 1;
+				return dir;
+			}
 		}
-		if(CheckSolid(map,x/map->tileW,y2/map->tileH))
-			return true;
+		if(CheckSolid(map,x/map->tileW,y2/map->tileH)){
+			dir.x = 1;
+			dir.y = -1;
+			return dir;
+		}
 	}
 	for(y = ent->position.y;y < y2;y+=map->tileH)
 	{
 		if(CheckSolid(map,x2/map->tileW,y/map->tileH))
-			return true;
+		{
+			dir.x = -1;
+			dir.y = 1;
+			return dir;
+		}
 	}
-		return false;//CheckSolid(map,x2/map->tileW,y2/map->h);
+		if(CheckSolid(map,x2/map->tileW,y2/map->tileH))
+		{
+			dir.x = -1;
+			dir.y = -1;
+			return dir;
+		}
+		return dir;
 }
-/*
+
 Entity* EntityIntersectAll(Entity *a)
 {
-
+	int i,j;
+	for(i = 0;i < MAX_ENTITIES;i++)
+		if(EntityList[i].inuse && &EntityList[i] != a)
+		{
+			if(AABB(a->hitBox,EntityList[i].hitBox)){
+				(a->touch)(a,&EntityList[i]);
+				return &EntityList[i];
+			}
+		}
 }
-*/
-/*
-int EntityIntersect(Entity *a, Entity *b)
+
+int GetID(Entity *ent)
 {
-
-
-
+	return ent->id;
 }
-*/
-/**
-*@brief Practice with Function pointers
-*/
-void UpdateNone(Entity* ent)
+
+Entity* GetEntityByID(int id)
 {
-	printf("Update occured");
+	int i;
+	for (i = 0;i < MAX_ENTITIES;i++)
+	{
+		if(!EntityList[i].id == id)
+			continue;
+	}
+	return &EntityList[i];
 }

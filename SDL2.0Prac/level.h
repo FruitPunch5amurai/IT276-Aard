@@ -21,12 +21,12 @@ typedef struct
 }Map;
 
 Map* CreateMap(int tileW, int tileH,int mapWidth,int mapHeight);
-bool Load(char *mapName,Map *map,char *imageName);
-void LoadLayer(Map* map,int data[],FILE *file);
-void LoadSolidTiles(Map* map,int data[],FILE *file);
+bool Load(char *mapName,char *imageName);
+void LoadLayer(int data[],FILE *file);
+void LoadSolidTiles(int data[],FILE *file,int NumSolidTiles);
 void GenerateSolidLayer(Map* map);
 bool IsTileSolid(Map* map,int tile);
 bool CheckSolid(Map* map,int x, int y);
-void DrawMap(Map *map,int layer ,int xOffset ,int yOffset);
+void DrawMap(int layer ,int xOffset ,int yOffset);
 
 #endif

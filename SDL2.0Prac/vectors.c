@@ -11,7 +11,7 @@
 /**
 *@brief Creates a 2D Vector
 */
-Vec2D CreateVec2D(int x, int y)
+Vec2D CreateVec2D(float x, float y)
 {
   Vec2D vec;
   Vec2DSet(vec,x, y);
@@ -57,6 +57,7 @@ float Vec4DMagnitude (Vec4D V)
 {
   return sqrt (V.x * V.x + V.y * V.y + V.z * V.z + V.w * V.w);
 }
+
 /**
 *@brief Returns the magnitude squared of specified 2D Vector
 */
@@ -184,4 +185,26 @@ void Vec3DCrossProduct(Vec3D *out, Vec3D v1, Vec3D v2)
   out->x = v1.y*v2.z - v1.z*v2.y;
   out->y = v1.z*v2.x - v1.x*v2.z;
   out->z = v1.x*v2.y - v1.y*v2.x;
+}
+
+bool DistanceBetweenLessThan2D(Vec2D p1,Vec2D p2,float size)
+{
+	float i; 
+	i = sqrt(pow((p2.x - p1.x),2) + pow((p2.y - p1.y),2));
+	if(sqrt(pow((p2.x - p1.x),2) + pow((p2.y - p1.y),2)) < size)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
+}
+void Vec2DReflect(Vec2D *out, Vec2D normal,Vec2D in)
+{
+  float f;
+  f = Vec2DDotProduct(in,normal);
+  out->x = in.x - (2 * normal.x * f);
+  out->y = in.y - (2 * normal.y * f);
 }

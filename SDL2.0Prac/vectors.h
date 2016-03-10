@@ -63,7 +63,7 @@ typedef struct
 *@brief Methods to create Vecs
 */
 
-Vec2D CreateVec2D(int x , int y);
+Vec2D CreateVec2D(float x , float y);
 Vec3D CreateVec3D(int x , int y, int z);
 Vec4D CreateVec4D(int x , int y,int z, int w);
 
@@ -83,6 +83,7 @@ void Vec3CrossProduct(Vec3D * out, Vec3D vec1,Vec3D vec2);
 #define Vec4DDotProduct(a,b)      (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w)
 #define Vec3DDotProduct(a,b)      (a.x*b.x+a.y*b.y+a.z*b.z)
 #define Vec2DDotProduct(a,b)      (a.x*b.x+a.y*b.y)
+
 /**
  * @brief checks if vectors are exactly matches of each other
  *
@@ -171,6 +172,15 @@ void Vec3CrossProduct(Vec3D * out, Vec3D vec1,Vec3D vec2);
 #define Vec3DNegate(dst,src)      (dst.x = -src.x,dst.y = -src.y,dst.z = -src.z)
 #define Vec4DNegate(dst,src)      (dst.x = -src.x,dst.y = -src.y,dst.z = -src.z,dst.w = -src.w)
 
+
+/**
+ * @brief reflect a vector about a normal.  Simulates "Bounce"
+ * @param out the resultant vector
+ * @param normal the normal vector for the surface that is providing the bounce
+ * @param in the input vector that will bounce off of the normal
+ */
+void Vec2DReflect(Vec2D *out, Vec2D normal,Vec2D in);
+
 /**
  * @brief normalizes the vector passed.  does nothing for a zero length vector.
  *
@@ -210,7 +220,7 @@ void Vec4DSetMagnitude(Vec4D * V,float magnitude);
  * @param size the value to check against
  * @return True if the distance between P1 and P2 is less than size, false otherwise
  */
-bool DistanceBetweenLessThan2D(Vec3D p1,Vec3D p2,float size);
+bool DistanceBetweenLessThan2D(Vec2D p1,Vec2D p2,float size);
 bool DistanceBetweenLessThan3D(Vec3D p1,Vec3D p2,float size);
 bool DistanceBetweenLessThan4D(Vec3D p1,Vec3D p2,float size);
 

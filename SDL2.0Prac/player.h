@@ -1,6 +1,7 @@
 #ifndef __PLAYER_H_
 #define __PLAYER_H_
 #include "entity.h"
+	
 
 typedef struct{
 	int cooldown;
@@ -27,6 +28,7 @@ void ThinkPlayer(Entity *ent);
 void TouchPlayer(Entity *ent,Entity *other);
 void FreePlayer(Player* player);
 void SetPlayerAnimations(Entity* ent);
+void RenderHPBar(int x, int y, int w, int h, float Percent, SDL_Color FGColor, SDL_Color BGColor) ;
 
 
 

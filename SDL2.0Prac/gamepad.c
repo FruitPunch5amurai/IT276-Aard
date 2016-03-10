@@ -27,7 +27,7 @@ void handleInput(int (*gameState)())
 			{
 				
 			case SDLK_LEFT:
-				printf("ArrowKeyLeft Key Pressed\n");
+				
 				playerEnt->velocity.x = -playerEnt->speed;
 				if(!playerEnt->amIFlipped)
 				{
@@ -36,11 +36,11 @@ void handleInput(int (*gameState)())
 				}
 				break;
 			case SDLK_UP:
-				printf("ArrowKeyUp Key Pressed\n");playerEnt->velocity.y = -playerEnt->speed;break;
+				playerEnt->velocity.y = -playerEnt->speed;break;
 			case SDLK_DOWN:
-				printf("ArrowKeyDown Key Pressed\n");playerEnt->velocity.y = playerEnt->speed;break;
+				playerEnt->velocity.y = playerEnt->speed;break;
 			case SDLK_RIGHT:
-				printf("ArrowKeyRight Key Pressed\n");
+				
 				playerEnt->velocity.x = playerEnt->speed;
 				if(playerEnt->amIFlipped)
 				{
@@ -57,13 +57,13 @@ void handleInput(int (*gameState)())
 			switch(mainEvent->key.keysym.sym)
 			{
 			case SDLK_LEFT:
-				printf("ArrowKeyLeft Key Released\n");playerEnt->velocity.x = 0;break;
+				playerEnt->velocity.x = 0;break;
 			case SDLK_UP:
-				printf("ArrowKeyUp Key Released\n");playerEnt->velocity.y = 0;break;
+				playerEnt->velocity.y = 0;break;
 			case SDLK_DOWN:
-				printf("ArrowKeyDown Key Released\n");playerEnt->velocity.y = 0;break;
+				playerEnt->velocity.y = 0;break;
 			case SDLK_RIGHT:
-				printf("ArrowKeyRight Key Released\n");playerEnt->velocity.x = 0;break;
+				playerEnt->velocity.x = 0;break;
 			default:
 				break;
 			}

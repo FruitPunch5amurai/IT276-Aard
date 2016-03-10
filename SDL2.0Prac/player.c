@@ -3,15 +3,19 @@
 #include <SDL_ttf.h>
 #include <string>
 #include "sprite.h"
+#include"graphics.h"
 #include "vectors.h"
+#include "LList.h"
 #include "player.h"
 
+SDL_Color hp;
+SDL_Color hp2;
 Player *playerData = NULL;
 Entity* playerEnt= NULL;
-
-Entity* Spirits;
-
+extern Link *l;
+extern ELink *SpiritLink;
 extern Map *map;
+
 /**
 *@brief Loads in Data for AnimationData for the player from a .txt
 */
@@ -51,21 +55,27 @@ void CreatePlayer()
 	playerData = (Player*)malloc(sizeof(Player));
 	memset(playerData,0,sizeof(Player));
 
-	Spirits = (Entity*)malloc(sizeof(Entity)*6);
-	memset(Spirits,0,sizeof(Entity));
-
 	//Data for Idle Animation
 	playerEnt->sprite= LoadSprite("images/Sonic.png",32,42);
 	LoadPlayerAnimations(playerEnt);
+	playerEnt->whatAmI = 0;
 	playerEnt->dimensions.x = playerEnt->sprite->w;
 	playerEnt->dimensions.y = playerEnt->sprite->h;
-	playerEnt->position.x = 300;
-	playerEnt->position.y = 300;
+	
+	hp.b = 0;hp.r = 255;hp.g = 0;hp.a = 0;
+	hp2.b= 255; hp2.r = 0; hp2.g = 0;hp2.a = 255;
+	
+	playerEnt->position.x = 400;
+	playerEnt->position.y = 400;
+	playerEnt->hitBox.x = playerEnt->position.x;
+	playerEnt->hitBox.y = playerEnt->position.y;
+	playerEnt->hitBox.w = playerEnt->sprite->w;
+	playerEnt->hitBox.h= playerEnt->sprite->h;
 	playerEnt->entType = 0;
 	playerEnt->position2.x = playerEnt->position.x+playerEnt->dimensions.x-1;
 	playerEnt->position2.y = playerEnt->position.y+playerEnt->dimensions.y-1;
-	playerEnt->speed = 10;
-	
+	playerEnt->speed = 5;
+	playerEnt->numSpirits = 0;
 	/*
 	player->self->sprite->animation[0]->startFrame = 5;
 	player->self->sprite->animation[0]->maxFrames = 5;
@@ -79,7 +89,8 @@ void CreatePlayer()
 	*/
 
 	/*Set the PlayerData*/
-	playerData->confidence = 30;
+	playerData->confidence = 20;
+	playerData->maxConfidence = 30;
 	playerData->rescuedSpirits = 0;
 	playerData->guidingSpirits = 0;
 	playerData->abandonSpirits = 0;
@@ -90,6 +101,9 @@ void CreatePlayer()
 	playerEnt->think = &ThinkPlayer;
 	playerEnt->touch = &TouchPlayer;
 
+	SetElement(l,playerEnt);
+	Insert(SpiritLink,playerEnt);
+	Next(SpiritLink);
 }
 /**
 *@brief Draws specified Entity to main renderer
@@ -103,42 +117,29 @@ void DrawPlayer(Entity* ent)
 */
 void UpdatePlayer(Entity *ent)
 {
+	RenderHPBar( 100, 0, -100,50,playerData->confidence/playerData->maxConfidence, hp ,hp2);
+	if(playerData->confidence <= 0)
+		printf("Player is Dead");
+	ent->spiritIndex = 0;
+	ent->hitBox.x =ent->position.x;
+	ent->hitBox.y =ent->position.y;
+	
 	if(ent->velocity.x != 0 || ent->velocity.y != 0)
 		ent->currentAnimation= 1;
 	else
 		ent->currentAnimation = 0;
+	Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
 	Vec2DAdd(ent->position,ent->position,ent->velocity);
-	DrawPlayer(ent);
 }
 void ThinkPlayer(Entity *ent)
 {
-	if(ent->velocity.x < 0)
-	{
-		if(OverlapsMap(map,ent)){
-			printf("Stepped on Solid!");
-		}
-	}
-	if(ent->velocity.x > 0)
-	{
-		if(OverlapsMap(map,ent)){
-			printf("Stepped on Solid!");
-		}
-	}
-	if(ent->velocity.y < 0)
-	{
-		if(OverlapsMap(map,ent)){
-			printf("Stepped on Solid!");
-		}
-	}
-	if(ent->velocity.y > 0)
-	{
-		if(OverlapsMap(map,ent)){
-			printf("Stepped on Solid!");
-		}
-	}
+	ent->numSpirits = SpiritLink->count;
+	EntityIntersectAll(ent);
+	Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
 }
 void TouchPlayer(Entity *ent,Entity *other)
 {
+
 
 }
 /**
@@ -162,3 +163,17 @@ Entity *GetPlayer()
 	}
 	printf("Player does not exist.");
 }
+void RenderHPBar(int x, int y, int w, int h, float Percent, SDL_Color FGColor, SDL_Color BGColor) { 
+   Percent = Percent > 1.f ? 1.f : Percent < 0.f ? 0.f : Percent; 
+   SDL_Color old; 
+   SDL_GetRenderDrawColor(GetRenderer(), &old.r, &old.g, &old.g, &old.a); 
+   SDL_Rect bgrect = { x, y, w, h }; 
+   SDL_SetRenderDrawColor(GetRenderer(), BGColor.r, BGColor.g, BGColor.b, BGColor.a); 
+   SDL_RenderFillRect(GetRenderer(), &bgrect); 
+   SDL_SetRenderDrawColor(GetRenderer(), FGColor.r, FGColor.g, FGColor.b, FGColor.a); 
+   int pw = (int)((float)w * Percent); 
+   int px = x + (w - pw); 
+   SDL_Rect fgrect = { px, y, pw, h }; 
+   SDL_RenderFillRect(GetRenderer(), &fgrect); 
+   SDL_SetRenderDrawColor(GetRenderer(), old.r, old.g, old.b, old.a); 
+} 

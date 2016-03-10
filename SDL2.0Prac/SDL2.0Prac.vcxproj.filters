@@ -44,6 +44,15 @@
     <ClCompile Include="spawn.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LList.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="save.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graphics.h">
@@ -77,6 +86,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="spawn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="save.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,7 +6,8 @@
 #include "graphics.h"
 #include "level.h"
 
-
+Map *map;
+	
 /**
 *@brief Allocates memory for map
 *@param int tileW for Tilewidth , int TileH for Tileheight, int mapWidth for width of map,
@@ -14,7 +15,6 @@
 */
 Map* CreateMap(int tileW, int tileH,int mapWidth,int mapHeight)
 {
-	Map* map;
 	map = (Map*)malloc(sizeof(Map));
 	memset(map,0,sizeof(map));
 	
@@ -30,9 +30,12 @@ Map* CreateMap(int tileW, int tileH,int mapWidth,int mapHeight)
 *@brief assigns a sprite sheet to the map and generates solidLayer of map
 *@param A list of chars which is the .map name, the map to load data in, the spriteImage name
 */
-bool Load(char *mapName,Map * map, char *imageName)
+bool Load(char *mapName, char *imageName)
 {
 	int i = 0, j = 0;
+	int NumSolidTiles = 0;
+	int mapWidth,mapHeight,tileH,tileW;
+	char buf[500];
 	FILE * file;
 	file = fopen(mapName,"r");
 
@@ -43,25 +46,64 @@ bool Load(char *mapName,Map * map, char *imageName)
 	 }
 
 	
-	map->solidLayer = (int*)malloc(sizeof(int) * map->w*map->h);
-	map->data = (int*)malloc(sizeof(int) * map->w*map->h);
-	map->data2 = (int*)malloc(sizeof(int) * map->w*map->h);
-	map->data3 = (int*)malloc(sizeof(int) * map->w*map->h);
 
-	memset(map->solidLayer,0,sizeof(map->solidLayer));
-	memset(map->data,0,sizeof(map->data));
-	memset(map->data2,0,sizeof(map->data2));
-	memset(map->data3,0,sizeof(map->data3));
+	while(fscanf(file,"%s",buf) != EOF){
+		if(strcmp(buf,"#MapWidth") == 0){
+			fscanf(file,"%d",&j);
+			mapWidth = j;	
+			}
+		if(strcmp(buf,"#MapHeight") == 0)
+		{
+			fscanf(file,"%d",&j);
+			mapHeight = j;
+		}
+		if(strcmp(buf,"#TileWidth") == 0)
+		{
+			fscanf(file,"%d",&j);
+			tileW = j;
+		}
+		if(strcmp(buf,"#TileHeight") == 0)
+		{
+			fscanf(file,"%d",&j);
+			tileH = j;
+			map = CreateMap(tileW,tileH,mapWidth,mapHeight);
+			map->solidLayer = (int*)malloc(sizeof(int) * map->w*map->h);
+			map->data = (int*)malloc(sizeof(int) * map->w*map->h);
+			map->data2 = (int*)malloc(sizeof(int) * map->w*map->h);
+			map->data3 = (int*)malloc(sizeof(int) * map->w*map->h);
 	
-	LoadLayer(map,map->data,file);
-	LoadLayer(map,map->data2,file);
-	LoadLayer(map,map->data3,file);
-	LoadSolidTiles(map,map->solidTiles,file); /**< MUST TO BE LOADED LAST!*/
+			memset(map->solidLayer,0,sizeof(map->solidLayer));
+			memset(map->data,0,sizeof(map->data));
+			memset(map->data2,0,sizeof(map->data2));
+			memset(map->data3,0,sizeof(map->data3));
+		}
+		if(strcmp(buf,"#NumSolidTiles") == 0)
+		{
+			fscanf(file,"%d",&j);
+			NumSolidTiles = j;
+			map->numSolidTiles = j;
+		}
+		if(strcmp(buf,"#Layer1") == 0)
+		{
+		LoadLayer(map->data,file);
+		}
+		if(strcmp(buf,"#Layer2") == 0)
+		{
+		LoadLayer(map->data2,file);
+		}
+		if(strcmp(buf,"#Layer3") == 0)
+		{
+		LoadLayer(map->data3,file);
+		}
+		if(strcmp(buf,"#SolidTiles") == 0)
+		{
+		LoadSolidTiles(map->solidTiles,file,NumSolidTiles);
+		}
+	}
 	GenerateSolidLayer(map);
-	//file = NULL;
 	fclose(file);
 
-	map->tiles = LoadSprite(imageName,32,32);
+	map->tiles = LoadSprite(imageName,tileW,tileH);
 	if(!map->tiles)
 	{
 	return false;
@@ -73,26 +115,25 @@ bool Load(char *mapName,Map * map, char *imageName)
 *@brief Loads in Solid tiles into an array used to keep track of them
 *@param Takes in a map pointer, an array of ints, and a file pointer
 */
-void LoadSolidTiles(Map* map,int data[],FILE *file)
+void LoadSolidTiles(int data[],FILE *file,int NumSolidTiles)
 {
 	int j = 0,i = 0;
-	
-	
-	while(fscanf(file,"%d",&j)){
-	data[i] = j;
-	i++;
-	map->numSolidTiles+=1;
-	printf("%d",data[i]);
+	char buf[500];
+	for(i = 0; i < NumSolidTiles;i++)
+	{
+		fscanf(file,"%d",&j);
+		data[i] = j;
+		printf("%d",data[i]);
 	}
+	
 }
 /**
 *@brief Loads in  tiles for layers into an array used to keep track of them
 *@param Takes in a map pointer, an array of ints, and a file pointer
 */
-void LoadLayer(Map* map,int data[],FILE *file)
+void LoadLayer(int data[],FILE *file)
 {
 	int x,y,i = 0,j = 0;
-
 	for(y = 0; y < map->h;y++)
 	{
 		for(x = 0; x < map->w;x++)
@@ -123,7 +164,7 @@ void GenerateSolidLayer(Map *map)
 *@brief Draws the portion of the map seen by screen
 *@param The map to draw,The layer to draw,int xOffset for Draw , int yOffset for Draw 
 */
-void DrawMap(Map *map,int layer, int xOffset ,int yOffset)
+void DrawMap(int layer, int xOffset ,int yOffset)
 {
 	int* drawLayer = NULL;
 	if(layer == 0)

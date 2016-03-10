@@ -2,56 +2,56 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <string>
+#include "graphics.h"
 #include "vectors.h"
 #include "entity.h"
+#include "LList.h"
 #include "spirit.h"
 
 int MaxSpirits = 6;
-int SpiritIndex = 0;
 extern Entity* playerEnt;
-extern Entity* Spirits;
-
-Entity* CreateSpirit(int x, int y)
+extern Entity* playerData;
+Link *l  = CreateLink(NULL,NULL,NULL);
+ELink *SpiritLink = CreateELink();
+void CreateSpirit(int x, int y)
 {
 	int i;
 	Entity* spirit;
-
 		spirit = CreateEntity();
 		spirit->sprite = LoadSprite("images/AardSoul.png",21,32);
+		spirit->whatAmI = 1;
+		spirit->isBeingGuided = 0;
 		spirit->position.x =x;
 		spirit->position.y =y;
+		spirit->dimensions.x = spirit->sprite->w;
+		spirit->dimensions.y = spirit->sprite->h;		
+		spirit->hitBox.x =x;
+		spirit->hitBox.y =y;
+		spirit->hitBox.w = spirit->sprite->w;
+		spirit->hitBox.h = spirit->sprite->h;
+
+		spirit->spiritIndex = -1;
 		spirit->currentAnimation = 0;
 		spirit->sprite->animation[0]->oscillate = true;
 		spirit->sprite->animation[0]->startFrame = 0;
 		spirit->sprite->animation[0]->maxFrames = 5;
 		spirit->nextThink = SDL_GetTicks() + 10;
-		spirit->spiritState = BeingGuided;
-		spirit->savedPlayerPosition = playerEnt->position;
-		for(i =0;i < MaxSpirits;i++)
-		{
-			if(Spirits[i].inuse)
-			{
-				continue;
-			}
-			Spirits[i].inuse = 1;
-			spirit->spiritIndex = i;
-			break;
-		}
-		spirit->offset.x = 1;
-		spirit->offset.y = 1;
-		spirit->offset.x *= spirit->offset.x ;
-		spirit->offset.y *= spirit->offset.y ;
-		Spirits[spirit->spiritIndex];
-		spirit->spiritIndex = SpiritIndex;
-		SpiritIndex += 1;
+		spirit->spiritState = 0;
+
+		//moveToEnd(SpiritLink);
+		//Insert(SpiritLink,spirit);
+		spirit->offset.x = 20;
+		spirit->offset.y = 20;
 		
+		spirit->follow = NULL;
 		spirit->inuse = 1;
-		spirit->speed = 9;
+		spirit->speed = 4;
 		spirit->think = &ThinkSpirit;
 		spirit->touch = &TouchSpirit;
 		spirit->draw = &DrawSpirit;
 		spirit->update = &UpdateSpirit;
-		return spirit;
+
+		
 }
 
 void DrawSpirit(Entity* ent)
@@ -61,65 +61,87 @@ void DrawSpirit(Entity* ent)
 
 void UpdateSpirit(Entity* ent)
 {
-	if(ent->savedPlayerPosition.x  < ent->position.x)
+	
+	ent->hitBox.x =ent->position.x;
+	ent->hitBox.y =ent->position.y;
+	if(ent->follow != NULL){
+	if(abs(ent->position.x - ent->savedPlayerPos.x) < ent->offset.x &&
+		abs(ent->position.y - ent->savedPlayerPos.y) < ent->offset.y){
+	ent->velocity.x = 0;
+	ent->velocity.y = 0;
+	}else
+	{
+	if(ent->savedPlayerPos.x < ent->position.x)
 	{
 		ent->velocity.x = -ent->speed;
 	}
-	if(ent->savedPlayerPosition.x > ent->position.x)
+	if(ent->savedPlayerPos.x > ent->position.x)
 	{	
 		ent->velocity.x = +ent->speed;
 	}
-	if(ent->savedPlayerPosition.y < ent->position.y)
+	if(ent->savedPlayerPos.y< ent->position.y)
 	{
 		ent->velocity.y = -ent->speed;
 	}
-	if(ent->savedPlayerPosition.y > ent->position.y)
+	if(ent->savedPlayerPos.y > ent->position.y)
 	{
 		ent->velocity.y = +ent->speed;
 	}
-	if(ent->savedPlayerPosition.y == ent->position.y + ent->offset.y)
-		ent->velocity.y = 0;
-	if(ent->savedPlayerPosition.x == ent->position.x + ent->offset.x)
-		ent->velocity.x = 0;
-	if(abs(ent->position.x - ent->savedPlayerPosition.x) < ent->speed)
-		ent->velocity.x = ent->savedPlayerPosition.x - ent->position.x;
-	if(abs(ent->position.y - ent->savedPlayerPosition.y) < ent->speed)
-		ent->velocity.y = ent->savedPlayerPosition.y - ent->position.y;
+	
+	if(abs(ent->position.x - ent->savedPlayerPos.x) < ent->speed)
+		ent->velocity.x = ent->savedPlayerPos.x - ent->position.x;
+	if(abs(ent->position.y - ent->savedPlayerPos.y) < ent->speed)
+		ent->velocity.y = ent->savedPlayerPos.y - ent->position.y;
+		}
+	}
 	Vec2DAdd(ent->position,ent->position ,ent->velocity);
 	DrawSpirit(ent);
 }
 void ThinkSpirit(Entity *ent)
 {
-	if(ent->spiritState == BeingGuided && ent->nextThink < SDL_GetTicks() )
-	{
-		if(ent->savedPlayerPosition.x  < ent->position.x)
-		{
-			ent->offset.x *=10;
-		}
-		if(ent->savedPlayerPosition.x > ent->position.x)
-		{	
-			ent->offset.x *= -10;
-		}
-		if(ent->savedPlayerPosition.y < ent->position.y)
-		{
-			ent->offset.y *= -10;
-		}
-		if(ent->savedPlayerPosition.y > ent->position.y)
-		{
-			ent->offset.y *= 10;
-		}
-		Vec2DAdd(ent->savedPlayerPosition,playerEnt->position,ent->offset);
-		printf("Spirit had a thought");
-		ent->nextThink = SDL_GetTicks() + 1000;
+	EntityIntersectAll(ent);
+	if(ent->spiritIndex >= 0){
+		moveToPos(SpiritLink,ent->spiritIndex);
+		if(Prev(SpiritLink->curr)->curr)
+			ent->follow = Prev(SpiritLink->curr)->curr;
 	}
-
+	if(ent->spiritState == BeingGuided && ent->nextThink < SDL_GetTicks() )
+	{		
+		if(ent->follow != NULL)
+			ent->savedPlayerPos = ent->follow->position;
+		ent->nextThink = SDL_GetTicks() + 200;
+	}
 	
 }
 void TouchSpirit(Entity *ent,Entity *other)
 {
-
+		if(other->whatAmI == 0)//Its a player!
+	{
+		if(!ent->isBeingGuided)
+		{
+			moveToEnd(SpiritLink);
+			Insert(SpiritLink,ent);
+			ent->isBeingGuided = 1;	
+			ent->spiritIndex = SpiritLink->count;
+		}
+	}
 }
-void FreeSpirit(Spirit* spirit)
+void FreeSpirit(Entity* ent)
 {
+	int i ;
+	moveToPos(SpiritLink,ent->spiritIndex);
+	Remove(SpiritLink);
+	if(Next(SpiritLink->curr)->curr != NULL)
+	{
+		for(i = SpiritLink->curr->curr->spiritIndex+1; i <= SpiritLink->count;i++) 
+		{
+			moveToPos(SpiritLink,i);
+			if(SpiritLink->curr != NULL)
+			{
+				SpiritLink->curr->curr->spiritIndex--;
+			}
+		}
+	}
+	FreeEntity(ent);
 
 }

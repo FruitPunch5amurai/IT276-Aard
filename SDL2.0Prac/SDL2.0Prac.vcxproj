@@ -70,12 +70,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="collision.c" />
+    <ClCompile Include="enemy.c" />
     <ClCompile Include="entity.c" />
     <ClCompile Include="game.c" />
     <ClCompile Include="gamepad.c" />
     <ClCompile Include="graphics.c" />
     <ClCompile Include="level.c" />
+    <ClCompile Include="LList.c" />
     <ClCompile Include="player.c" />
+    <ClCompile Include="save.c" />
     <ClCompile Include="spawn.c" />
     <ClCompile Include="spirit.c" />
     <ClCompile Include="sprite.c" />
@@ -83,12 +86,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collision.h" />
+    <ClInclude Include="enemy.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gamepad.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="level.h" />
+    <ClInclude Include="LList.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="save.h" />
     <ClInclude Include="spawn.h" />
     <ClInclude Include="spirit.h" />
     <ClInclude Include="sprite.h" />

@@ -6,6 +6,7 @@
 #include "player.h"
 #include "spirit.h"
 #include "graphics.h"
+#include "enemy.h"
 #include "gamepad.h"
 #include "entity.h"
 #include "level.h"
@@ -13,7 +14,7 @@
 #include "gamepad.h"
 #include "game.h"
 
-Map* map;
+extern Map* map;
 
 const int AREA_WIDTH = 2400;
 const int AREA_HEIGHT = 1800;
@@ -56,9 +57,14 @@ void Init()
 	InitEntityList();
 	CreatePlayer();
 	playerData->camera = GetCamera();
+	CreateSpirit(360,300);
 	CreateSpirit(300,300);
-	map = CreateMap(32,32,75,57);
-	Load("level.map",map,"images/Resources1.png");
+	CreateSpirit(420,300);
+	CreateSpirit(460,300);
+	CreateSpirit(520,300);
+	CreateEnemy(200,200,0);
+
+	Load("level.map","images/Resources1.png");
 
 }
 /**
@@ -74,10 +80,10 @@ void Loop()
 		SDL_PollEvent(mainEvent);
 		SDL_RenderClear(GetRenderer());
 		handleInput(gameState);			
-		DrawMap(map,1,0,0);
-		DrawMap(map,2,0,0);
-		DrawMap(map,3,0,0);
-		DrawMap(map,0,0,0);
+		DrawMap(1,0,0);
+		DrawMap(2,0,0);
+		DrawMap(3,0,0);
+		DrawMap(0,0,0);
 		SetCamera(*camera,playerEnt);
 		ThinkEntities();
 		UpdateEntities();
