@@ -21,11 +21,33 @@ Entity *CreateEnemy(int x, int y, int type)
 	srand(time(NULL));
 
 	enemy->enemyType = type;
-	enemy->sprite= LoadSprite("images/Enemies1.png",27,32);
-	SetEnemyAnimations(enemy,"EnemyAnimationData.txt");
-	enemy->currentAnimation = 1;
+	if(type == 0)
+	{
+		enemy->sprite= LoadSprite("images/Enemies1.png",27,32);
+		SetEnemyAnimations(enemy,"EnemyAnimationData.txt");
+		enemy->update = &UpdateEnemyChaser;	
+		enemy->think = &ThinkEnemyChaser;
+		enemy->currentAnimation = 1;
+	}
+	else if(type == 1){
+		enemy->sprite= LoadSprite("images/Enemies2.png",27,32);
+		SetEnemyAnimations(enemy,"EnemyAnimationData.txt");
+		enemy->update = &UpdateEnemyLurker;
+		enemy->think = &ThinkEnemyLurker;
+		enemy->currentAnimation = 1;
+	}
+	else if(type == 2)
+	{
+		enemy->sprite= LoadSprite("images/Enemies3.png",32,32);
+		SetEnemyAnimations(enemy,"EnemyAnimationData.txt");
+		enemy->update = &UpdateEnemySnatcher;	
+		enemy->think = &ThinkEnemySnatcher;
+		enemy->state = IDLE;
+		enemy->currentAnimation = 0;
+		enemy->sprite->animation[0]->frameRate = 500;
 
-	enemy->savedPlayerPos = playerEnt->position;
+	}
+
 	enemy->hitBox.x = enemy->position.x;
 	enemy->hitBox.y = enemy->position.y;
 	enemy->hitBox.w = enemy->sprite->w;
@@ -40,15 +62,6 @@ Entity *CreateEnemy(int x, int y, int type)
 	enemy->whatAmI = 2;
 	enemy->state = IDLE;
 	enemy->nextThink = SDL_GetTicks() + 500;
-	if(enemy->enemyType == 0)
-	{
-		enemy->update = &UpdateEnemyChaser;	
-		enemy->think = &ThinkEnemyChaser;
-	}
-	else if(enemy->enemyType == 1){
-		enemy->update = &UpdateEnemyLurker;
-		enemy->think = &ThinkEnemyLurker;
-	}
 
 	enemy->draw = &DrawEnemy;
 	enemy->touch = &TouchEnemy;
@@ -122,7 +135,7 @@ void ThinkEnemyChaser(Entity *ent)
 		else if(ent->nextMove >= 5 && ent->state != MOVING)
 		{
 			ent->nextMove = 0;
-			moveIndicator = rand() % 3;
+			moveIndicator = rand() % 4;
 			ent->state = MOVING;
 		}
 		else if(ent->nextMove >= 2 && ent->state != IDLE ) 
@@ -135,23 +148,85 @@ void ThinkEnemyChaser(Entity *ent)
 }
 void UpdateEnemyLurker(Entity *ent)
 {
-	Vec2D *dir = &CreateVec2D(-5.0,5.0);
 	ent->hitBox.x =ent->position.x;
 	ent->hitBox.y =ent->position.y;
+		if(ent->state == MOVING){
+		if(moveIndicator == 0)
+			ent->velocity.x = ent->speed;
+		if(moveIndicator == 1)
+			ent->velocity.y = ent->speed;
+		if(moveIndicator == 2)
+			ent->velocity.x = -ent->speed;
+		if(moveIndicator == 3)
+			ent->velocity.y = -ent->speed;
+		}
 	if(OverlapsMap(map,ent).x != 0)
 	{
-
+		Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
+		moveIndicator = rand() % 4;
 	}
-
+	if(ent->sprite->animation[1]->currentFrame == ent->sprite->animation[1]->maxFrames)
+		ent->sprite->animation[1]->frameRate = 5000;
+	else
+		ent->sprite->animation[1]->frameRate = 100;
 	Vec2DAdd(ent->position,ent->position,ent->velocity);
-	
+	EntityIntersectAll(ent);
 }
 void ThinkEnemyLurker(Entity *ent)
 {
 	if(ent->nextThink < SDL_GetTicks()){
-
-		ent->nextThink = SDL_GetTicks() + 500;
+		ent->state = MOVING;
+		moveIndicator = rand() % 4;
+		ent->velocity.x = 0;
+		ent->velocity.y = 0;
+		ent->nextThink = SDL_GetTicks() + 5000;
 	}	
+}
+void UpdateEnemySnatcher(Entity *ent)
+{
+ if (ent->state == GOINGUP && ent->temp > SDL_GetTicks())
+	{
+	ent->hitBox.w= 0;
+	ent->hitBox.h= 0;
+	ent->hitBox.x =0;
+	ent->hitBox.y =0;
+	Vec2DAdd(ent->position,ent->position,CreateVec2D(0,-4));
+    }
+ else if (ent->state == GOINGUP && ent->temp < SDL_GetTicks())
+	{
+	 ent->position.x = ent->savedPlayerPos.x;
+	 ent->position.y = ent->savedPlayerPos.y - 200;
+	 ent->state = GOINGDOWN;
+	}
+ if(ent->state == GOINGDOWN)
+	{
+	Vec2DAdd(ent->position,ent->position,CreateVec2D(0,4));
+	}
+ if(ent->state == IDLE){
+	ent->hitBox.w = ent->sprite->w;
+	ent->hitBox.h= ent->sprite->h;
+	ent->hitBox.x =ent->position.x;
+	ent->hitBox.y =ent->position.y;
+ }
+ EntityIntersectAll(ent);
+}
+void ThinkEnemySnatcher(Entity *ent)
+{
+	if(ent->nextThink < SDL_GetTicks()){
+		if(ent->state == IDLE || ent->state == GOINGUP)
+			ent->savedPlayerPos = playerEnt->position ;
+		if(DistanceBetweenLessThan2D(ent->position,playerEnt->position,150) 
+		&& (ent->state != GOINGUP && ent->state != GOINGDOWN))
+	{
+		ent->state = GOINGUP;
+		ent->temp = SDL_GetTicks() + 1000;
+	}
+		if(ent->position.y >= ent->savedPlayerPos.y && ent->state == GOINGDOWN)
+	{
+		ent->state = IDLE;
+	}
+		ent->nextThink = SDL_GetTicks() + 100;
+	}
 }
 
 void TouchEnemy(Entity *ent, Entity* other)
@@ -161,6 +236,9 @@ void TouchEnemy(Entity *ent, Entity* other)
 		FreeSpirit(other);
 		playerData->confidence -= 10;
 		FreeEnemy(ent);
+	}else if(other->whatAmI == 0)
+	{
+		ent->state = IDLE;
 	}
 }
 void FreeEnemy(Entity *ent)
@@ -171,7 +249,7 @@ void SetEnemyAnimations(Entity *ent,char *filename)
 {
 	char buf[50];
 	int j;
-	int i;
+	int i,numAnimations;
 	FILE *file;
 	file = fopen(filename,"r");
 	if(!file)
@@ -180,18 +258,65 @@ void SetEnemyAnimations(Entity *ent,char *filename)
 		return;
 	}
 	i = 0;
+	if(ent->enemyType == 0){
 	while(fscanf(file,"%s",buf) != EOF){
-		if(strcmp(buf,"#") == 0)
-			fgets(buf,50,file);
-			fscanf(file,"%d",&j);
-			ent->sprite->animation[i]->currentFrame = j;
-			fscanf(file,"%d",&j);
-			ent->sprite->animation[i]->startFrame = j;
-			fscanf(file,"%d",&j);
-			ent->sprite->animation[i]->maxFrames = j;
-			fscanf(file,"%d",&j);
-			ent->sprite->animation[i]->oscillate = j;
-			i++;
+		if(strcmp(buf,"#Chaser") == 0)
+		{
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d",&numAnimations);
+			for(i = 0;i < numAnimations;i++){ 
+				fscanf(file,"%s",buf);
+				fscanf(file,"%d",&j);
+				ent->sprite->animation[i]->currentFrame = j;
+				fscanf(file,"%d",&j);
+				ent->sprite->animation[i]->startFrame = j;
+				fscanf(file,"%d",&j);
+				ent->sprite->animation[i]->maxFrames = j;
+				fscanf(file,"%d",&j);
+				ent->sprite->animation[i]->oscillate = j;
+			}
 		}
+	}
+	}
+	if(ent->enemyType == 1){
+	while(fscanf(file,"%s",buf) != EOF){
+		if(strcmp(buf,"#Lurker") == 0)
+		{
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d",&numAnimations);
+			for(i = 0;i < numAnimations;i++){ 
+				fscanf(file,"%s",buf);
+				fscanf(file,"%d",&j);
+				ent->sprite->animation[i]->currentFrame = j;
+				fscanf(file,"%d",&j);
+				ent->sprite->animation[i]->startFrame = j;
+				fscanf(file,"%d",&j);
+				ent->sprite->animation[i]->maxFrames = j;
+				fscanf(file,"%d",&j);
+				ent->sprite->animation[i]->oscillate = j;
+			}
+		}
+	}
+	}
+	if(ent->enemyType == 2){
+	while(fscanf(file,"%s",buf) != EOF){
+		if(strcmp(buf,"#Snatcher") == 0)
+		{
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d",&numAnimations);
+			for(i = 0;i < numAnimations;i++){ 
+				fscanf(file,"%s",buf);
+				fscanf(file,"%d",&j);
+				ent->sprite->animation[i]->currentFrame = j;
+				fscanf(file,"%d",&j);
+				ent->sprite->animation[i]->startFrame = j;
+				fscanf(file,"%d",&j);
+				ent->sprite->animation[i]->maxFrames = j;
+				fscanf(file,"%d",&j);
+				ent->sprite->animation[i]->oscillate = j;
+			}
+		}
+	}
+	}
 }
 

@@ -6,7 +6,7 @@
 #include "level.h"
 #include "sprite.h"
 #include "vectors.h"
-
+#include "particle.h"
 /**
 *@brief Core data of the entity system
 */
@@ -14,7 +14,9 @@ typedef struct EntityData Entity;
 enum EnemyState{
 	IDLE,
 	MOVING,
-	CHASING
+	CHASING,
+	GOINGUP,
+	GOINGDOWN
 };
 
 enum GuidedState{
@@ -28,7 +30,7 @@ typedef struct EntityData
 {
 	int		inuse;
 	int		id;
-	int		whatAmI;		/**< 0 is Aard, 1 is Spirit, 2 is Enemy*/
+	int		whatAmI;		/**< 0 is Aard, 1 is Spirit, 2 is Enemy, 3 is Portal*/
 	int		speed;
 	int		maxSpeed;
 	SDL_Rect hitBox;
@@ -52,10 +54,12 @@ typedef struct EntityData
 	int spiritIndex;	
 	Vec2D offset;
 	Entity* follow;
+	Particle *particles;
 	//Enemy Stuff
 	EnemyState state;			/**< State of enemy*/
-	int enemyType;				/**< 0 for Lurker, 1 for Ghost*/
+	int enemyType;				/**< 0 for Lurker, 1 for Ghost,2 for Chaser*/
 	int nextMove;
+	Uint32 temp;
 
 	void (*update)(struct EntityData *ent);
 	void (*think)(struct EntityData *ent);
@@ -79,7 +83,8 @@ int EntityIntersect(Entity *a, Entity *b);
 Entity* EntityIntersectAll(Entity *a);
 int GetID(Entity *ent);
 Entity* GetEntityByID(int id);
-
+Entity *CreatePortal(int x, int y);
+void DrawPortal(Entity *ent);
 
 
 

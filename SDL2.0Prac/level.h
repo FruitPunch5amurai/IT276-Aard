@@ -17,6 +17,8 @@ typedef struct
 	int *solidLayer;
 	int solidTiles[60];
 	int numSolidTiles;
+	int numOfSpirits;
+
 
 }Map;
 
@@ -28,5 +30,7 @@ void GenerateSolidLayer(Map* map);
 bool IsTileSolid(Map* map,int tile);
 bool CheckSolid(Map* map,int x, int y);
 void DrawMap(int layer ,int xOffset ,int yOffset);
+void SetUpMap(Map* map,FILE *file);
+
 
 #endif

@@ -4,10 +4,13 @@
 #include <SDL_ttf.h>
 #include "vectors.h"
 #include "graphics.h"
+#include"entity.h"
+#include"spirit.h"
+#include "enemy.h"
 #include "level.h"
 
 Map *map;
-	
+extern void SetUpMap(Map* map,FILE *file);
 /**
 *@brief Allocates memory for map
 *@param int tileW for Tilewidth , int TileH for Tileheight, int mapWidth for width of map,
@@ -98,6 +101,10 @@ bool Load(char *mapName, char *imageName)
 		if(strcmp(buf,"#SolidTiles") == 0)
 		{
 		LoadSolidTiles(map->solidTiles,file,NumSolidTiles);
+		}
+		if(strcmp(buf,"#MapEntities") == 0)
+		{
+			SetUpMap(map,file);
 		}
 	}
 	GenerateSolidLayer(map);
@@ -235,4 +242,69 @@ bool CheckSolid(Map *map,int x, int y)
 		return map->solidLayer[y*map->w+ x];
 		}
 }
+void SetUpMap(Map* map,FILE *file)
+{
+	char buf[500];
+	int j,k,l,i;
+	while(fscanf(file,"%s",buf) != EOF){
+		if(strcmp(buf,"#Spirits") == 0){
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d",&j);
+			map->numOfSpirits = j;
+			fscanf(file,"%s",buf);
+			for(i = 0;i < map->numOfSpirits;i++)
+			{
+				fscanf(file,"%d",&j);
+				fscanf(file,"%s",buf);
+				fscanf(file,"%d", &k);
+				CreateSpirit(j,k);
+			}
+		}
+		if(strcmp(buf,"#Enemies") == 0){
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d",&j); 
+			for(i = 0; i < j; i++)
+			{
+				fscanf(file,"%s",buf);
+				fscanf(file,"%s",buf);
+				if(strcmp(buf,"Snatcher") == 0)
+				{
+					fscanf(file,"%s",buf);
+					fscanf(file,"%d",&k);
+					fscanf(file,"%s",buf);
+					fscanf(file,"%d",&l);
+					CreateEnemy(k,l,2);
+				}
+				if(strcmp(buf,"Lurker")== 0)
+				{
+					fscanf(file,"%s",buf);
+					fscanf(file,"%d",&k);
+					fscanf(file,"%s",buf);
+					fscanf(file,"%d",&l);
+					CreateEnemy(k,l,1);
+				}
+				if(strcmp(buf,"Chaser")== 0)
+				{
+					fscanf(file,"%s",buf);
+					fscanf(file,"%d",&k);
+					fscanf(file,"%s",buf);
+					fscanf(file,"%d",&l);
+					CreateEnemy(k,l,0);
+				}
+			}
+		}
+		if(strcmp(buf,"#Portal") == 0){
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d",&j);
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d", &k);
+			CreatePortal(j,k);
+		}
+
+	}
+
+}
+
+
+
 

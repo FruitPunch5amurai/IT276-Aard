@@ -95,6 +95,7 @@ Entity* Remove(ELink* e)
 	e->curr = Prev(e->curr);
 	e->count--;
 
+
 	return ent;
 }
 //Moving Curr

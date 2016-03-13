@@ -48,6 +48,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <CompileAs>CompileAsCpp</CompileAs>
+      <DisableSpecificWarnings>%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -77,6 +78,7 @@
     <ClCompile Include="graphics.c" />
     <ClCompile Include="level.c" />
     <ClCompile Include="LList.c" />
+    <ClCompile Include="particle.c" />
     <ClCompile Include="player.c" />
     <ClCompile Include="save.c" />
     <ClCompile Include="spawn.c" />
@@ -93,6 +95,7 @@
     <ClInclude Include="graphics.h" />
     <ClInclude Include="level.h" />
     <ClInclude Include="LList.h" />
+    <ClInclude Include="particle.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="save.h" />
     <ClInclude Include="spawn.h" />

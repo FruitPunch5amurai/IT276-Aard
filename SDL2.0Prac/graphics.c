@@ -149,12 +149,11 @@ Uint32 GetSystemTime()
 {
 	return NOW;
 }
-void DrawRect(int x, int y, int width, int height, int r, int g, int b)
+void DrawRect(int x, int y, int width, int height, SDL_Color FGColor)
 {
-    FillRect(x, y, width, 1, r, g, b);
-    FillRect(x, y+height-1, width, 1, r, g, b);
-    FillRect(x, y, 1, height, r, g, b);
-    FillRect(x+width-1, y, 1, height, r, g, b);
+	SDL_Rect bgrect = { x, y, width, height };
+	SDL_SetRenderDrawColor(GetRenderer(), FGColor.r, FGColor.g, FGColor.b, 0); 
+	SDL_RenderFillRect(GetRenderer(), &bgrect); 
 }
 
 void FillRect(int x, int y, int width, int height, int r, int g, int b)

@@ -189,3 +189,31 @@
 
 #SolidTiles
 02 03 04 05 18 19 20 21 34 35 36 37 50 51 52 53 66 67 68 69 
+
+#MapEntities
+#Spirits
+Count: 5
+Locations: 
+360 , 300
+300 , 300 
+420 , 300
+460 , 300
+520 , 300
+
+#Enemies
+Count: 3
+Type: Snatcher
+Location:
+200 , 200
+Type: Lurker
+Location:
+200 , 200
+Type: Chaser
+Location:
+200 , 200
+
+#Portal
+Location: 
+500 , 200
+
+

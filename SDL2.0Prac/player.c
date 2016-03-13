@@ -6,6 +6,7 @@
 #include"graphics.h"
 #include "vectors.h"
 #include "LList.h"
+#include "spirit.h"
 #include "player.h"
 
 SDL_Color hp;
@@ -23,7 +24,7 @@ void LoadPlayerAnimations(Entity* ent)
 {
 	int j,i=0;
 	FILE *file;
-	file = fopen("AnimationData.txt","r");
+	file = fopen("PlayerAnimationData.txt","r");
 
 	if(!file)
 	{
@@ -48,7 +49,7 @@ void LoadPlayerAnimations(Entity* ent)
 *@brief Creates and Allocates memory for the player. Then initializes all the
 *@brief data members for Player
 */
-void CreatePlayer()
+void CreatePlayer(int x, int y)
 {
 	playerEnt = CreateEntity();
 
@@ -65,8 +66,8 @@ void CreatePlayer()
 	hp.b = 0;hp.r = 255;hp.g = 0;hp.a = 0;
 	hp2.b= 255; hp2.r = 0; hp2.g = 0;hp2.a = 255;
 	
-	playerEnt->position.x = 400;
-	playerEnt->position.y = 400;
+	playerEnt->position.x = x;
+	playerEnt->position.y = y;
 	playerEnt->hitBox.x = playerEnt->position.x;
 	playerEnt->hitBox.y = playerEnt->position.y;
 	playerEnt->hitBox.w = playerEnt->sprite->w;
@@ -139,7 +140,25 @@ void ThinkPlayer(Entity *ent)
 }
 void TouchPlayer(Entity *ent,Entity *other)
 {
+	if(other->whatAmI == 3)
+	{
+		moveToEnd(SpiritLink);
+		for(int i = 1;i < SpiritLink->count;++i)
+		{
+			FreeSpirit(SpiritLink->curr->curr);
+		}
 
+	}else if(other->whatAmI == 2)
+	{
+		other->position2 = other->velocity;
+		Vec2DNormalize(&other->position2);
+		(ent->velocity.x == 0 && ent->velocity.y == 0)?
+			Vec2DAdd(ent->position,ent->position,
+				CreateVec2D(other->speed*6*other->position2.x,other->speed*6*other->position2.y)):
+			Vec2DAdd(ent->position,ent->position,
+				-CreateVec2D(ent->speed * ent->velocity.x ,ent->speed* ent->velocity.y));
+
+	}
 
 }
 /**

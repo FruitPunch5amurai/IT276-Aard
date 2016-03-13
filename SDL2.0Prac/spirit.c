@@ -13,11 +13,15 @@ extern Entity* playerEnt;
 extern Entity* playerData;
 Link *l  = CreateLink(NULL,NULL,NULL);
 ELink *SpiritLink = CreateELink();
+int MAXSPIRITPARTICLES = 2;
 void CreateSpirit(int x, int y)
 {
 	int i;
 	Entity* spirit;
 		spirit = CreateEntity();
+		spirit->particles = (Particle*)malloc(sizeof(Particle) * MAXSPIRITPARTICLES );
+		memset(spirit->particles,0,sizeof(Particle) * MAXSPIRITPARTICLES );	
+	
 		spirit->sprite = LoadSprite("images/AardSoul.png",21,32);
 		spirit->whatAmI = 1;
 		spirit->isBeingGuided = 0;
@@ -43,6 +47,12 @@ void CreateSpirit(int x, int y)
 		spirit->offset.x = 20;
 		spirit->offset.y = 20;
 		
+	 for(i = 0; i < MAXSPIRITPARTICLES ; ++i )
+		{
+			spirit->particles[i] = *CreateParticle( spirit->position.x,spirit->position.y,
+				"images/Particles.png",9,12,20);
+		}
+
 		spirit->follow = NULL;
 		spirit->inuse = 1;
 		spirit->speed = 4;
@@ -56,12 +66,25 @@ void CreateSpirit(int x, int y)
 
 void DrawSpirit(Entity* ent)
 {
+	int i;
+
 	DrawEntity(ent,ent->currentAnimation,ent->position.x,ent->position.y);
+	if(!ent->follow){
+	for(i = 0; i < MAXSPIRITPARTICLES ; i++){
+		if(isDead(&ent->particles[i]))
+		{
+			ent->particles[i] = *CreateParticle( ent->position.x,ent->position.y,
+				"images/Particles.png",9,12,20);	
+		}
+	}
+	for(i = 0; i < MAXSPIRITPARTICLES ; i++){
+	DrawParticle(&ent->particles[i],0, ent->particles[i].position.x, ent->particles[i].position.y);
+	}
+	}
 }
 
 void UpdateSpirit(Entity* ent)
 {
-	
 	ent->hitBox.x =ent->position.x;
 	ent->hitBox.y =ent->position.y;
 	if(ent->follow != NULL){

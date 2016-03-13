@@ -20,7 +20,7 @@ typedef struct PlayerData{
 	SDL_Rect* camera;
 
 }Player;
-void CreatePlayer();
+void CreatePlayer(int x,int y);
 Entity *GetPlayer();
 void DrawPlayer(Entity* ent);
 void UpdatePlayer(Entity* ent);

@@ -169,14 +169,14 @@ Vec2D OverlapsMap(Map *map,Entity *ent)
 		for( y = ent->position.y; y < y2;y+=map->tileH)
 		{
 			if(CheckSolid(map,x/map->tileW,y/map->tileH)){
-				dir.x = 1;
-				dir.y = 1;
+				dir.x = ent->speed;
+				dir.y = ent->speed;
 				return dir;
 			}
 		}
 		if(CheckSolid(map,x/map->tileW,y2/map->tileH)){
-			dir.x = 1;
-			dir.y = -1;
+			dir.x = ent->speed;
+			dir.y = -ent->speed;
 			return dir;
 		}
 	}
@@ -184,15 +184,15 @@ Vec2D OverlapsMap(Map *map,Entity *ent)
 	{
 		if(CheckSolid(map,x2/map->tileW,y/map->tileH))
 		{
-			dir.x = -1;
-			dir.y = 1;
+			dir.x = -ent->speed;
+			dir.y = ent->speed;
 			return dir;
 		}
 	}
 		if(CheckSolid(map,x2/map->tileW,y2/map->tileH))
 		{
-			dir.x = -1;
-			dir.y = -1;
+			dir.x = -ent->speed;
+			dir.y = -ent->speed;
 			return dir;
 		}
 		return dir;
@@ -225,4 +225,32 @@ Entity* GetEntityByID(int id)
 			continue;
 	}
 	return &EntityList[i];
+}
+Entity *CreatePortal(int x, int y)
+{
+	Entity *portal;
+	portal = CreateEntity();
+	portal->sprite = LoadSprite("images/Portal.png",32,32);
+	portal->whatAmI = 3;
+
+	portal->position.x =x;
+	portal->position.y =y;
+	portal->dimensions.x = portal->sprite->w;
+	portal->dimensions.y = portal->sprite->h;		
+	portal->hitBox.x =x;
+	portal->hitBox.y =y;
+	portal->hitBox.w = portal->sprite->w;
+	portal->hitBox.h = portal->sprite->h;
+
+	portal->currentAnimation = 0;
+	portal->sprite->animation[0]->oscillate = true ;
+	portal->sprite->animation[0]->startFrame = 0;
+	portal->sprite->animation[0]->maxFrames = 3;
+
+	portal->draw = &DrawPortal;
+	return portal;
+}
+void DrawPortal(Entity *ent)
+{
+	DrawEntity(ent,ent->currentAnimation,ent->position.x,ent->position.y);
 }

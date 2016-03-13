@@ -19,7 +19,11 @@ extern Map* map;
 const int AREA_WIDTH = 2400;
 const int AREA_HEIGHT = 1800;
 const int SCROLL_SPEED = 10;
+
+const int SCREEN_WIDTH =800;
+const int SCREEN_HEIGHT =600;
 SDL_Rect *camera;
+SDL_Rect *hotBox;
 
 extern Entity* playerEnt;
 extern Player *playerData;
@@ -55,16 +59,10 @@ void Init()
     600,
     bgcolor);
 	InitEntityList();
-	CreatePlayer();
-	playerData->camera = GetCamera();
-	CreateSpirit(360,300);
-	CreateSpirit(300,300);
-	CreateSpirit(420,300);
-	CreateSpirit(460,300);
-	CreateSpirit(520,300);
-	CreateEnemy(200,200,0);
-
 	Load("level.map","images/Resources1.png");
+	CreatePlayer(400,400);
+	playerData->camera = GetCamera();
+	hotBox = InitBox();
 
 }
 /**
@@ -84,7 +82,8 @@ void Loop()
 		DrawMap(2,0,0);
 		DrawMap(3,0,0);
 		DrawMap(0,0,0);
-		SetCamera(*camera,playerEnt);
+		UpdateBox();
+		SetCamera(*camera,hotBox);
 		ThinkEntities();
 		UpdateEntities();
 		DrawEntities();
@@ -101,16 +100,44 @@ void Loop()
 /**
 *@brief Sets camera
 */
-
-void SetCamera(SDL_Rect &camera,Entity* ent)
+SDL_Rect *InitBox()
 {
-    camera.w = 800;
-    camera.h = 600;
+	SDL_Rect *box;
+	box = (SDL_Rect*)malloc(sizeof(SDL_Rect));
+	box->x =  playerEnt->position.x - 200;
+	box->y =  playerEnt->position.y - 100;
+	box->w = .25 * SCREEN_WIDTH;
+	box->h = .25 * SCREEN_HEIGHT;
+	return box;
+}
+void UpdateBox()
+{
+	SDL_Color hp;
+	hp.b = 0;hp.r = 255;hp.g = 0;hp.a = 0;
+	if(playerEnt->position.x + playerEnt->dimensions.x < hotBox->x )
+		hotBox->x = playerEnt->position.x + playerEnt->dimensions.x;
+	if(playerEnt->position.y < hotBox->y)
+		hotBox->y = playerEnt->position.y;
+	if(playerEnt->position.x > hotBox->x + hotBox->w)
+		hotBox->x = playerEnt->position.x - hotBox->w;
+	if(playerEnt->position.y + playerEnt->dimensions.y > hotBox->y+ hotBox->h)
+		hotBox->y = playerEnt->position.y+ playerEnt->dimensions.y - hotBox->h;
+
+}
+void SetCamera(SDL_Rect &camera,SDL_Rect* box)
+{
+
+
+    camera.w = SCREEN_WIDTH;
+    camera.h = SCREEN_HEIGHT;
+
 	//printf("x:%d\ny:%d\n",camera.x,camera.y);
 	playerData->camera = &camera;
-	camera.x = (ent->position.x + ent->dimensions.x/2) - 800/2;
-	camera.y = (ent->position.y + ent->dimensions.y/2) - 600/2;
-    //Keep the camera in bounds
+	camera.x = (box->x + box->w/2) - SCREEN_WIDTH/2;
+	camera.y = (box->y + box->h/2) - SCREEN_HEIGHT/2;
+
+	
+	//Keep the camera in bounds
     if( camera.x < 0 )
     { 
         camera.x = 0;
@@ -127,6 +154,7 @@ void SetCamera(SDL_Rect &camera,Entity* ent)
     {
         camera.y = AREA_HEIGHT - camera.h;
     }
+	
 }
 /**
 *@brief Draws the Title Screen

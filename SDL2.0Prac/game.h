@@ -13,9 +13,12 @@ void DrawTitle();
 void DrawGame();
 void Init();
 void Loop();
-void SetCamera(SDL_Rect &camera,Entity* ent);
+void SetCamera(SDL_Rect &camera,SDL_Rect *box);
+void UpdateBox();
+SDL_Rect *InitBox();
 int (*gameState)();
 int Title();
 int Game();
+void SetUpMap(Map *map,FILE *file);
 
 #endif
