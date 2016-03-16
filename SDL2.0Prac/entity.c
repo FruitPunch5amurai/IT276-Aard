@@ -150,6 +150,7 @@ void FreeEntity(Entity* ent)
 	if(ent != NULL){
 		ent->inuse--;
 		FreeSprite(ent->sprite);
+		ent->id =  NULL;
 		ent = NULL;
 	}
 }
@@ -169,13 +170,14 @@ Vec2D OverlapsMap(Map *map,Entity *ent)
 		for( y = ent->position.y; y < y2;y+=map->tileH)
 		{
 			if(CheckSolid(map,x/map->tileW,y/map->tileH)){
-				dir.x = ent->speed;
+				if(CheckSolid(map,x/map->tileW,y2/map->tileH)){
+					dir.x = ent->speed;
+				}
 				dir.y = ent->speed;
 				return dir;
 			}
 		}
 		if(CheckSolid(map,x/map->tileW,y2/map->tileH)){
-			dir.x = ent->speed;
 			dir.y = -ent->speed;
 			return dir;
 		}
@@ -211,6 +213,19 @@ Entity* EntityIntersectAll(Entity *a)
 		}
 }
 
+
+Entity* AttackBoxIntersectAll(Entity *a)
+{
+	int i,j;
+	for(i = 0;i < MAX_ENTITIES;i++)
+		if(EntityList[i].inuse && &EntityList[i] != a)
+		{
+			if(AABB(a->atkBox,EntityList[i].hitBox)){
+				(a->touch)(a,&EntityList[i]);
+				return &EntityList[i];
+			}
+		}
+}
 int GetID(Entity *ent)
 {
 	return ent->id;

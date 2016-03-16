@@ -37,4 +37,5 @@ void FreeSprite(Sprite *img);
 void FreeAnimations(Sprite *sprite);
 Sprite *LoadSprite(char *filename,int sizex, int sizey);	
 void DrawSprite(Sprite *sprite,int sx,int sy, int frame,SDL_Renderer *renderer,SDL_RendererFlip flip);
+void SetColor(Sprite *sprite,Uint8 red, Uint8 green, Uint8 blue);
 #endif

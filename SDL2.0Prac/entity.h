@@ -20,10 +20,9 @@ enum EnemyState{
 };
 
 enum GuidedState{
+	Untouched,
 	BeingGuided,
 	Lost,
-	Untouched,
-	Immunity
 
 };
 typedef struct EntityData
@@ -33,21 +32,23 @@ typedef struct EntityData
 	int		whatAmI;		/**< 0 is Aard, 1 is Spirit, 2 is Enemy, 3 is Portal*/
 	int		speed;
 	int		maxSpeed;
+	int		knockback;
 	SDL_Rect hitBox;
+	SDL_Rect atkBox;
 	Vec2D	position;
 	Vec2D	position2;
 	Vec2D	velocity;
 	Vec2D	dimensions;
+	Vec2D facing;				/**<*/
 	Sprite*	sprite;
-	int entType;
 	int	currentAnimation;
 	SDL_RendererFlip flipped;
-	int amIFlipped;
 	SDL_Rect* camera;
-	int numSpirits;
+	Entity *timer;
+	int immunity;
 
 	//Spirit stuff
-	int spiritState;
+	GuidedState spiritState;
 	int isBeingGuided;
 	Uint32 nextThink;
 	Vec2D  savedPlayerPos;
@@ -59,7 +60,8 @@ typedef struct EntityData
 	EnemyState state;			/**< State of enemy*/
 	int enemyType;				/**< 0 for Lurker, 1 for Ghost,2 for Chaser*/
 	int nextMove;
-	Uint32 temp;
+	Uint8 temp;
+	int moveIndicator;
 
 	void (*update)(struct EntityData *ent);
 	void (*think)(struct EntityData *ent);
@@ -81,11 +83,13 @@ Vec2D OverlapsMap(Map *map,Entity *ent);
 
 int EntityIntersect(Entity *a, Entity *b);
 Entity* EntityIntersectAll(Entity *a);
+Entity* AttackBoxIntersectAll(Entity *a);
 int GetID(Entity *ent);
 Entity* GetEntityByID(int id);
 Entity *CreatePortal(int x, int y);
 void DrawPortal(Entity *ent);
-
+Entity* CreateTimer(Uint8 time);
+void ThinkTimer(Entity *ent);
 
 
 #endif 

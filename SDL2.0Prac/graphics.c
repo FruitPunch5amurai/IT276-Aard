@@ -10,6 +10,7 @@
 
 static SDL_Window* window = NULL;
 static SDL_Renderer *renderer = NULL;
+static SDL_Renderer *GUIRenderer= NULL;
 static SDL_Texture  * texture = NULL;
 static SDL_Surface  * surface = NULL;
 static SDL_Surface  * temp_buffer = NULL;
@@ -18,7 +19,6 @@ static SDL_Surface  * temp_buffer = NULL;
 SDL_Surface *buffer; /*pointer to the background image buffer*/
 SDL_Surface *videobuffer; /*pointer to the draw buffer*/
 SDL_Rect Camera; /*x & y are the coordinates for the background map, w and h are of the screen*/
-
 /*timing*/
 static Uint32 Delay = 45;
 static Uint32 NOW = 0;
@@ -74,19 +74,13 @@ void Init_Graphics(
     }else{
 		printf("SDL Renderer Success\n");
 	}
-	/*
-	texture = IMG_LoadTexture(renderer,"images/grass.png");
-	if(texture == NULL)
+	if(TTF_Init() == -1)
 	{
-		printf("Error: Texture is NULL");
-		return;
+		printf("Failed to init TTF");
+		graphics_close();
+        return;
 	}
-	grass_rect.x = 0;
-	grass_rect.y = 0;
-	grass_rect.w = 800;
-	grass_rect.h = 600;
-    printf("graphics initialized\n");
-	*/
+
 }
 /**
 *@brief Returns Renderer	
@@ -94,6 +88,11 @@ void Init_Graphics(
 SDL_Renderer* GetRenderer()
 {
 	return renderer;
+}
+
+SDL_Renderer* GetGUIRenderer()
+{
+	return GUIRenderer;
 }
 
 void FrameDelay()
@@ -139,6 +138,10 @@ void graphics_close()
     {
         SDL_FreeSurface(temp_buffer);
     }
+	if(TTF_WasInit)
+	{
+		TTF_Quit();
+	}
     surface = NULL;
     window = NULL;
     renderer = NULL;
@@ -149,24 +152,15 @@ Uint32 GetSystemTime()
 {
 	return NOW;
 }
-void DrawRect(int x, int y, int width, int height, SDL_Color FGColor)
+void RenderFont(char *message,SDL_Rect &rect,TTF_Font *f,SDL_Color *fg)
 {
-	SDL_Rect bgrect = { x, y, width, height };
-	SDL_SetRenderDrawColor(GetRenderer(), FGColor.r, FGColor.g, FGColor.b, 0); 
-	SDL_RenderFillRect(GetRenderer(), &bgrect); 
+	SDL_Surface * text;
+	SDL_Texture * texture;
+	text = TTF_RenderText_Solid(f, message , *fg);
+	texture = SDL_CreateTextureFromSurface(GetRenderer(),text);
+	SDL_QueryTexture(texture,NULL,NULL,&rect.w,&rect.h);
+	SDL_RenderCopy(GetRenderer(),texture,NULL,&rect);
+
 }
 
-void FillRect(int x, int y, int width, int height, int r, int g, int b)
-{
-    Uint32 color;
 
-    color = SDL_MapRGB(buffer->format, r, g, b );
-
-    SDL_Rect rect;
-    rect.x = x;
-    rect.y = y;
-    rect.w = width;
-    rect.h = height;
-
-    SDL_FillRect(buffer, &rect, color);
-}

@@ -4,11 +4,11 @@
 #include <string>
 #include "graphics.h"
 #include "vectors.h"
-#include "entity.h"
 #include "LList.h"
 #include "spirit.h"
 
 int MaxSpirits = 6;
+extern Map *map;
 extern Entity* playerEnt;
 extern Entity* playerData;
 Link *l  = CreateLink(NULL,NULL,NULL);
@@ -40,7 +40,7 @@ void CreateSpirit(int x, int y)
 		spirit->sprite->animation[0]->startFrame = 0;
 		spirit->sprite->animation[0]->maxFrames = 5;
 		spirit->nextThink = SDL_GetTicks() + 10;
-		spirit->spiritState = 0;
+		spirit->spiritState = Untouched;
 
 		//moveToEnd(SpiritLink);
 		//Insert(SpiritLink,spirit);
@@ -118,11 +118,12 @@ void UpdateSpirit(Entity* ent)
 		}
 	}
 	Vec2DAdd(ent->position,ent->position ,ent->velocity);
+	Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
 	DrawSpirit(ent);
+	EntityIntersectAll(ent);
 }
 void ThinkSpirit(Entity *ent)
 {
-	EntityIntersectAll(ent);
 	if(ent->spiritIndex >= 0){
 		moveToPos(SpiritLink,ent->spiritIndex);
 		if(Prev(SpiritLink->curr)->curr)
@@ -134,17 +135,30 @@ void ThinkSpirit(Entity *ent)
 			ent->savedPlayerPos = ent->follow->position;
 		ent->nextThink = SDL_GetTicks() + 200;
 	}
-	
+	if(ent->timer != NULL){
+		if(ent->timer->temp > 0){
+			ent->hitBox.w = 0;
+			ent->hitBox.h = 0;
+			ent->hitBox.x = 0;
+			ent->hitBox.y = 0;
+		}else{
+			ent->immunity = 0;
+			ent->hitBox.w = ent->sprite->w;
+			ent->hitBox.h = ent->sprite->h;	
+			ent->hitBox.x = ent->position.x;
+			ent->hitBox.y = ent->position.y;
+		}
+	}
 }
 void TouchSpirit(Entity *ent,Entity *other)
 {
 		if(other->whatAmI == 0)//Its a player!
 	{
-		if(!ent->isBeingGuided)
+		if(ent->spiritState == Untouched || ent->spiritState == Lost)
 		{
 			moveToEnd(SpiritLink);
 			Insert(SpiritLink,ent);
-			ent->isBeingGuided = 1;	
+			ent->spiritState= BeingGuided;	
 			ent->spiritIndex = SpiritLink->count;
 		}
 	}

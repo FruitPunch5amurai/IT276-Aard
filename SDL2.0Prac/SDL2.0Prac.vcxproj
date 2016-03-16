@@ -41,7 +41,7 @@
     <IncludePath>C:\vs_dev_lib\SDL2_image-2.0.1\include;C:\vs_dev_lib\SDL2_ttf-2.0.13\include;C:\vs_dev_lib\SDL2-2.0.4\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>C:\vs_dev_lib\SDL2_image-2.0.1\lib\x86;C:\vs_dev_lib\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\vs_dev_lib\SDL2_ttf-2.0.13\lib\x86;C:\vs_dev_lib\SDL2_image-2.0.1\lib\x86;C:\vs_dev_lib\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -52,7 +52,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>

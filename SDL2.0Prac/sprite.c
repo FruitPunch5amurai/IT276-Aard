@@ -66,6 +66,10 @@ void CloseSpriteSystem()
 */
 void FreeSprite(Sprite *sprite)
 {
+	if(sprite == NULL)
+	{
+		return;
+	}
   /*first lets check to see if the sprite is still being used.*/
   if(sprite->refCount > 0)
   {
@@ -212,6 +216,12 @@ void SetCurrentFrame(Animation* animation,int Frame) {
 */
 int GetCurrentFrame(Animation* animation) {
     return animation->currentFrame;
+}
+
+void SetColor(Sprite *sprite,Uint8 red, Uint8 green, Uint8 blue)
+{
+	SDL_SetTextureColorMod(sprite->image,red,green,blue);
+
 }
 
 

@@ -1,6 +1,6 @@
 #ifndef _SPIRIT_H_
 #define _SPIRIT_H_
-
+#include "entity.h"
 
 
 typedef struct SpiritData{

@@ -15,11 +15,11 @@ void graphics_render_to_screen(SDL_Surface *surface,SDL_Rect srcRect,int x,int y
 void FrameDelay();
 void ResetBuffer();
 void NextFrame();
+void RenderFont(char *message,SDL_Rect &rect,TTF_Font *f,SDL_Color *fg);
 
-void FillRect(int x, int y, int width, int height, int r, int g, int b);
-void DrawRect(int x, int y, int width, int height, SDL_Color FGColor);
 Uint32 GetSystemTime();
 SDL_Renderer* GetRenderer();
+
 
 
 #endif

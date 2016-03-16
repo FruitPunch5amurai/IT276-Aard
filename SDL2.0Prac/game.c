@@ -52,47 +52,35 @@ void Init()
 	camera->x = 0;
 	camera->y = 0;
 	InitSpriteList();
-		Init_Graphics("Game Test",
+	Init_Graphics("Game Test",
     800,
     600,
     800,
     600,
     bgcolor);
 	InitEntityList();
+	InitKeyData();
 	Load("level.map","images/Resources1.png");
 	CreatePlayer(400,400);
 	playerData->camera = GetCamera();
-	hotBox = InitBox();
-
+	hotBox = InitHotBox();
 }
 /**
 *@brief Main game loop
 */
 void Loop()
 {
-	gameState = Game;
+	gameState = Title;
 	int quit = 0;	
 	do
 	{
 		quit = gameState();
 		SDL_PollEvent(mainEvent);
-		SDL_RenderClear(GetRenderer());
-		handleInput(gameState);			
-		DrawMap(1,0,0);
-		DrawMap(2,0,0);
-		DrawMap(3,0,0);
-		DrawMap(0,0,0);
-		UpdateBox();
-		SetCamera(*camera,hotBox);
-		ThinkEntities();
-		UpdateEntities();
-		DrawEntities();
-		NextFrame();
-		SDL_RenderPresent(GetRenderer());
-		//FreePlayer(player);
-		//CloseEntityList();
+		handleInput(gameState);		
+
 		}
 	while(!quit && mainEvent->type != SDL_QUIT);
+	graphics_close();
 	exit(0);
 	delete mainEvent;
 	return;
@@ -100,7 +88,7 @@ void Loop()
 /**
 *@brief Sets camera
 */
-SDL_Rect *InitBox()
+SDL_Rect *InitHotBox()
 {
 	SDL_Rect *box;
 	box = (SDL_Rect*)malloc(sizeof(SDL_Rect));
@@ -110,7 +98,7 @@ SDL_Rect *InitBox()
 	box->h = .25 * SCREEN_HEIGHT;
 	return box;
 }
-void UpdateBox()
+void UpdateHotBox()
 {
 	SDL_Color hp;
 	hp.b = 0;hp.r = 255;hp.g = 0;hp.a = 0;
@@ -126,7 +114,7 @@ void UpdateBox()
 }
 void SetCamera(SDL_Rect &camera,SDL_Rect* box)
 {
-
+		UpdateHotBox();
 
     camera.w = SCREEN_WIDTH;
     camera.h = SCREEN_HEIGHT;
@@ -170,13 +158,26 @@ int Title()
 */
 int Game()
 {
-	//printf("In game\n");
-	//DrawGame();
+		SDL_RenderClear(GetRenderer());	
+		DrawMap(1,0,0);
+		DrawMap(2,0,0);
+		DrawMap(3,0,0);
+		DrawMap(0,0,0);
+		SetCamera(*camera,hotBox);
+		ThinkEntities();
+		UpdateEntities();
+		DrawEntities();
+		NextFrame();
+		SDL_RenderPresent(GetRenderer());
 	return 0;
 }
 SDL_Rect* GetCamera()
 {
 	return camera;
+}
+void SetGameState(int (*state)())
+{
+	gameState = state;
 }
 /*
 Vec2D GetCameraPosition()

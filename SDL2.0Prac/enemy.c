@@ -13,7 +13,6 @@
 extern Map *map;
 extern Entity *playerEnt;
 extern Player *playerData;
-int moveIndicator = 0;
 
 Entity *CreateEnemy(int x, int y, int type)
 {
@@ -23,18 +22,22 @@ Entity *CreateEnemy(int x, int y, int type)
 	enemy->enemyType = type;
 	if(type == 0)
 	{
-		enemy->sprite= LoadSprite("images/Enemies1.png",27,32);
+		enemy->sprite= LoadSprite("images/Ghostmove.png",31,31);
+		enemy->sprite->fpl = 1;
 		SetEnemyAnimations(enemy,"EnemyAnimationData.txt");
+		enemy->speed = 2;
 		enemy->update = &UpdateEnemyChaser;	
 		enemy->think = &ThinkEnemyChaser;
-		enemy->currentAnimation = 1;
+		enemy->currentAnimation = 0;
 	}
 	else if(type == 1){
-		enemy->sprite= LoadSprite("images/Enemies2.png",27,32);
+		enemy->sprite= LoadSprite("images/lurker.png",31,31);
+		enemy->sprite->fpl = 1;
 		SetEnemyAnimations(enemy,"EnemyAnimationData.txt");
+		enemy->speed = 2;
 		enemy->update = &UpdateEnemyLurker;
 		enemy->think = &ThinkEnemyLurker;
-		enemy->currentAnimation = 1;
+		enemy->currentAnimation = 0;
 	}
 	else if(type == 2)
 	{
@@ -43,6 +46,7 @@ Entity *CreateEnemy(int x, int y, int type)
 		enemy->update = &UpdateEnemySnatcher;	
 		enemy->think = &ThinkEnemySnatcher;
 		enemy->state = IDLE;
+		enemy->speed = 2;
 		enemy->currentAnimation = 0;
 		enemy->sprite->animation[0]->frameRate = 500;
 
@@ -56,13 +60,12 @@ Entity *CreateEnemy(int x, int y, int type)
 	enemy->dimensions.y = enemy->sprite->h;
 	enemy->position.x = x;
 	enemy->position.y = y;
-	enemy->speed = 2;
 	enemy->velocity.x = -enemy->speed;
 
 	enemy->whatAmI = 2;
 	enemy->state = IDLE;
 	enemy->nextThink = SDL_GetTicks() + 500;
-
+	enemy->moveIndicator = 0;
 	enemy->draw = &DrawEnemy;
 	enemy->touch = &TouchEnemy;
 
@@ -76,17 +79,17 @@ void UpdateEnemyChaser(Entity *ent)
 {
 	ent->hitBox.x =ent->position.x;
 	ent->hitBox.y =ent->position.y;
-	if(ent->state == MOVING){
-		if(moveIndicator == 0)
+	if(ent->state == MOVING && !ent->knockback){
+		if(ent->moveIndicator  == 0)
 			ent->velocity.x = ent->speed;
-		if(moveIndicator == 1)
+		if(ent->moveIndicator == 1)
 			ent->velocity.y = ent->speed;
-		if(moveIndicator == 2)
+		if(ent->moveIndicator == 2)
 			ent->velocity.x = -ent->speed;
-		if(moveIndicator == 3)
+		if(ent->moveIndicator == 3)
 			ent->velocity.y = -ent->speed;
 		}
-	else if (ent->state == CHASING)
+	else if (ent->state == CHASING &&!ent->knockback)
 		{
 			if(ent->savedPlayerPos.x < ent->position.x)
 			{
@@ -106,7 +109,7 @@ void UpdateEnemyChaser(Entity *ent)
 			}
 	
 			}
-		else
+	else if(ent->state == IDLE && !ent->knockback)
 		{
 			ent->velocity.x = ent->velocity.y = 0;
 		}
@@ -126,8 +129,16 @@ void ThinkEnemyChaser(Entity *ent)
 	if(ent->nextThink < SDL_GetTicks()){
 		ent->savedPlayerPos = playerEnt->position;
 		ent->nextMove += 1;
-		printf("%d\n",ent->nextMove);
-		if(DistanceBetweenLessThan2D(ent->position,ent->savedPlayerPos,150))
+		if(ent->knockback == 2)
+		{
+			ent->knockback = 0;
+		}
+		if(ent->knockback == 1)
+		{
+			ent->nextThink =  SDL_GetTicks() + 2000;
+			ent->knockback = 2;
+		}
+		else if(DistanceBetweenLessThan2D(ent->position,ent->savedPlayerPos,150))
 		{
 			ent->nextMove = 0;
 			ent->state = CHASING;
@@ -135,7 +146,7 @@ void ThinkEnemyChaser(Entity *ent)
 		else if(ent->nextMove >= 5 && ent->state != MOVING)
 		{
 			ent->nextMove = 0;
-			moveIndicator = rand() % 4;
+			ent->moveIndicator = rand() % 4;
 			ent->state = MOVING;
 		}
 		else if(ent->nextMove >= 2 && ent->state != IDLE ) 
@@ -150,20 +161,22 @@ void UpdateEnemyLurker(Entity *ent)
 {
 	ent->hitBox.x =ent->position.x;
 	ent->hitBox.y =ent->position.y;
-		if(ent->state == MOVING){
-		if(moveIndicator == 0)
+		if(ent->state == MOVING && !ent->knockback){
+		if(ent->moveIndicator == 0)
 			ent->velocity.x = ent->speed;
-		if(moveIndicator == 1)
+		if(ent->moveIndicator == 1)
 			ent->velocity.y = ent->speed;
-		if(moveIndicator == 2)
+		if(ent->moveIndicator == 2)
 			ent->velocity.x = -ent->speed;
-		if(moveIndicator == 3)
+		if(ent->moveIndicator == 3)
 			ent->velocity.y = -ent->speed;
 		}
 	if(OverlapsMap(map,ent).x != 0)
 	{
 		Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
-		moveIndicator = rand() % 4;
+		ent->moveIndicator = rand() % 4;;
+	}else{
+		Vec2DAdd(ent->position,ent->position,ent->velocity);
 	}
 	if(ent->sprite->animation[1]->currentFrame == ent->sprite->animation[1]->maxFrames)
 		ent->sprite->animation[1]->frameRate = 5000;
@@ -175,11 +188,22 @@ void UpdateEnemyLurker(Entity *ent)
 void ThinkEnemyLurker(Entity *ent)
 {
 	if(ent->nextThink < SDL_GetTicks()){
+		if(ent->knockback == 2)
+		{
+			ent->knockback = 0;
+		}
+		if(ent->knockback == 1)
+		{
+			ent->nextThink =  SDL_GetTicks() + 2000;
+			ent->knockback = 2;
+		}else
+		{
 		ent->state = MOVING;
-		moveIndicator = rand() % 4;
+		ent->moveIndicator = rand() % 4;
 		ent->velocity.x = 0;
 		ent->velocity.y = 0;
 		ent->nextThink = SDL_GetTicks() + 5000;
+		}
 	}	
 }
 void UpdateEnemySnatcher(Entity *ent)
@@ -231,9 +255,10 @@ void ThinkEnemySnatcher(Entity *ent)
 
 void TouchEnemy(Entity *ent, Entity* other)
 {
-	if(other->isBeingGuided)
+	if(other->spiritState == BeingGuided)
 	{
 		FreeSpirit(other);
+		map->numOfSpirits--;
 		playerData->confidence -= 10;
 		FreeEnemy(ent);
 	}else if(other->whatAmI == 0)

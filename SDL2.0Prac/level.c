@@ -204,9 +204,9 @@ void DrawMap(int layer, int xOffset ,int yOffset)
 			if(layer == 0)
 			{
 				if(frame = 1){
-					DrawSprite(map->tiles,
-					x*map->tileW,
-					 y*map->tileH,32,GetRenderer(),SDL_FLIP_NONE);
+					//DrawSprite(map->tiles,
+					//x*map->tileW,
+					// y*map->tileH,32,GetRenderer(),SDL_FLIP_NONE);
 				
 				}
 			}
@@ -261,34 +261,41 @@ void SetUpMap(Map* map,FILE *file)
 			}
 		}
 		if(strcmp(buf,"#Enemies") == 0){
-			fscanf(file,"%s",buf);
-			fscanf(file,"%d",&j); 
-			for(i = 0; i < j; i++)
-			{
 				fscanf(file,"%s",buf);
 				fscanf(file,"%s",buf);
 				if(strcmp(buf,"Snatcher") == 0)
 				{
 					fscanf(file,"%s",buf);
-					fscanf(file,"%d",&k);
+					fscanf(file,"%d",&j);
 					fscanf(file,"%s",buf);
-					fscanf(file,"%d",&l);
+					for(int i = 0;i < j ; i++ ){
+						fscanf(file,"%d",&k);
+						fscanf(file,"%s",buf);
+						fscanf(file,"%d",&l);
 					CreateEnemy(k,l,2);
+					}
 				}
 				if(strcmp(buf,"Lurker")== 0)
 				{
 					fscanf(file,"%s",buf);
-					fscanf(file,"%d",&k);
+					fscanf(file,"%d",&j);
 					fscanf(file,"%s",buf);
-					fscanf(file,"%d",&l);
+					for(int i = 0;i < j ; i++ ){
+						fscanf(file,"%d",&k);
+						fscanf(file,"%s",buf);
+						fscanf(file,"%d",&l);
 					CreateEnemy(k,l,1);
+				}
 				}
 				if(strcmp(buf,"Chaser")== 0)
 				{
 					fscanf(file,"%s",buf);
-					fscanf(file,"%d",&k);
+					fscanf(file,"%d",&j);
 					fscanf(file,"%s",buf);
-					fscanf(file,"%d",&l);
+					for(int i = 0;i < j ; i++ ){
+						fscanf(file,"%d",&k);
+						fscanf(file,"%s",buf);
+						fscanf(file,"%d",&l);
 					CreateEnemy(k,l,0);
 				}
 			}
