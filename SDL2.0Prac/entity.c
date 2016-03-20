@@ -9,6 +9,10 @@
 //Study pass by reference
 //Study pass by value
 
+void ThinkObject(Entity* ent);
+void TouchObject(Entity* ent,Entity* other);
+void DrawObject(Entity* ent);
+void UpdateObject(Entity* ent);
 #define MAX_ENTITIES		500
 extern SDL_Rect *camera;
 
@@ -269,3 +273,33 @@ void DrawPortal(Entity *ent)
 {
 	DrawEntity(ent,ent->currentAnimation,ent->position.x,ent->position.y);
 }
+
+void CreateObject(int x, int y,int width, int height, int frame)
+{
+	Entity *object;
+	object= CreateEntity();
+	object->sprite = LoadSprite("images/Resources1.png",width,height);
+	object->sprite->animation[0]->startFrame = frame;
+	object->sprite->animation[0]->currentFrame = frame;
+	object->sprite->animation[0]->maxFrames = 0;
+	object->currentAnimation = 0;
+	object->position.x = x;
+	object->position.y = y;
+	object->dimensions.x = width;
+	object->dimensions.y = height;
+	object->hitBox.w = width;
+	object->hitBox.h = height;
+	object->hitBox.x = x;
+	object->hitBox.y = y;
+	object->think = &ThinkObject;
+	object->touch = &TouchObject;
+	object->draw = &DrawObject;
+	object->update = &UpdateObject;
+}
+void DrawObject(Entity* ent)
+{
+	DrawEntity(ent,ent->currentAnimation,ent->position.x,ent->position.y);
+}
+void ThinkObject(Entity* ent){}
+void TouchObject(Entity* ent,Entity* other){}
+void UpdateObject(Entity* ent){}

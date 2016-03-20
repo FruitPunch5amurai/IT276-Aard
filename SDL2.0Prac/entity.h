@@ -29,7 +29,7 @@ typedef struct EntityData
 {
 	int		inuse;
 	int		id;
-	int		whatAmI;		/**< 0 is Aard, 1 is Spirit, 2 is Enemy, 3 is Portal*/
+	int		whatAmI;		/**< 0 is Aard, 1 is Spirit, 2 is Enemy, 3 is Portal, 4 is Grabbable*/
 	int		speed;
 	int		maxSpeed;
 	int		knockback;
@@ -89,10 +89,11 @@ Entity* EntityIntersectAll(Entity *a);
 Entity* AttackBoxIntersectAll(Entity *a);
 int GetID(Entity *ent);
 Entity* GetEntityByID(int id);
+
 Entity *CreatePortal(int x, int y);
 void DrawPortal(Entity *ent);
 Entity* CreateTimer(Uint8 time);
 void ThinkTimer(Entity *ent);
-
+void CreateObject(int x, int y,int width, int height, int frame);
 
 #endif 
