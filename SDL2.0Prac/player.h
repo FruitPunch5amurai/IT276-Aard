@@ -14,6 +14,7 @@ typedef struct{
 typedef struct PlayerData{
 	int confidence;
 	int maxConfidence;
+	int EXP;
 	int rescuedSpirits;
 	int guidingSpirits;
 	int abandonSpirits;

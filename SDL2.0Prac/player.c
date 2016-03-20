@@ -9,6 +9,7 @@
 #include "LList.h"
 #include "spirit.h"
 #include "gamepad.h"
+#include "collision.h"
 #include "player.h"
 
 SDL_Color hp;
@@ -82,6 +83,14 @@ void CreatePlayer(int x, int y)
 	playerEnt->position2.x = playerEnt->position.x+playerEnt->dimensions.x-1;
 	playerEnt->position2.y = playerEnt->position.y+playerEnt->dimensions.y-1;
 	playerEnt->speed = 5;
+	playerEnt->penalty = 0;
+	for(int i =0;i < map->numberOfRooms;++i)
+	{
+		if(AABB(playerEnt->hitBox,map->rooms[i].boundary))
+		{
+			playerEnt->room = &map->rooms[i];
+		}
+	}
 
 	/*Set the PlayerData*/
 	playerData->confidence = 20;
@@ -89,11 +98,12 @@ void CreatePlayer(int x, int y)
 	playerData->rescuedSpirits = 0;
 	playerData->guidingSpirits = 0;
 	playerData->abandonSpirits = 0;
+	playerData->EXP = 0;
 	for(int i = 0;i < 4;i++)
 	{
 		playerData->abilities[i].cooldown = 0;
 		playerData->abilities[i].maxCooldown = 10;
-		playerData->abilities[i].inuse = 0;
+		playerData->abilities[i].inuse =0;
 		playerData->abilities[i].unlocked = 1; 
 	}
 	playerData->font = TTF_OpenFont("Tahoma.ttf",20);
@@ -123,6 +133,7 @@ void DrawPlayer(Entity* ent)
 */
 void UpdatePlayer(Entity *ent)
 {
+	printf("%d\n",playerData->EXP);
 	UpdateGUI();
 	ExecuteSkill();
 	if(playerData->confidence <= 0)
@@ -146,11 +157,12 @@ void ThinkPlayer(Entity *ent)
 	if(playerEnt->nextThink < SDL_GetTicks())
 	{
 		for(int i = 0;i < 4;++i){
-			if(playerData->abilities[0].cooldown > 0){
-				playerData->abilities[0].cooldown--;
-				playerData->abilities[0].inuse = 0;
+			if(playerData->abilities[i].cooldown > 0){
+				playerData->abilities[i].cooldown--;
+				playerData->abilities[i].inuse = 0;
 			}
 		}
+		playerData->confidence -= playerEnt->penalty;
 		playerEnt->nextThink = SDL_GetTicks() +1000;
 	}
 	playerData->guidingSpirits = SpiritLink->count;
@@ -163,6 +175,13 @@ void ThinkPlayer(Entity *ent)
 	{
 		FreePlayer();
 	}
+
+	playerEnt->room = 
+		   playerEnt->position.x > playerEnt->room->boundary.x + playerEnt->room->boundary.w ? playerEnt->room = playerEnt->room->west 
+		:  playerEnt->position.x < playerEnt->room->boundary.x ? playerEnt->room = playerEnt->room->east
+		:  playerEnt->position.y > playerEnt->room->boundary.y + playerEnt->room->boundary.h ? playerEnt->room = playerEnt->room->south
+		:  playerEnt->position.y < playerEnt->room->boundary.y ? playerEnt->room = playerEnt->room->north
+		:  playerEnt->room;
 }
 void TouchPlayer(Entity *ent,Entity *other)
 {
@@ -174,21 +193,26 @@ void TouchPlayer(Entity *ent,Entity *other)
 		moveToEnd(SpiritLink);
 		for(int i = 1;i < SpiritLink->count;++i)
 		{
+			playerData->EXP += (SpiritLink->count-1) % 2 == 0 && SpiritLink->count != 1? 1 * (SpiritLink->count-1)/2: 0;
+			playerData->confidence +=(SpiritLink->count-1) % 2 == 0 && SpiritLink->count != 1? 1 * (SpiritLink->count-1)/2: 0;
 			FreeSpirit(SpiritLink->curr->curr);
 			playerData->confidence = playerData->confidence < playerData->maxConfidence 
-				? playerData->confidence+3 : playerData->maxConfidence;
+				? playerData->confidence+1 : playerData->maxConfidence;
 			map->numOfSpirits--;
+			playerData->rescuedSpirits++;
+			playerData->EXP += 2;
 		}
 
 	}else if(other->whatAmI == 2)
 	{
-		other->position2 = other->velocity;
-		Vec2DNormalize(&other->position2);
-		(ent->velocity.x == 0 && ent->velocity.y == 0)?
+		ent->velocity.x == 0 && ent->velocity.y == 0 ?
 			Vec2DAdd(ent->position,ent->position,
-				CreateVec2D(other->speed*6*other->position2.x,other->speed*6*other->position2.y)):
+				CreateVec2D(other->speed*6*other->velocity.x,other->speed*6*other->velocity.y)):
 			Vec2DAdd(ent->position,ent->position,
 				-CreateVec2D(ent->speed * ent->velocity.x ,ent->speed* ent->velocity.y));
+
+		Vec2DAdd(other->position,other->position,-other->velocity);
+
 
 	}
 		
@@ -282,24 +306,27 @@ void SkillNEVERGONNAGIVEYOUUP()
 }
 void ExecuteSkill()
 {
-	if(keyData->Q == 1 && playerData->abilities[0].inuse == 0 && playerData->abilities[0].cooldown == 0)
+	if(keyData->Q == 1 && playerData->abilities[0].inuse == 0 
+		&& playerData->abilities[0].cooldown == 0 && playerData->EXP >2)
 	{
 		playerData->abilities[0].inuse = 1;
 		playerData->abilities[0].cooldown = 10;
 		printf("Whip used:%d\n" ,playerData->abilities[0].cooldown);
 		SkillWhip();
 	}
-	if(keyData->W == 1 && playerData->abilities[1].inuse == 0 && playerData->abilities[1].cooldown == 0)
+	if(keyData->W == 1 && playerData->abilities[1].inuse == 0 
+		&& playerData->abilities[1].cooldown == 0 && playerData->EXP >4 && SpiritLink->count >1)
 	{
 		playerData->abilities[1].inuse = 1;
 		playerData->abilities[1].cooldown = 10;
 		printf("Retrieve used:%d\n" ,playerData->abilities[0].cooldown);
 		SkillRetrieve();
 	}
-		if(keyData->E == 1 && playerData->abilities[2].inuse == 0 && playerData->abilities[2].cooldown == 0)
+		if(keyData->E == 1 && playerData->abilities[2].inuse == 0 
+			&& playerData->abilities[2].cooldown == 0 && playerData->EXP >6 && SpiritLink->count >1)
 	{
 		playerData->abilities[2].inuse = 1;
-		playerData->abilities[2].cooldown = 0;
+		playerData->abilities[2].cooldown = 30;
 		printf("Immune used:%d\n" ,playerData->abilities[0].cooldown);
 		SkillNEVERGONNAGIVEYOUUP();
 	}

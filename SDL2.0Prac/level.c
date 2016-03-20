@@ -16,11 +16,13 @@ extern void SetUpMap(Map* map,FILE *file);
 *@param int tileW for Tilewidth , int TileH for Tileheight, int mapWidth for width of map,
 *@param int mapHeight for mapHeight
 */
-Map* CreateMap(int tileW, int tileH,int mapWidth,int mapHeight)
+Map* CreateMap(int tileW, int tileH,int mapWidth,int mapHeight,int numOfRooms)
 {
 	map = (Map*)malloc(sizeof(Map));
 	memset(map,0,sizeof(map));
 	
+	map->rooms = (Room*)malloc(sizeof(Room)* numOfRooms);
+	map->numberOfRooms = numOfRooms;
 	map->tileW = tileW;
 	map->tileH = tileH;
 	map->w = mapWidth;
@@ -69,7 +71,9 @@ bool Load(char *mapName, char *imageName)
 		{
 			fscanf(file,"%d",&j);
 			tileH = j;
-			map = CreateMap(tileW,tileH,mapWidth,mapHeight);
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d",&j);
+			map = CreateMap(tileW,tileH,mapWidth,mapHeight,j);
 			map->solidLayer = (int*)malloc(sizeof(int) * map->w*map->h);
 			map->data = (int*)malloc(sizeof(int) * map->w*map->h);
 			map->data2 = (int*)malloc(sizeof(int) * map->w*map->h);
@@ -107,6 +111,7 @@ bool Load(char *mapName, char *imageName)
 			SetUpMap(map,file);
 		}
 	}
+	ConnectRooms();
 	GenerateSolidLayer(map);
 	fclose(file);
 
@@ -245,8 +250,65 @@ bool CheckSolid(Map *map,int x, int y)
 void SetUpMap(Map* map,FILE *file)
 {
 	char buf[500];
-	int j,k,l,i;
+	int j,k,l,i,RoomId,LinksTo[4],joined[4];
+	SDL_Rect *roomDimensions = (SDL_Rect*)malloc(sizeof(SDL_Rect));
 	while(fscanf(file,"%s",buf) != EOF){
+		if(strcmp(buf,"#RoomIds") == 0)
+		{
+			for(i = 0; i < map->numberOfRooms;++i)
+			{
+				k = 0;
+				fscanf(file,"%s",buf);
+				fscanf(file,"%d",&RoomId);
+				fscanf(file,"%s",buf);
+				fscanf(file,"%d",&LinksTo[k]);
+				fscanf(file,"%s",buf);
+				while(strcmp(buf,",") == 0){
+					k++;
+					fscanf(file,"%d",&LinksTo[k]);
+					fscanf(file,"%s",buf);
+				}
+				if(k < 3)
+				{
+					do
+					{
+						k++;
+						LinksTo[k] = NULL;
+					}
+					while(k < 3);
+					
+				}
+				if(strcmp(buf,"Joined:") == 0)
+				{
+					fscanf(file,"%d",&joined[0]);
+					fscanf(file,"%s",buf);
+					k= 0;
+					while(strcmp(buf,",") == 0){
+					k++;
+					fscanf(file,"%d",&joined[k]);
+					fscanf(file,"%s",buf);
+				}
+				if(k < 3)
+				{
+					do
+					{
+						k++;
+						joined[k] = NULL;
+					}
+					while(k < 3);
+					
+				}
+				}
+				fscanf(file,"%d",&roomDimensions->w);
+				fscanf(file,"%s",buf);
+				fscanf(file,"%d",&roomDimensions->h);
+				fscanf(file,"%s",buf);
+				fscanf(file,"%d",&roomDimensions->x);
+				fscanf(file,"%s",buf);
+				fscanf(file,"%d",&roomDimensions->y);
+				CreateRoom(RoomId,roomDimensions,LinksTo,joined);
+			}
+		}
 		if(strcmp(buf,"#Spirits") == 0){
 			fscanf(file,"%s",buf);
 			fscanf(file,"%d",&j);
@@ -312,6 +374,59 @@ void SetUpMap(Map* map,FILE *file)
 
 }
 
+void ConnectRooms()
+{
+	for(int i = 0; i <= map->numberOfRooms;++i)
+	{
+		map->rooms[i].north = map->rooms[i].roomIDs[0] == -1 ?&map->rooms[0]
+		:	map->rooms[i].roomIDs[0] == 0 ? NULL
+		:	&map->rooms[map->rooms[i].roomIDs[0]];
+		map->rooms[i].south = map->rooms[i].roomIDs[1] == -1 ? &map->rooms[0]
+		:   map->rooms[i].roomIDs[1] == 0 ? NULL
+		:	&map->rooms[map->rooms[i].roomIDs[1]];
+		map->rooms[i].east = map->rooms[i].roomIDs[2] == -1 ?&map->rooms[0] 
+		:	map->rooms[i].roomIDs[2] == 0 ? NULL
+		:	&map->rooms[map->rooms[i].roomIDs[2]];
+		map->rooms[i].west = map->rooms[i].roomIDs[3] == -1 ?&map->rooms[0] 
+		:	map->rooms[i].roomIDs[3] == 0 ? NULL
+		:	&map->rooms[map->rooms[i].roomIDs[3]];
+	}
+}
 
+Room *CreateRoom(int id,SDL_Rect *boundary,int linksTo[],int joined[])
+{
+	Room *room;
+	room = (Room*)malloc(sizeof(Room));
+	for(int i = 0;i < 4;i++)
+	{
+		room->roomIDs[i] = linksTo[i];
+	}
+	for(int i = 0;i < 4;i++)
+	{
+		room->roomIDsJoined[i] = joined[i];
+	}
+	room->boundary = *boundary;
+	room->id = id;
+	if(id == -1)
+	{
+		map->rooms[0] = *room;
+	}else
+	{
+		map->rooms[id] = *room;
+	}
+	return room;
+}
+
+Room *FindRoomWithID(int id)
+{
+	for(int i = 0; i <= map->numberOfRooms;++i)
+	{
+		if(map->rooms[i].id == id)
+			return &map->rooms[i];
+		else
+			return NULL;
+	}
+
+}
 
 

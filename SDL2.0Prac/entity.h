@@ -46,6 +46,8 @@ typedef struct EntityData
 	SDL_Rect* camera;
 	Entity *timer;
 	int immunity;
+	int penalty;
+	Room *room;
 
 	//Spirit stuff
 	GuidedState spiritState;
@@ -56,6 +58,7 @@ typedef struct EntityData
 	Vec2D offset;
 	Entity* follow;
 	Particle *particles;
+	int value;
 	//Enemy Stuff
 	EnemyState state;			/**< State of enemy*/
 	int enemyType;				/**< 0 for Lurker, 1 for Ghost,2 for Chaser*/

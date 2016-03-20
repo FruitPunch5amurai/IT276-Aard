@@ -34,7 +34,7 @@ Entity *CreateEnemy(int x, int y, int type)
 		enemy->sprite= LoadSprite("images/lurker.png",31,31);
 		enemy->sprite->fpl = 1;
 		SetEnemyAnimations(enemy,"EnemyAnimationData.txt");
-		enemy->speed = 2;
+		enemy->speed = 4;
 		enemy->update = &UpdateEnemyLurker;
 		enemy->think = &ThinkEnemyLurker;
 		enemy->currentAnimation = 0;
@@ -51,16 +51,25 @@ Entity *CreateEnemy(int x, int y, int type)
 		enemy->sprite->animation[0]->frameRate = 500;
 
 	}
-
-	enemy->hitBox.x = enemy->position.x;
-	enemy->hitBox.y = enemy->position.y;
-	enemy->hitBox.w = enemy->sprite->w;
-	enemy->hitBox.h= enemy->sprite->h;
 	enemy->dimensions.x = enemy->sprite->w;
 	enemy->dimensions.y = enemy->sprite->h;
 	enemy->position.x = x;
 	enemy->position.y = y;
+	enemy->position2.x = x;
+	enemy->position2.y = y;
+	enemy->hitBox.x = enemy->position.x;
+	enemy->hitBox.y = enemy->position.y;
+	enemy->hitBox.w = enemy->sprite->w;
+	enemy->hitBox.h= enemy->sprite->h;
 	enemy->velocity.x = -enemy->speed;
+
+		for(int i =0;i < map->numberOfRooms;++i)
+		{	
+			if(AABB(enemy->hitBox,map->rooms[i].boundary))
+			{
+				enemy->room = &map->rooms[i];
+			}
+		}
 
 	enemy->whatAmI = 2;
 	enemy->state = IDLE;
@@ -118,7 +127,19 @@ void UpdateEnemyChaser(Entity *ent)
 	{
 		Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
 		ent->state = IDLE;
-	}else{
+	}
+	else if(playerEnt->room->id != ent->room->id)
+	{
+		ent->position = ent->position2;
+	}
+	else if(ent->position.y >= ent->room->boundary.y +ent->room->boundary.h ||
+		ent->position.x >= ent->room->boundary.x +ent->room->boundary.w ||
+		ent->position.x <= ent->room->boundary.x || ent->position.y <= ent->room->boundary.y)
+	{
+		Vec2DAdd(ent->position,ent->position,-ent->velocity);
+		ent->state = IDLE;
+	}
+	else{
 		Vec2DAdd(ent->position,ent->position,ent->velocity);
 	}
 	EntityIntersectAll(ent);
@@ -171,18 +192,36 @@ void UpdateEnemyLurker(Entity *ent)
 		if(ent->moveIndicator == 3)
 			ent->velocity.y = -ent->speed;
 		}
-	if(OverlapsMap(map,ent).x != 0)
+	if(ent->position.x + ent->dimensions.x >= ent->room->boundary.x +ent->room->boundary.w ||
+		ent->position.x <= ent->room->boundary.x)
+	{
+		Vec2DAdd(ent->position,ent->position,-ent->velocity);
+		ent->moveIndicator = rand() % 4;
+	}
+	else if(ent->position.y >= ent->room->boundary.y +ent->room->boundary.h ||
+		ent->position.y <= ent->room->boundary.y)
+	{
+		Vec2DAdd(ent->position,ent->position,-ent->velocity);
+		ent->moveIndicator = rand() % 4;
+	}
+	else if(playerEnt->room->id != ent->room->id)
+	{
+		ent->position = ent->position2;
+	}
+	else if(OverlapsMap(map,ent).x != 0)
 	{
 		Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
-		ent->moveIndicator = rand() % 4;;
-	}else{
+		ent->velocity = OverlapsMap(map,ent);
+	}
+	else{
 		Vec2DAdd(ent->position,ent->position,ent->velocity);
 	}
+	/*
 	if(ent->sprite->animation[1]->currentFrame == ent->sprite->animation[1]->maxFrames)
 		ent->sprite->animation[1]->frameRate = 5000;
 	else
 		ent->sprite->animation[1]->frameRate = 100;
-	Vec2DAdd(ent->position,ent->position,ent->velocity);
+		*/
 	EntityIntersectAll(ent);
 }
 void ThinkEnemyLurker(Entity *ent)
@@ -194,7 +233,7 @@ void ThinkEnemyLurker(Entity *ent)
 		}
 		if(ent->knockback == 1)
 		{
-			ent->nextThink =  SDL_GetTicks() + 2000;
+			ent->nextThink =  SDL_GetTicks() + 1000;
 			ent->knockback = 2;
 		}else
 		{
@@ -202,9 +241,16 @@ void ThinkEnemyLurker(Entity *ent)
 		ent->moveIndicator = rand() % 4;
 		ent->velocity.x = 0;
 		ent->velocity.y = 0;
-		ent->nextThink = SDL_GetTicks() + 5000;
+		ent->nextThink = SDL_GetTicks() + 4000;
 		}
-	}	
+	}
+	//if(OverlapsMap(map,ent).x != 0 || OverlapsMap(map,ent).y != 0)
+		ent->moveIndicator = 
+			OverlapsMap(map,ent).x < 0 ? 2:
+			OverlapsMap(map,ent).x > 0 ? 0:
+			OverlapsMap(map,ent).y < 0 ? 3:
+			OverlapsMap(map,ent).y > 0 ? 1:
+			ent->moveIndicator;
 }
 void UpdateEnemySnatcher(Entity *ent)
 {
@@ -232,6 +278,10 @@ void UpdateEnemySnatcher(Entity *ent)
 	ent->hitBox.x =ent->position.x;
 	ent->hitBox.y =ent->position.y;
  }
+ 	if(playerEnt->room->id != ent->room->id)
+	{
+		ent->position = ent->position2;
+	}
  EntityIntersectAll(ent);
 }
 void ThinkEnemySnatcher(Entity *ent)

@@ -5,6 +5,8 @@
 #include "graphics.h"
 #include "vectors.h"
 #include "LList.h"
+#include "collision.h"
+#include "enemy.h"
 #include "spirit.h"
 
 int MaxSpirits = 6;
@@ -35,15 +37,20 @@ void CreateSpirit(int x, int y)
 		spirit->hitBox.h = spirit->sprite->h;
 
 		spirit->spiritIndex = -1;
+		spirit->value = 2;
 		spirit->currentAnimation = 0;
 		spirit->sprite->animation[0]->oscillate = true;
 		spirit->sprite->animation[0]->startFrame = 0;
 		spirit->sprite->animation[0]->maxFrames = 5;
 		spirit->nextThink = SDL_GetTicks() + 10;
 		spirit->spiritState = Untouched;
-
-		//moveToEnd(SpiritLink);
-		//Insert(SpiritLink,spirit);
+		for(int i =0;i < map->numberOfRooms;++i)
+		{	
+			if(AABB(spirit->hitBox,map->rooms[i].boundary))
+			{
+				spirit->room = &map->rooms[i];
+			}
+		}
 		spirit->offset.x = 20;
 		spirit->offset.y = 20;
 		
@@ -87,6 +94,9 @@ void UpdateSpirit(Entity* ent)
 {
 	ent->hitBox.x =ent->position.x;
 	ent->hitBox.y =ent->position.y;
+
+
+
 	if(ent->follow != NULL){
 	if(abs(ent->position.x - ent->savedPlayerPos.x) < ent->offset.x &&
 		abs(ent->position.y - ent->savedPlayerPos.y) < ent->offset.y){
@@ -116,6 +126,8 @@ void UpdateSpirit(Entity* ent)
 	if(abs(ent->position.y - ent->savedPlayerPos.y) < ent->speed)
 		ent->velocity.y = ent->savedPlayerPos.y - ent->position.y;
 		}
+	if(ent->room != playerEnt->room)
+		ent->position = playerEnt->position;
 	}
 	Vec2DAdd(ent->position,ent->position ,ent->velocity);
 	Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
@@ -134,7 +146,29 @@ void ThinkSpirit(Entity *ent)
 		if(ent->follow != NULL)
 			ent->savedPlayerPos = ent->follow->position;
 		ent->nextThink = SDL_GetTicks() + 200;
+		if(!DistanceBetweenLessThan2D(ent->position,playerEnt->position,200))
+		{
+			playerEnt->penalty += 1;
+			ent->spiritState = Lost;
+			ent->think = &ThinkEnemyLurker;
+			ent->update = &UpdateEnemyLurker;
+			ent->speed = 1;
+			moveToPos(SpiritLink,ent->spiritIndex);
+			Remove(SpiritLink);
+			if(Next(SpiritLink->curr)->curr != NULL)
+			{
+			for(int i = SpiritLink->curr->curr->spiritIndex+1; i <= SpiritLink->count;i++) 
+			{
+				moveToPos(SpiritLink,i);
+				if(SpiritLink->curr != NULL)
+				{
+					SpiritLink->curr->curr->spiritIndex--;
+				}
+			}
+			}
+		}
 	}
+
 	if(ent->timer != NULL){
 		if(ent->timer->temp > 0){
 			ent->hitBox.w = 0;
@@ -149,17 +183,35 @@ void ThinkSpirit(Entity *ent)
 			ent->hitBox.y = ent->position.y;
 		}
 	}
+		ent->room = 
+		   ent->position.x > ent->room->boundary.x + ent->room->boundary.w ? ent->room = ent->room->west 
+		:  ent->position.x < ent->room->boundary.x ? ent->room = ent->room->east
+		:  ent->position.y > ent->room->boundary.y + ent->room->boundary.h ? ent->room = ent->room->south
+		:  ent->position.y < ent->room->boundary.y ? ent->room = ent->room->north
+		:  ent->room;
+
 }
 void TouchSpirit(Entity *ent,Entity *other)
 {
 		if(other->whatAmI == 0)//Its a player!
 	{
-		if(ent->spiritState == Untouched || ent->spiritState == Lost)
+		if(ent->spiritState == Untouched)
 		{
 			moveToEnd(SpiritLink);
 			Insert(SpiritLink,ent);
 			ent->spiritState= BeingGuided;	
 			ent->spiritIndex = SpiritLink->count;
+			ent->speed = 4;
+		}
+		if(ent->spiritState == Lost){
+			playerEnt->penalty -= playerEnt->penalty > 0 ? 1 : 0;
+			moveToEnd(SpiritLink);
+			Insert(SpiritLink,ent);
+			ent->spiritState= BeingGuided;	
+			ent->spiritIndex = SpiritLink->count;
+			ent->think = &ThinkSpirit;
+			ent->update = &UpdateSpirit;
+			ent->speed = 4;
 		}
 	}
 }

@@ -2,6 +2,7 @@
 #MapHeight 57
 #TileWidth 32
 #TileHeight 32
+#NumOfRooms 7
 #NumSolidTiles 33
 
 #Layer1
@@ -189,8 +190,52 @@
 
 #SolidTiles
 02 03 04 05 18 19 20 21 34 35 36 37 50 51 52 53 66 67 68 69 06 07 22 23 39 38 54 70 86 81 82 97 98
+			
 															
 #MapEntities
+#RoomIds
+RoomId: -1
+LinksTo: 0 , 3 , 0 , 0
+Joined: 0
+Boundary: 800 , 600
+Location: 0 , 0
+
+RoomId: 1
+LinksTo: 0 , 4 , 0 , 0
+Joined: 0
+Boundary: 800 , 600
+Location: 800 , 0
+
+RoomId: 2
+LinksTo: 0 , 5 , 0 , 0
+Joined: 0
+Boundary: 800 , 600
+Location: 1600 , 0
+
+RoomId: 3
+LinksTo: -1 , 0 , 0 , 4
+Joined: 1
+Boundary: 800 , 1200
+Location: 0 , 600
+
+RoomId: 4
+LinksTo: 1 , 6 , 3 , 5
+Joined: 0
+Boundary: 800 , 600
+Location: 800 , 600
+
+RoomId: 5
+LinksTo: 2 , 0 , 4 , 0
+Joined: 1
+Boundary: 800 , 1200
+Location: 1600 , 600
+
+RoomId: 6
+LinksTo: 4 , 0 , 0 , 5 
+Joined: 0
+Boundary: 800 , 600
+Location: 800 , 1200
+
 
 #Enemies
 Type: Chaser
@@ -217,5 +262,3 @@ Locations:
 #Portal
 Location: 
 500 , 200
-
-

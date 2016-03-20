@@ -64,6 +64,7 @@ void Init()
 	CreatePlayer(400,400);
 	playerData->camera = GetCamera();
 	hotBox = InitHotBox();
+	printf("\n%d\n" , map->rooms[1].roomIDs[1]);
 }
 /**
 *@brief Main game loop
@@ -114,7 +115,7 @@ void UpdateHotBox()
 }
 void SetCamera(SDL_Rect &camera,SDL_Rect* box)
 {
-		UpdateHotBox();
+	UpdateHotBox();
 
     camera.w = SCREEN_WIDTH;
     camera.h = SCREEN_HEIGHT;
@@ -126,23 +127,16 @@ void SetCamera(SDL_Rect &camera,SDL_Rect* box)
 
 	
 	//Keep the camera in bounds
-    if( camera.x < 0 )
-    { 
-        camera.x = 0;
-    }
-    if( camera.y < 0 )
-    {
-        camera.y = 0;
-    }
-    if( camera.x > AREA_WIDTH - camera.w )
-    {
-        camera.x = AREA_WIDTH - camera.w;
-    }
-    if( camera.y > AREA_HEIGHT - camera.h )
-    {
-        camera.y = AREA_HEIGHT - camera.h;
-    }
-	
+		if( camera.x < playerEnt->room->boundary.x)
+			camera.x = playerEnt->room->boundary.x;
+		if(camera.x + camera.w > playerEnt->room->boundary.x + playerEnt->room->boundary.w)
+			camera.x = playerEnt->room->boundary.x + playerEnt->room->boundary.w - camera.w;
+		if( camera.y < playerEnt->room->boundary.y)
+			camera.y = playerEnt->room->boundary.y ;
+		if(camera.y + camera.h > playerEnt->room->boundary.y + playerEnt->room->boundary.h)
+			camera.y = playerEnt->room->boundary.y + playerEnt->room->boundary.h - camera.h;
+		
+
 }
 /**
 *@brief Draws the Title Screen

@@ -6,6 +6,21 @@
 #include <stdio.h>
 #include "sprite.h"
 
+
+typedef struct RoomData Room;
+
+typedef struct RoomData
+{
+	Room *north;
+	Room *south;
+	Room *east;
+	Room *west;
+	int id;
+	int roomIDs[4];
+	int roomIDsJoined[4];
+	SDL_Rect boundary;
+}Room;
+
 typedef struct 
 {
 	Sprite *tiles;
@@ -18,11 +33,15 @@ typedef struct
 	int solidTiles[60];
 	int numSolidTiles;
 	int numOfSpirits;
-
+	Room *rooms;
+	int numberOfRooms;
 
 }Map;
 
-Map* CreateMap(int tileW, int tileH,int mapWidth,int mapHeight);
+Room *CreateRoom(int id,SDL_Rect *boundary,int *linksTo,int *joined);
+void ConnectRooms();
+Room *FindRoomWithID(int id);
+Map* CreateMap(int tileW, int tileH,int mapWidth,int mapHeight,int numOfRooms);
 bool Load(char *mapName,char *imageName);
 void LoadLayer(int data[],FILE *file);
 void LoadSolidTiles(int data[],FILE *file,int NumSolidTiles);
