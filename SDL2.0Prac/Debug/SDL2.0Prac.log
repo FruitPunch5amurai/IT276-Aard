@@ -1,18 +1,90 @@
-﻿Build started 3/20/2016 4:57:28 PM.
+﻿Build started 3/21/2016 9:30:25 AM.
      1>Project "C:\Users\Jason\Desktop\Aard-GTS\SDL2.0Prac\SDL2.0Prac.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\Aard.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt game.c
-         game.c
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(97): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(98): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(99): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(100): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(108): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(110): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(112): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(114): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt enemy.c
+         enemy.c
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(20): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(54): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(55): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(56): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(57): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(58): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(59): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(60): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(61): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(64): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(85): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(85): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(89): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(90): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(93): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(95): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(97): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(99): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(105): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(109): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(113): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(117): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(183): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(184): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(187): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(189): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(191): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(193): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(278): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(279): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(329): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(234) : see declaration of 'fopen'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(337): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(340): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(341): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(343): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(344): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(346): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(348): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(350): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(357): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(360): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(361): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(363): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(364): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(366): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(368): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(370): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(377): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(380): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(381): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(383): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(384): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(386): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(388): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\enemy.c(390): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
        Link:
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.exe" /NOLOGO SDL2.lib SDL2main.lib SDL2_image.lib SDL2_ttf.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\Aard.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.lib" /MACHINE:X86 Debug\collision.obj
          Debug\enemy.obj
@@ -40,4 +112,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.01
+Time Elapsed 00:00:03.11

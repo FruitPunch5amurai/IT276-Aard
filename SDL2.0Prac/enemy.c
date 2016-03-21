@@ -293,7 +293,7 @@ void ThinkEnemySnatcher(Entity *ent)
 		&& (ent->state != GOINGUP && ent->state != GOINGDOWN))
 	{
 		ent->state = GOINGUP;
-		ent->temp = SDL_GetTicks() + 1000;
+		ent->temp = SDL_GetTicks() + 500;
 	}
 		if(ent->position.y >= ent->savedPlayerPos.y && ent->state == GOINGDOWN)
 	{

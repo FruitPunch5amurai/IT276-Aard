@@ -63,7 +63,7 @@ typedef struct EntityData
 	EnemyState state;			/**< State of enemy*/
 	int enemyType;				/**< 0 for Lurker, 1 for Ghost,2 for Chaser*/
 	int nextMove;
-	Uint8 temp;
+	Uint32 temp;
 	int moveIndicator;
 
 	void (*update)(struct EntityData *ent);

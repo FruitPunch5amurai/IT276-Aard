@@ -250,6 +250,12 @@ Count: 1
 Location:
 192 , 892
 
+#Enemies
+Type: Snatcher 
+Count: 1
+Location:
+192 , 1100
+
 #Spirits
 Count: 5
 Locations: 
