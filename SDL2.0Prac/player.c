@@ -307,7 +307,7 @@ void SkillNEVERGONNAGIVEYOUUP()
 void ExecuteSkill()
 {
 	if(keyData->Q == 1 && playerData->abilities[0].inuse == 0 
-		&& playerData->abilities[0].cooldown == 0 && playerData->EXP >2)
+		&& playerData->abilities[0].cooldown == 0 && playerData->EXP >=2)
 	{
 		playerData->abilities[0].inuse = 1;
 		playerData->abilities[0].cooldown = 3;
@@ -315,7 +315,7 @@ void ExecuteSkill()
 		SkillWhip();
 	}
 	if(keyData->W == 1 && playerData->abilities[1].inuse == 0 
-		&& playerData->abilities[1].cooldown == 0 && playerData->EXP >4 && SpiritLink->count >1)
+		&& playerData->abilities[1].cooldown == 0 && playerData->EXP >=4 && SpiritLink->count >1)
 	{
 		playerData->abilities[1].inuse = 1;
 		playerData->abilities[1].cooldown = 3;
@@ -323,7 +323,7 @@ void ExecuteSkill()
 		SkillRetrieve();
 	}
 		if(keyData->E == 1 && playerData->abilities[2].inuse == 0 
-			&& playerData->abilities[2].cooldown == 0 && playerData->EXP >6 && SpiritLink->count >1)
+			&& playerData->abilities[2].cooldown == 0 && playerData->EXP >=6 && SpiritLink->count >1)
 	{
 		playerData->abilities[2].inuse = 1;
 		playerData->abilities[2].cooldown = 10;
