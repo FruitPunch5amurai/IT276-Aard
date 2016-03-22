@@ -310,7 +310,7 @@ void ExecuteSkill()
 		&& playerData->abilities[0].cooldown == 0 && playerData->EXP >2)
 	{
 		playerData->abilities[0].inuse = 1;
-		playerData->abilities[0].cooldown = 10;
+		playerData->abilities[0].cooldown = 3;
 		printf("Whip used:%d\n" ,playerData->abilities[0].cooldown);
 		SkillWhip();
 	}
@@ -318,7 +318,7 @@ void ExecuteSkill()
 		&& playerData->abilities[1].cooldown == 0 && playerData->EXP >4 && SpiritLink->count >1)
 	{
 		playerData->abilities[1].inuse = 1;
-		playerData->abilities[1].cooldown = 10;
+		playerData->abilities[1].cooldown = 3;
 		printf("Retrieve used:%d\n" ,playerData->abilities[0].cooldown);
 		SkillRetrieve();
 	}
@@ -326,7 +326,7 @@ void ExecuteSkill()
 			&& playerData->abilities[2].cooldown == 0 && playerData->EXP >6 && SpiritLink->count >1)
 	{
 		playerData->abilities[2].inuse = 1;
-		playerData->abilities[2].cooldown = 30;
+		playerData->abilities[2].cooldown = 10;
 		printf("Immune used:%d\n" ,playerData->abilities[0].cooldown);
 		SkillNEVERGONNAGIVEYOUUP();
 	}

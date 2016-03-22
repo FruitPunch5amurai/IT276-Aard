@@ -42,6 +42,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LibraryPath>C:\vs_dev_lib\SDL2_ttf-2.0.13\lib\x86;C:\vs_dev_lib\SDL2_image-2.0.1\lib\x86;C:\vs_dev_lib\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
