@@ -1,7 +1,7 @@
 # IT276-Aard
 READ THIS!!!
 Executable might not work for some reason but it works when u build and run in VS 2010
-
+Press space to get out of title screen at the start
 MIDTERM DELIVERABLES:
 All done except i made 3 skills instead of 4 
 -Player and Following Spirits
