@@ -79,6 +79,7 @@
     <ClCompile Include="graphics.c" />
     <ClCompile Include="level.c" />
     <ClCompile Include="LList.c" />
+    <ClCompile Include="obj.c" />
     <ClCompile Include="particle.c" />
     <ClCompile Include="player.c" />
     <ClCompile Include="save.c" />
@@ -96,6 +97,7 @@
     <ClInclude Include="graphics.h" />
     <ClInclude Include="level.h" />
     <ClInclude Include="LList.h" />
+    <ClInclude Include="obj.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="save.h" />

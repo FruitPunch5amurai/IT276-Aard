@@ -22,7 +22,7 @@ extern ELink *SpiritLink;
 extern Map *map;
 extern KeyData *keyData;
 char numOfSpirits[256];
-
+void Stun();
 /**
 *@brief Loads in Data for AnimationData for the player from a .txt
 */
@@ -133,7 +133,6 @@ void DrawPlayer(Entity* ent)
 */
 void UpdatePlayer(Entity *ent)
 {
-	printf("%d\n",playerData->EXP);
 	UpdateGUI();
 	ExecuteSkill();
 	if(playerData->confidence <= 0)
@@ -149,11 +148,18 @@ void UpdatePlayer(Entity *ent)
 	Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
 	Vec2DAdd(ent->position,ent->position,ent->velocity);
 	EntityIntersectAll(ent);
-	AttackBoxIntersectAll(ent);
+	if(ent->atkBox.x > 0)
+	{
+		AttackBoxIntersectAll(ent);
+	}
 }
 
 void ThinkPlayer(Entity *ent)
 {
+	if(playerEnt->stun > 0){
+		Stun();
+		playerEnt->stun -=.1;
+	}
 	if(playerEnt->nextThink < SDL_GetTicks())
 	{
 		for(int i = 0;i < 4;++i){
@@ -182,10 +188,12 @@ void ThinkPlayer(Entity *ent)
 		:  playerEnt->position.y > playerEnt->room->boundary.y + playerEnt->room->boundary.h ? playerEnt->room = playerEnt->room->south
 		:  playerEnt->position.y < playerEnt->room->boundary.y ? playerEnt->room = playerEnt->room->north
 		:  playerEnt->room;
+
 }
 void TouchPlayer(Entity *ent,Entity *other)
 {
-
+	if(other->whatAmI == 4)
+		SkillPickUpObject(other);
 	if(ent->atkBox.w == 0 && ent->atkBox.h == 0)
 	{
 	if(other->whatAmI == 3)
@@ -224,6 +232,7 @@ void TouchPlayer(Entity *ent,Entity *other)
 			other->velocity = CreateVec2D(other->speed*2*playerEnt->facing.x,-other->speed*2*playerEnt->facing.y);
 		}
 	}
+
 }
 /**
 *@brief Deallocates memory for player
@@ -304,6 +313,36 @@ void SkillNEVERGONNAGIVEYOUUP()
 			Prev(SpiritLink);
 		}
 }
+void SkillPickUpObject(Entity* ent)
+{
+	if(keyData->R == 1 && playerEnt->objectHolding == NULL && playerData->abilities[3].cooldown == 0)
+	{
+		playerEnt->objectHolding = ent;
+		playerEnt->stun = 2;
+		playerEnt->objectHolding->hitBox.w = playerEnt->objectHolding->hitBox.h = 0;
+		playerEnt->objectHolding->hitBox.y = playerEnt->objectHolding->hitBox.x = 0;
+	}
+	printf("Picked up object\n");
+}
+
+void SkillThrowObject()
+{
+		printf("threw the object\n");
+		playerEnt->objectHolding->nextThink = SDL_GetTicks() + 500;
+		playerEnt->objectHolding->temp = 1;
+		if(playerEnt->facing.x != 0)
+		{
+			playerEnt->objectHolding->velocity.x = playerEnt->facing.x* playerEnt->objectHolding->speed;
+			playerEnt->objectHolding->velocity.y = 2;
+		}else if(playerEnt->facing.y != 0)
+		{
+		playerEnt->objectHolding->velocity.y = -playerEnt->facing.y*  playerEnt->objectHolding->speed;
+		}
+		playerEnt->objectHolding = NULL;
+		playerData->abilities[3].inuse = 0;
+		playerData->abilities[3].cooldown = 1;
+
+}
 void ExecuteSkill()
 {
 	if(keyData->Q == 1 && playerData->abilities[0].inuse == 0 
@@ -330,6 +369,12 @@ void ExecuteSkill()
 		printf("Immune used:%d\n" ,playerData->abilities[0].cooldown);
 		SkillNEVERGONNAGIVEYOUUP();
 	}
+		if(keyData->R == 1 && playerEnt->objectHolding != NULL && playerData->abilities[3].inuse == 0
+			&& playerData->abilities[3].cooldown == 0)
+		{
+			playerData->abilities[3].inuse = 1;
+			SkillThrowObject();
+		}
 }
 
 Entity *CreateTimer(Uint8 time)
@@ -352,5 +397,16 @@ void ThinkTimer(Entity *ent)
 	if(ent->temp == 0)
 	{
 		FreeEntity(ent);
+	}
+}
+void Stun()
+{
+	if(playerEnt->stun > 0){
+		playerEnt->velocity.x = 0;
+		playerEnt->velocity.y = 0;
+		keyData->Q = 0;
+		keyData->W = 0;
+		keyData->E = 0;
+		keyData->R = 0;
 	}
 }

@@ -29,10 +29,11 @@ typedef struct EntityData
 {
 	int		inuse;
 	int		id;
-	int		whatAmI;		/**< 0 is Aard, 1 is Spirit, 2 is Enemy, 3 is Portal, 4 is Grabbable*/
+	int		whatAmI;		/**< 0 is Aard, 1 is Spirit, 2 is Enemy, 3 is Portal, 4 is Object*/
 	int		speed;
-	int		maxSpeed;
+	float	stun;
 	int		knockback;
+	Entity* objectHolding;
 	SDL_Rect hitBox;
 	SDL_Rect atkBox;
 	Vec2D	position;
@@ -86,14 +87,15 @@ Vec2D OverlapsMap(Map *map,Entity *ent);
 
 int EntityIntersect(Entity *a, Entity *b);
 Entity* EntityIntersectAll(Entity *a);
+Vec2D CollisionObject(Entity* ent1,Entity* ent2);
 Entity* AttackBoxIntersectAll(Entity *a);
 int GetID(Entity *ent);
 Entity* GetEntityByID(int id);
+SDL_Rect GetCenter(Entity* ent);
 
 Entity *CreatePortal(int x, int y);
 void DrawPortal(Entity *ent);
 Entity* CreateTimer(Uint8 time);
 void ThinkTimer(Entity *ent);
-void CreateObject(int x, int y,int width, int height, int frame);
 
 #endif 

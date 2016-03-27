@@ -63,8 +63,6 @@ void handleInput(int (*gameState)())
 				playerEnt->velocity.y = playerEnt->speed;
 				playerEnt->facing.x = 0;
 				playerEnt->facing.y = -1;
-					printf("playerFacing x:%d y:%d\n",playerEnt->facing.x,playerEnt->facing.y);
-
 				break;
 			case SDLK_q:
 				printf("q pressed");keyData->Q = 1;

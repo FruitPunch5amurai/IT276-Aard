@@ -11,6 +11,7 @@
 #include "entity.h"
 #include "level.h"
 #include "sprite.h"
+#include "obj.h"
 #include "gamepad.h"
 #include "game.h"
 
@@ -62,6 +63,7 @@ void Init()
 	InitKeyData();
 	Load("level.map","images/Resources1.png");
 	CreatePlayer(400,400);
+	CreateObject(200,200,64,64,48);
 	playerData->camera = GetCamera();
 	hotBox = InitHotBox();
 	printf("\n%d\n" , map->rooms[1].roomIDs[1]);

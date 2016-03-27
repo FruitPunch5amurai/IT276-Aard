@@ -15,7 +15,7 @@ void DrawObject(Entity* ent);
 void UpdateObject(Entity* ent);
 #define MAX_ENTITIES		500
 extern SDL_Rect *camera;
-
+extern Entity* playerEnt;
 Entity* EntityList = NULL;
 /**
 *@brief Initializes an Entity List
@@ -203,19 +203,65 @@ Vec2D OverlapsMap(Map *map,Entity *ent)
 		}
 		return dir;
 }
-
+/*
+*@breif Check for collisions between entities
+*@param Entity to check collisions
+*@return Entity that is colliding with param entity
+*/
 Entity* EntityIntersectAll(Entity *a)
 {
 	int i,j;
 	for(i = 0;i < MAX_ENTITIES;i++)
 		if(EntityList[i].inuse && &EntityList[i] != a)
 		{
+			if(a->room == playerEnt->room)
+			{
 			if(AABB(a->hitBox,EntityList[i].hitBox)){
 				(a->touch)(a,&EntityList[i]);
 				return &EntityList[i];
 			}
 		}
+	}
 }
+
+/*
+*@breif Uses Minkowski's sum do determine side of collision
+*@param 2 Entities
+*@return A Vec2D
+*/
+Vec2D CollisionObject(Entity* ent1,Entity* ent2)
+{
+	Vec2D dir;
+	int w,h,dx,dy,wy,hx;
+	dir.x =dir.y = 0;
+	w = .5*(ent1->hitBox.w + ent2->hitBox.w);
+	h = .5*(ent1->hitBox.h + ent2->hitBox.h);
+	dx = GetCenter(ent1).x - GetCenter(ent2).x;
+	dy = GetCenter(ent1).y - GetCenter(ent2).y;
+	wy = w *dy;
+	hx = h*dx;
+	
+			if(wy > hx)
+				if(wy > -hx){
+					//Top Collision
+					dir.y = -ent2->speed;
+				}
+				else{
+					//Left Collision
+					dir.x = ent2->speed;
+				}
+			else
+				if(wy > -hx)
+				{
+					//Right Collision
+					dir.x = -ent2->speed;
+				}
+				else{
+					//Bottom Collisions
+					dir.y = ent2->speed;
+				}
+				return dir;
+			}
 
 
 Entity* AttackBoxIntersectAll(Entity *a)
@@ -245,6 +291,14 @@ Entity* GetEntityByID(int id)
 	}
 	return &EntityList[i];
 }
+SDL_Rect GetCenter(Entity* ent)
+{
+	SDL_Rect newBox;
+	newBox.x = ent->hitBox.x + ent->hitBox.w/2;
+	newBox.y = ent->hitBox.y + ent->hitBox.h/2;
+	return newBox;
+}
+
 Entity *CreatePortal(int x, int y)
 {
 	Entity *portal;
@@ -274,32 +328,3 @@ void DrawPortal(Entity *ent)
 	DrawEntity(ent,ent->currentAnimation,ent->position.x,ent->position.y);
 }
 
-void CreateObject(int x, int y,int width, int height, int frame)
-{
-	Entity *object;
-	object= CreateEntity();
-	object->sprite = LoadSprite("images/Resources1.png",width,height);
-	object->sprite->animation[0]->startFrame = frame;
-	object->sprite->animation[0]->currentFrame = frame;
-	object->sprite->animation[0]->maxFrames = 0;
-	object->currentAnimation = 0;
-	object->position.x = x;
-	object->position.y = y;
-	object->dimensions.x = width;
-	object->dimensions.y = height;
-	object->hitBox.w = width;
-	object->hitBox.h = height;
-	object->hitBox.x = x;
-	object->hitBox.y = y;
-	object->think = &ThinkObject;
-	object->touch = &TouchObject;
-	object->draw = &DrawObject;
-	object->update = &UpdateObject;
-}
-void DrawObject(Entity* ent)
-{
-	DrawEntity(ent,ent->currentAnimation,ent->position.x,ent->position.y);
-}
-void ThinkObject(Entity* ent){}
-void TouchObject(Entity* ent,Entity* other){}
-void UpdateObject(Entity* ent){}

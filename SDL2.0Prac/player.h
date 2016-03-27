@@ -38,5 +38,7 @@ void ExecuteSkill();
 void SkillWhip();
 void SkillRetrieve();
 void SkillNEVERGONNAGIVEYOUUP();
+void SkillPickUpObject(Entity* ent);
+void SkillThrowObject();
 
 #endif _PLAYER_H_

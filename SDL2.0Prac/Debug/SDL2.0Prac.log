@@ -1,11 +1,51 @@
-﻿Build started 3/21/2016 11:37:08 PM.
+﻿Build started 3/27/2016 5:43:01 PM.
      1>Project "C:\Users\Jason\Desktop\Aard-GTS\SDL2.0Prac\SDL2.0Prac.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\Aard.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         All outputs are up-to-date.
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt game.c obj.c
+         obj.c
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\obj.c(21): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\obj.c(22): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\obj.c(24): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\obj.c(25): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\obj.c(47): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\obj.c(47): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\obj.c(59): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\obj.c(60): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\obj.c(61): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\obj.c(62): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\obj.c(71): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\obj.c(72): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+         Generating Code...
+         Compiling...
+         game.c
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(98): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(99): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(100): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(101): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(109): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(111): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(113): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\game.c(115): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+         Generating Code...
        Link:
-         All outputs are up-to-date.
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.exe" /NOLOGO SDL2.lib SDL2main.lib SDL2_image.lib SDL2_ttf.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST:NO /DEBUG /PDB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.lib" /MACHINE:X86 Debug\collision.obj
+         Debug\enemy.obj
+         Debug\entity.obj
+         Debug\game.obj
+         Debug\gamepad.obj
+         Debug\graphics.obj
+         Debug\level.obj
+         Debug\LList.obj
+         Debug\obj.obj
+         Debug\particle.obj
+         Debug\player.obj
+         Debug\save.obj
+         Debug\spawn.obj
+         Debug\spirit.obj
+         Debug\sprite.obj
+         Debug\vectors.obj
          SDL2.0Prac.vcxproj -> C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.exe
        FinalizeBuildStatus:
          Deleting file "Debug\Aard.unsuccessfulbuild".
@@ -14,4 +54,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.27
+Time Elapsed 00:00:04.94
