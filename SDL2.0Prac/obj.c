@@ -9,14 +9,19 @@
 
 extern Map* map;
 extern Entity* playerEnt;
-void CreateObject(int x, int y,int width, int height, int frame)
+void CreateObject(int x, int y,int width, int height, int type)
 {
 	Entity *object;
 	object= CreateEntity();
-	object->sprite = LoadSprite("images/Resources1.png",width,height);
-	object->sprite->animation[0]->startFrame = frame;
-	object->sprite->animation[0]->currentFrame = frame;
-	object->sprite->animation[0]->maxFrames = 0;
+	object->sprite = LoadSprite("images/BigWhiteRock.png",width,height);
+	object->sprite->animation[0]->startFrame = 0;
+	object->sprite->animation[0]->currentFrame = 0;
+	object->sprite->animation[0]->maxFrames = 1;
+	object->sprite->animation[0]->oscillate = 0;
+	object->sprite->animation[1]->startFrame = 16;
+	object->sprite->animation[1]->currentFrame = 16;
+	object->sprite->animation[1]->maxFrames = 7;
+	object->sprite->animation[1]->oscillate = 1;
 	object->currentAnimation = 0;
 	object->position.x = x;
 	object->position.y = y;
@@ -27,7 +32,6 @@ void CreateObject(int x, int y,int width, int height, int frame)
 	object->hitBox.h = height;
 	object->hitBox.x = x;
 	object->hitBox.y = y;
-	object->whatAmI = 4;
 	for(int i =0;i < map->numberOfRooms;++i)
 	{
 		if(AABB(object->hitBox,map->rooms[i].boundary))
@@ -35,16 +39,23 @@ void CreateObject(int x, int y,int width, int height, int frame)
 			object->room = &map->rooms[i];
 		}
 	}
-	object->think = &ThinkObject;
-	object->touch = &TouchObject;
-	object->draw = &DrawObject;
-	object->update = &UpdateObject;
-	object->nextThink = 0;
+	if(type == 0){
+		object->whatAmI = BreakableObject;
+		object->think = &ThinkObject;
+		object->touch = &TouchObject;
+		object->draw = &DrawObject;
+		object->update = &UpdateObject;
+		object->nextThink = 0;
+	}
 }
 
 void DrawObject(Entity* ent)
 {
 	DrawEntity(ent,ent->currentAnimation,ent->position.x,ent->position.y);
+	if(ent->sprite->animation[1]->currentFrame == ent->sprite->animation[1]->startFrame + ent->sprite->animation[1]->maxFrames)
+	{
+		BreakObject(ent);
+	}
 }
 void ThinkObject(Entity* ent)
 {
@@ -71,7 +82,7 @@ void ThinkObject(Entity* ent)
 		ent->hitBox.y = ent->position.y;
 		ent->hitBox.x = ent->position.x;
 		ent->temp = 0;
-		BreakObject(ent);
+		ent->currentAnimation = 1;
 	}
 
 
@@ -83,7 +94,8 @@ void TouchObject(Entity* ent,Entity* other)
 	else if(other->whatAmI == 2)
 	{
 		//Do some damage;
-		BreakObject(ent);
+		ent->currentAnimation = 1;
+		              
 	}
 }
 void UpdateObject(Entity* ent)

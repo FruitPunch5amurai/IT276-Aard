@@ -71,7 +71,7 @@ Entity *CreateEnemy(int x, int y, int type)
 			}
 		}
 
-	enemy->whatAmI = 2;
+	enemy->whatAmI = Enemy;
 	enemy->state = IDLE;
 	enemy->nextThink = SDL_GetTicks() + 500;
 	enemy->moveIndicator = 0;

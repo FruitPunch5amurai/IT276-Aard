@@ -3,13 +3,6 @@
 #include "entity.h"
 
 
-typedef struct SpiritData{
-	int isBeingGuided;
-
-
-
-
-}Spirit;
 
 void CreateSpirit(int x,int y);
 void DrawSpirit(Entity* ent);

@@ -63,7 +63,7 @@ void Init()
 	InitKeyData();
 	Load("level.map","images/Resources1.png");
 	CreatePlayer(400,400);
-	CreateObject(200,200,64,64,48);
+	CreateObject(200,200,64,64,0);
 	playerData->camera = GetCamera();
 	hotBox = InitHotBox();
 	printf("\n%d\n" , map->rooms[1].roomIDs[1]);

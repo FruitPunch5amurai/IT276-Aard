@@ -25,11 +25,18 @@ enum GuidedState{
 	Lost,
 
 };
+enum EntityType{
+	Aard,
+	Spirit,
+	Enemy,
+	Portal,
+	BreakableObject
+};
 typedef struct EntityData
 {
 	int		inuse;
 	int		id;
-	int		whatAmI;		/**< 0 is Aard, 1 is Spirit, 2 is Enemy, 3 is Portal, 4 is Object*/
+	EntityType	whatAmI;		/**< 0 is Aard, 1 is Spirit, 2 is Enemy, 3 is Portal, 4 is Object*/
 	int		speed;
 	float	stun;
 	int		knockback;
@@ -97,5 +104,4 @@ Entity *CreatePortal(int x, int y);
 void DrawPortal(Entity *ent);
 Entity* CreateTimer(Uint8 time);
 void ThinkTimer(Entity *ent);
-
 #endif 

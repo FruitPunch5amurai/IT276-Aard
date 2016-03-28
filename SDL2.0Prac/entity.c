@@ -304,7 +304,7 @@ Entity *CreatePortal(int x, int y)
 	Entity *portal;
 	portal = CreateEntity();
 	portal->sprite = LoadSprite("images/Portal.png",32,32);
-	portal->whatAmI = 3;
+	portal->whatAmI = Portal;
 
 	portal->position.x =x;
 	portal->position.y =y;
@@ -327,4 +327,5 @@ void DrawPortal(Entity *ent)
 {
 	DrawEntity(ent,ent->currentAnimation,ent->position.x,ent->position.y);
 }
+
 

@@ -5,7 +5,7 @@
 
 
 
-void CreateObject(int x, int y,int width, int height, int frame);
+void CreateObject(int x, int y,int width, int height, int type);
 void ThinkObject(Entity* ent);
 void TouchObject(Entity* ent,Entity* other);
 void UpdateObject(Entity* ent);

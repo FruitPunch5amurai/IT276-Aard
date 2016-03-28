@@ -65,7 +65,7 @@ void CreatePlayer(int x, int y)
 	//Data for Idle Animation
 	playerEnt->sprite= LoadSprite("images/Sonic.png",32,42);
 	LoadPlayerAnimations(playerEnt);
-	playerEnt->whatAmI = 0;
+	playerEnt->whatAmI = Aard;
 	playerEnt->dimensions.x = playerEnt->sprite->w;
 	playerEnt->dimensions.y = playerEnt->sprite->h;
 	playerEnt->facing.x = 0;

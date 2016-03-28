@@ -135,7 +135,7 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey)
 	  fprintf(stderr,"CREATE TEXTURE FROM SURFACE HAS FAILED: %s\n",SDL_GetError());
 	  exit(0);
   }
-  SDL_FreeSurface(temp);
+  SpriteList[i].surfaceImage = temp;
   SpriteList[i].image = temp2;
 // SDL_SetColorKey(SpriteList[i].image, SDL_TRUE , SDL_MapRGB(SpriteList[i].image->format, 255,255,255));
    /*then copy the given information to the sprite*/
@@ -223,5 +223,6 @@ void SetColor(Sprite *sprite,Uint8 red, Uint8 green, Uint8 blue)
 	SDL_SetTextureColorMod(sprite->image,red,green,blue);
 
 }
+
 
 

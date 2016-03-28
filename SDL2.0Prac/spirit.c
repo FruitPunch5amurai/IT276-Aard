@@ -25,8 +25,7 @@ void CreateSpirit(int x, int y)
 		memset(spirit->particles,0,sizeof(Particle) * MAXSPIRITPARTICLES );	
 	
 		spirit->sprite = LoadSprite("images/AardSoul.png",21,32);
-		spirit->whatAmI = 1;
-		spirit->isBeingGuided = 0;
+		spirit->whatAmI = Spirit;
 		spirit->position.x =x;
 		spirit->position.y =y;
 		spirit->dimensions.x = spirit->sprite->w;
