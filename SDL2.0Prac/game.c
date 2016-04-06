@@ -52,6 +52,7 @@ void Init()
 	memset(camera,0,sizeof(SDL_Rect));
 	camera->x = 0;
 	camera->y = 0;
+	InitMapList();
 	InitSpriteList();
 	Init_Graphics("Game Test",
     800,
@@ -63,10 +64,10 @@ void Init()
 	InitKeyData();
 	Load("level.map","images/Resources1.png");
 	CreatePlayer(400,400);
-	CreateObject(200,200,64,64,0);
+	CreatePlayerData();
+	SetPlayerData();
 	playerData->camera = GetCamera();
 	hotBox = InitHotBox();
-	printf("\n%d\n" , map->rooms[1].roomIDs[1]);
 }
 /**
 *@brief Main game loop
@@ -117,11 +118,11 @@ void UpdateHotBox()
 }
 void SetCamera(SDL_Rect &camera,SDL_Rect* box)
 {
+	if(playerEnt != NULL){
 	UpdateHotBox();
 
     camera.w = SCREEN_WIDTH;
     camera.h = SCREEN_HEIGHT;
-
 	//printf("x:%d\ny:%d\n",camera.x,camera.y);
 	playerData->camera = &camera;
 	camera.x = (box->x + box->w/2) - SCREEN_WIDTH/2;
@@ -138,7 +139,7 @@ void SetCamera(SDL_Rect &camera,SDL_Rect* box)
 		if(camera.y + camera.h > playerEnt->room->boundary.y + playerEnt->room->boundary.h)
 			camera.y = playerEnt->room->boundary.y + playerEnt->room->boundary.h - camera.h;
 		
-
+	}
 }
 /**
 *@brief Draws the Title Screen

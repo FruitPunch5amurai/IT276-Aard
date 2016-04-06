@@ -35,6 +35,7 @@ void handleInput(int (*gameState)())
 	{
 		//printf("This is the Game\n");
 		if(playerEnt != NULL){
+		
 		if(mainEvent->type == SDL_KEYDOWN)	
 		{
 			switch(mainEvent->key.keysym.sym)
@@ -46,23 +47,26 @@ void handleInput(int (*gameState)())
 				playerEnt->facing.x = -1;
 				playerEnt->facing.y = 0;
 				playerEnt->flipped = SDL_FLIP_HORIZONTAL;
-
+				keyData->ArrowKeyLeft = 1;
 				break;
 			case SDLK_RIGHT:
 				playerEnt->facing.x = 1;
 				playerEnt->facing.y = 0;
 				playerEnt->velocity.x = playerEnt->speed;
 				playerEnt->flipped = SDL_FLIP_NONE;
+				keyData->ArrowKeyRight = 1;
 				break;
 			case SDLK_UP:
 				playerEnt->velocity.y = -playerEnt->speed;
 				playerEnt->facing.x = 0;
 				playerEnt->facing.y = 1;
+				keyData->ArrowKeyUp = 1;
 				break;
 			case SDLK_DOWN:
 				playerEnt->velocity.y = playerEnt->speed;
 				playerEnt->facing.x = 0;
 				playerEnt->facing.y = -1;
+				keyData->ArrowKeyDown = 1;
 				break;
 			case SDLK_q:
 				printf("q pressed");keyData->Q = 1;
@@ -85,13 +89,13 @@ void handleInput(int (*gameState)())
 			switch(mainEvent->key.keysym.sym)
 			{
 			case SDLK_LEFT:
-				playerEnt->velocity.x = 0;break;
+				playerEnt->velocity.x = 0;keyData->ArrowKeyLeft = 0;break;
 			case SDLK_RIGHT:
-				playerEnt->velocity.x = 0;break;
+				playerEnt->velocity.x = 0;keyData->ArrowKeyRight = 0;break;
 			case SDLK_UP:
-				playerEnt->velocity.y = 0;break;
+				playerEnt->velocity.y = 0;keyData->ArrowKeyUp = 0;break;
 			case SDLK_DOWN:
-				playerEnt->velocity.y = 0;break;
+				playerEnt->velocity.y = 0;keyData->ArrowKeyDown = 0;break;
 			case SDLK_q:
 				keyData->Q = 0;
 				break;

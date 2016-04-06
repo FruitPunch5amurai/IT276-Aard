@@ -13,7 +13,7 @@ void ThinkObject(Entity* ent);
 void TouchObject(Entity* ent,Entity* other);
 void DrawObject(Entity* ent);
 void UpdateObject(Entity* ent);
-#define MAX_ENTITIES		500
+int MAX_ENTITIES	= 500;
 extern SDL_Rect *camera;
 extern Entity* playerEnt;
 Entity* EntityList = NULL;
@@ -42,8 +42,8 @@ void CloseEntityList()
 	{
 		if(EntityList[i].sprite != NULL)
 		{
-		FreeSprite(EntityList[i].sprite);
-		EntityList[i].inuse--;
+		if(EntityList[i].free != NULL)
+			(*EntityList[i].free)(&EntityList[i]);
 		}
 	}
 	free(EntityList);
@@ -73,7 +73,7 @@ void ThinkEntities()
 	int i;
 	for(i = 0;i < MAX_ENTITIES;i++)
 	{
-		if(!EntityList[i].inuse)
+		if(EntityList[i].inuse <= 0)
 		{
 			continue;
 		}
@@ -121,9 +121,9 @@ void DrawEntity(Entity *ent,int animationNum,int x, int y)
 	*/
 
 
-	Animate(ent->sprite->animation[animationNum],ent->sprite->animation[animationNum]->startFrame);
+	Animate(&ent->sprite->animation[animationNum],ent->sprite->animation[animationNum].startFrame);
 	DrawSprite(ent->sprite,x
-		,y,GetCurrentFrame(ent->sprite->animation[animationNum]),
+		,y,GetCurrentFrame(&ent->sprite->animation[animationNum]),
 		GetRenderer(),ent->flipped);
 }
 /**
@@ -156,6 +156,7 @@ void FreeEntity(Entity* ent)
 		FreeSprite(ent->sprite);
 		ent->id =  NULL;
 		ent = NULL;
+		free(ent);
 	}
 }
 /**
@@ -214,7 +215,7 @@ Entity* EntityIntersectAll(Entity *a)
 	for(i = 0;i < MAX_ENTITIES;i++)
 		if(EntityList[i].inuse && &EntityList[i] != a)
 		{
-			if(a->room == playerEnt->room)
+			if(a->room->id == playerEnt->room->id)
 			{
 			if(AABB(a->hitBox,EntityList[i].hitBox)){
 				(a->touch)(a,&EntityList[i]);
@@ -303,7 +304,7 @@ Entity *CreatePortal(int x, int y)
 {
 	Entity *portal;
 	portal = CreateEntity();
-	portal->sprite = LoadSprite("images/Portal.png",32,32);
+ 	portal->sprite = LoadSprite("images/Portal.png",32,32);
 	portal->whatAmI = Portal;
 
 	portal->position.x =x;
@@ -316,9 +317,9 @@ Entity *CreatePortal(int x, int y)
 	portal->hitBox.h = portal->sprite->h;
 
 	portal->currentAnimation = 0;
-	portal->sprite->animation[0]->oscillate = true ;
-	portal->sprite->animation[0]->startFrame = 0;
-	portal->sprite->animation[0]->maxFrames = 3;
+	portal->sprite->animation[0].oscillate = true ;
+	portal->sprite->animation[0].startFrame = 0;
+	portal->sprite->animation[0].maxFrames = 3;
 
 	portal->draw = &DrawPortal;
 	return portal;

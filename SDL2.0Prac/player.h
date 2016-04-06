@@ -24,13 +24,15 @@ typedef struct PlayerData{
 	SDL_Rect* camera;
 
 }Player;
+void CreatePlayerData();
+void SetPlayerData();
 void CreatePlayer(int x,int y);
 Entity *GetPlayer();
 void DrawPlayer(Entity* ent);
 void UpdatePlayer(Entity* ent);
 void ThinkPlayer(Entity *ent);
 void TouchPlayer(Entity *ent,Entity *other);
-void FreePlayer();
+void FreePlayer(Entity* ent);
 void SetPlayerAnimations(Entity* ent);
 void RenderHPBar(int x, int y, int w, int h, float Percent, SDL_Color FGColor, SDL_Color BGColor) ;
 void UpdateGUI();

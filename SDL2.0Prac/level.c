@@ -2,15 +2,46 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <glib.h>
 #include "vectors.h"
 #include "graphics.h"
-#include"entity.h"
 #include"spirit.h"
 #include "enemy.h"
+#include "obj.h"
+#include "collision.h"
+#include "player.h"
 #include "level.h"
 
 Map *map;
-extern void SetUpMap(Map* map,FILE *file);
+Map *MapList = NULL;
+extern Entity* playerEnt;
+extern int  MAX_ENTITIES;
+extern Entity* EntityList;
+GHashTable *GMaps = g_hash_table_new_full(g_str_hash,g_str_equal,NULL,NULL);
+
+/**
+*@brief Allocates memory for mapList
+*/
+void InitMapList()
+{
+	MapList = (Map*)malloc(sizeof(Map) *20);
+	memset(MapList,0,sizeof(Map) * 20);	
+	atexit(CloseMapList);
+}
+/**
+*@brief Frees Allocated memory for mapList
+*/
+void CloseMapList()
+{
+	int i;
+	if(!MapList)
+	{
+		printf("Entity List not initialized");
+		return;
+	}
+	free(MapList);
+	MapList = NULL;
+}
 /**
 *@brief Allocates memory for map
 *@param int tileW for Tilewidth , int TileH for Tileheight, int mapWidth for width of map,
@@ -18,17 +49,35 @@ extern void SetUpMap(Map* map,FILE *file);
 */
 Map* CreateMap(int tileW, int tileH,int mapWidth,int mapHeight,int numOfRooms)
 {
-	map = (Map*)malloc(sizeof(Map));
-	memset(map,0,sizeof(map));
-	
-	map->rooms = (Room*)malloc(sizeof(Room)* numOfRooms);
-	map->numberOfRooms = numOfRooms;
-	map->tileW = tileW;
-	map->tileH = tileH;
-	map->w = mapWidth;
-	map->h = mapHeight;
-	map->numSolidTiles = 0;
-	return map;
+	int i;
+	for(i = 0;i < 20;i++)
+	{
+		if(!MapList[i].w <= 0)
+			continue;
+		memset(&MapList[i],0,sizeof(Map));
+		MapList[i].rooms = (Room*)malloc(sizeof(Room)* numOfRooms);
+		MapList[i].numberOfRooms = numOfRooms;
+		MapList[i].tileW = tileW;
+		MapList[i].tileH = tileH;
+		MapList[i].w = mapWidth;
+		MapList[i].h = mapHeight;
+		MapList[i].numSolidTiles = 0;
+		MapList[i].numOfEntities = 0;
+		return &MapList[i];
+	}
+}
+/**
+*@brief Free Allocated memory for current map pointer
+*/
+void FreeMap()
+{
+	if(!map)
+	{
+		printf("Map not initialized");
+		return;
+	}
+	free(map);
+	map= NULL;
 }
 /**
 *@brief Loads in a specified .map and loads in the values into map as well as
@@ -73,7 +122,11 @@ bool Load(char *mapName, char *imageName)
 			tileH = j;
 			fscanf(file,"%s",buf);
 			fscanf(file,"%d",&j);
-			map = CreateMap(tileW,tileH,mapWidth,mapHeight,j);
+			map = NULL;
+      		map = CreateMap(tileW,tileH,mapWidth,mapHeight,j);
+			//map->EntityList = (Entity*)malloc(sizeof(Entity) * MAX_ENTITIES);
+		//	memset(map->EntityList,0,sizeof(Entity) * MAX_ENTITIES);	
+  			strncpy(map->name,mapName,128);
 			map->solidLayer = (int*)malloc(sizeof(int) * map->w*map->h);
 			map->data = (int*)malloc(sizeof(int) * map->w*map->h);
 			map->data2 = (int*)malloc(sizeof(int) * map->w*map->h);
@@ -114,14 +167,55 @@ bool Load(char *mapName, char *imageName)
 	ConnectRooms();
 	GenerateSolidLayer(map);
 	fclose(file);
-
+	/*
+	Map *map1; 
+		if(g_hash_table_lookup(GMaps,map->name))
+		{
+			map1 = (Map*)g_hash_table_lookup(GMaps,map->name);
+		}
+		*/
 	map->tiles = LoadSprite(imageName,tileW,tileH);
+	g_hash_table_insert(GMaps,mapName,map);
 	if(!map->tiles)
 	{
 	return false;
 	}
+	
 	return true;
 	
+}
+
+void LoadBreakableObjects(FILE *file)
+{
+	int j = 0,i = 0;
+	int frame = 0;
+	int type = 0;
+	int count = 0;
+	int w = 0;
+	int h = 0;
+	int x = 0;
+	int y = 0;
+	char buf[500];
+	fscanf(file,"%s",buf);
+	fscanf(file,"%d",&frame);
+	fscanf(file,"%s",buf);
+	fscanf(file,"%s",buf);
+	if(strcmp(buf,"Breakable") == 0)
+		type = 4;
+	fscanf(file,"%s",buf);
+	fscanf(file,"%d",&count);
+	fscanf(file,"%s",buf);
+	fscanf(file,"%d",&w);
+	fscanf(file,"%s",buf);
+	fscanf(file,"%d",&h);
+	fscanf(file,"%s",buf);
+	for(i = 0;i < count;i++){
+		fscanf(file,"%d",&x);
+		fscanf(file,"%s",buf);
+		fscanf(file,"%d",&y);
+ 		CreateObject(CreateVec2D(x*33,y*28),w,h,type,frame);
+		map->numOfEntities++;
+	}
 }
 /**
 *@brief Loads in Solid tiles into an array used to keep track of them
@@ -179,6 +273,7 @@ void GenerateSolidLayer(Map *map)
 void DrawMap(int layer, int xOffset ,int yOffset)
 {
 	int* drawLayer = NULL;
+	if(map != NULL){
 	if(layer == 0)
 		drawLayer = map->solidLayer;
 	if(layer == 1)
@@ -222,6 +317,7 @@ void DrawMap(int layer, int xOffset ,int yOffset)
 		}
 	}
 }
+}
 /**
 *@brief Tells me if a tile is solid
 *@param Map poiner, and a number which indicates a tile in "layer" 
@@ -247,12 +343,22 @@ bool CheckSolid(Map *map,int x, int y)
 		return map->solidLayer[y*map->w+ x];
 		}
 }
+/**
+*@brief Spawns Entities on the map from map file
+*@param Map* map pointer to map
+*@param FILE* file pointer 
+*/
 void SetUpMap(Map* map,FILE *file)
 {
 	char buf[500];
-	int j,k,l,i,RoomId,LinksTo[4],joined[4];
+	int j,k,l,i,m,a,RoomId,LinksTo[4];
+	char filename[128];
 	SDL_Rect *roomDimensions = (SDL_Rect*)malloc(sizeof(SDL_Rect));
 	while(fscanf(file,"%s",buf) != EOF){
+		if(strcmp(buf,"#Objects") == 0)
+		{
+			LoadBreakableObjects(file);
+		}
 		if(strcmp(buf,"#RoomIds") == 0)
 		{
 			for(i = 0; i < map->numberOfRooms;++i)
@@ -278,27 +384,6 @@ void SetUpMap(Map* map,FILE *file)
 					while(k < 3);
 					
 				}
-				if(strcmp(buf,"Joined:") == 0)
-				{
-					fscanf(file,"%d",&joined[0]);
-					fscanf(file,"%s",buf);
-					k= 0;
-					while(strcmp(buf,",") == 0){
-					k++;
-					fscanf(file,"%d",&joined[k]);
-					fscanf(file,"%s",buf);
-				}
-				if(k < 3)
-				{
-					do
-					{
-						k++;
-						joined[k] = NULL;
-					}
-					while(k < 3);
-					
-				}
-				}
 				fscanf(file,"%d",&roomDimensions->w);
 				fscanf(file,"%s",buf);
 				fscanf(file,"%d",&roomDimensions->h);
@@ -306,7 +391,7 @@ void SetUpMap(Map* map,FILE *file)
 				fscanf(file,"%d",&roomDimensions->x);
 				fscanf(file,"%s",buf);
 				fscanf(file,"%d",&roomDimensions->y);
-				CreateRoom(RoomId,roomDimensions,LinksTo,joined);
+				CreateRoom(RoomId,roomDimensions,LinksTo);
 			}
 		}
 		if(strcmp(buf,"#Spirits") == 0){
@@ -320,6 +405,8 @@ void SetUpMap(Map* map,FILE *file)
 				fscanf(file,"%s",buf);
 				fscanf(file,"%d", &k);
 				CreateSpirit(j,k);
+				//memcpy(map->EntityList,CreateSpirit(j,k),sizeof(Entity));
+				map->numOfEntities++;
 			}
 		}
 		if(strcmp(buf,"#Enemies") == 0){
@@ -334,7 +421,8 @@ void SetUpMap(Map* map,FILE *file)
 						fscanf(file,"%d",&k);
 						fscanf(file,"%s",buf);
 						fscanf(file,"%d",&l);
-					CreateEnemy(k,l,2);
+					CreateEnemy(k,l,Snatcher);
+					map->numOfEntities++;
 					}
 				}
 				if(strcmp(buf,"Lurker")== 0)
@@ -346,8 +434,8 @@ void SetUpMap(Map* map,FILE *file)
 						fscanf(file,"%d",&k);
 						fscanf(file,"%s",buf);
 						fscanf(file,"%d",&l);
-					CreateEnemy(k,l,1);
-				}
+					CreateEnemy(k,l,Lurker);
+				}	map->numOfEntities++;
 				}
 				if(strcmp(buf,"Chaser")== 0)
 				{
@@ -358,8 +446,9 @@ void SetUpMap(Map* map,FILE *file)
 						fscanf(file,"%d",&k);
 						fscanf(file,"%s",buf);
 						fscanf(file,"%d",&l);
-					CreateEnemy(k,l,0);
-				}
+					CreateEnemy(k,l,Chaser);
+					map->numOfEntities++;
+					}
 			}
 		}
 		if(strcmp(buf,"#Portal") == 0){
@@ -368,12 +457,35 @@ void SetUpMap(Map* map,FILE *file)
 			fscanf(file,"%s",buf);
 			fscanf(file,"%d", &k);
 			CreatePortal(j,k);
+			map->numOfEntities++;
+		}
+		if(strcmp(buf,"#Dungeons") == 0){
+			fscanf(file,"%s",buf);
+			fscanf(file,"%s",filename);
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d", &j);
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d",&k);
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d", &l);
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d",&m);
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d", &i);
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d",&a);
+			CreateDungeonEntrance(l,m,j,k,filename,i,a);
+			map->numOfEntities++;
 		}
 
+
+
+
 	}
-
 }
-
+/**
+*@brief Connects all the rooms of the map
+*/
 void ConnectRooms()
 {
 	for(int i = 0; i <= map->numberOfRooms;++i)
@@ -392,18 +504,19 @@ void ConnectRooms()
 		:	&map->rooms[map->rooms[i].roomIDs[3]];
 	}
 }
-
-Room *CreateRoom(int id,SDL_Rect *boundary,int linksTo[],int joined[])
+/**
+*@brief Creates and allocates memory for a room
+*@param The rooms id
+*@param The rooms size
+*@param the list of room id's it links to
+*/
+Room *CreateRoom(int id,SDL_Rect *boundary,int linksTo[])
 {
 	Room *room;
 	room = (Room*)malloc(sizeof(Room));
 	for(int i = 0;i < 4;i++)
 	{
 		room->roomIDs[i] = linksTo[i];
-	}
-	for(int i = 0;i < 4;i++)
-	{
-		room->roomIDsJoined[i] = joined[i];
 	}
 	room->boundary = *boundary;
 	room->id = id;
@@ -416,7 +529,11 @@ Room *CreateRoom(int id,SDL_Rect *boundary,int linksTo[],int joined[])
 	}
 	return room;
 }
-
+/**
+*@brief Locates a room
+*@param id of room
+*@return pointer to the room
+*/
 Room *FindRoomWithID(int id)
 {
 	for(int i = 0; i <= map->numberOfRooms;++i)
@@ -428,5 +545,117 @@ Room *FindRoomWithID(int id)
 	}
 
 }
+/**
+*@brief Creates a dungeon entrance
+*@param int x and y for position, int w and h for width and height
+*@param the name of the dungeon it leads to
+*@param the position to spawn the player when he touches it
+*/
+Entity* CreateDungeonEntrance(int x,int y,int w, int h,char filename[128],int playerSpawnX,int playerSpawnY)
+{
+	Entity* dungeon;
+	dungeon = CreateEntity();
+	dungeon->whatAmI = Dungeon;
+	dungeon->sprite = LoadSprite("images/Resources1.png",w,h);
+	dungeon->currentAnimation = 0;
 
+	dungeon->sprite->animation[0].startFrame = 4;
+	dungeon->sprite->animation[0].currentFrame = 4;
+	dungeon->sprite->animation[0].maxFrames = 1;
+	dungeon->sprite->animation[0].oscillate = 0;
+	dungeon->position.x = x;
+	dungeon->position.y = y;
+	dungeon->savedPlayerPos.x = playerSpawnX;
+	dungeon->savedPlayerPos.y = playerSpawnY;
+	dungeon->dimensions.x = w;
+	dungeon->dimensions.y = h;
+	dungeon->hitBox.w = w;
+	dungeon->hitBox.h = h;
+	dungeon->hitBox.x= x;
+	dungeon->hitBox.y = y;
+	strncpy(dungeon->dungeonName,filename,20);
+	for(int i =0;i < map->numberOfRooms;++i)
+	{
+ 		if(AABB(dungeon->hitBox,map->rooms[i].boundary))
+		{
+			dungeon->room = &map->rooms[i];
+		}
+	}
+	dungeon->draw = &DrawObject;
+	dungeon->think = NULL;
+	dungeon->free = &FreeEntity;
+	dungeon->touch = NULL;
+	return dungeon;
+}
+/**
+*@brief Loads a Dungeon into map pointer
+*@param filename of the dungeon, Vec2D where to spawn player
+*/
+void LoadDungeon(char *filename,Vec2D playerSpawn)
+{
+	char dungeonName[120];
+	strncpy(dungeonName,filename,120);
+	/*
+	if(g_hash_table_lookup(GMaps,filename))
+		{
+			map = (Map*)g_hash_table_lookup(GMaps,filename);
+			map->tiles = LoadSprite("images/Resources1.png",map->tileW,map->tileH);
+			CloseEntityList();
+			InitEntityList();
+			memcpy(EntityList,map->EntityList,sizeof(Entity) * MAX_ENTITIES);
+			LoadEntities();		
+	}else{*/
+		//memcpy(map->EntityList,EntityList,sizeof(Entity) * MAX_ENTITIES);
+		CloseEntityList();
+		CloseSpriteSystem();
+		InitSpriteList();
+		InitEntityList();
+		Load(dungeonName,"images/Resources1.png");
+		CreatePlayer(playerSpawn.x,playerSpawn.y);
+	//}
+		
+}
+/**
+*@brief Loads in all the entities associated with the current map
+*/
+void LoadEntities()
+{
+	int i;
+	for(i = 0; i < MAX_ENTITIES;++i)
+	{
+		if(map->EntityList[i].whatAmI == Enemy)
+		{
+			CreateEnemy(map->EntityList[i].position.x,map->EntityList[i].position.y,map->EntityList[i].enemyType);
+		}
+		else if(map->EntityList[i].whatAmI == Spirit)
+		{
+			CreateSpirit(map->EntityList[i].position.x,map->EntityList[i].position.y);
+		}
+		else if(map->EntityList[i].whatAmI == BreakableObject)
+		{
+			CreateObject(map->EntityList[i].position,map->EntityList[i].sprite->w,map->EntityList[i].sprite->h
+				, 4,map->EntityList[i].currentFrame);
+		}
+		else if(map->EntityList[i].whatAmI == Dungeon)
+		{
+			CreateDungeonEntrance(map->EntityList[i].position.x,
+				map->EntityList[i].position.y,
+				map->EntityList[i].sprite->w, 
+				map->EntityList[i].sprite->h,
+				map->EntityList[i].dungeonName,
+				map->EntityList[i].savedPlayerPos.x,
+				map->EntityList[i].savedPlayerPos.y);
+		}
+		else if(map->EntityList[i].whatAmI == Portal)
+		{
+			CreatePortal(map->EntityList[i].position.x,map->EntityList[i].position.y);
+		}
+		/*
+		EntityList[i] = map->EntityList[i];
+		if(EntityList[i].inuse)
+		EntityList[i].sprite = LoadSprite(map->EntityList[i].sprite->filename,
+			map->EntityList[i].sprite->w,map->EntityList[i].sprite->h);
+	*/
+	}
 
+}

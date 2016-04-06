@@ -3,7 +3,7 @@
 
 #include "spirit.h"
 
-Entity* CreateEnemy(int x, int y, int type);
+Entity* CreateEnemy(int x, int y, EnemyType type);
 void DrawEnemy(Entity *ent);
 void UpdateEnemyChaser(Entity *ent);
 void ThinkEnemyChaser(Entity *ent);

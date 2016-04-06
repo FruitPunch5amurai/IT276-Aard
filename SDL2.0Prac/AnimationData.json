@@ -1,0 +1,94 @@
+{"AnimationData" : [
+{
+	"Entity" : "Aard",
+	"filepath" : "images/Link.png",
+	"frame-width" : 16,
+	"frame-height" : 25,
+	"Animations" :[
+		{
+			"name" : "walk-down" ,
+			"start-frame" : 0,
+			"max-frames" : 7,
+			"oscillate" : 1,
+			"held-frame" : 4
+		},
+		{
+			"name" : "walk-up" ,
+			"start-frame" : 16,
+			"max-frames" : 7,
+			"oscillate" : 1,
+			"held-frame" : 4	
+		},
+		{
+			"name" : "walk-horizontal" ,
+			"start-frame" : 32,
+			"max-frames" : 7,
+			"oscillate" : 1,
+			"held-frame" : 4
+		}		
+	]
+},
+	{
+		"Entity" : "Chaser",
+		"EnemyType" : 0,
+		"filepath" : "images/Ghostmove.png" ,
+		"frame-width" : 31 ,
+		"frame-height" : 31 ,
+		"Animations" :[
+			{
+				"name" : "idle" , 
+				"start-frame" : 0 ,
+				"max-frames" : 3,
+				"oscillate" : 1 
+			},
+			{
+				"name" : "move" , 
+				"start-frame" : 0 ,
+				"max-frames" : 3,
+				"oscillate" : 1 
+			}
+		
+		]
+	},
+	{
+		"Entity" : "Lurker" ,
+		"EnemyType" : 1,
+		"filepath" : "images/lurker.png" ,
+		"frame-width" : 31 ,
+		"frame-height" : 31 ,
+		"Animations" :[
+			{
+				"name" : "idle" , 
+				"start-frame" : 0 ,
+				"max-frames" : 3 ,
+				"oscillate" : 1 
+			},
+			{
+				"name" : "move" , 
+				"start-frame" : 0 ,
+				"max-frames" : 3,
+				"oscillate" : 1 
+			}
+			
+		
+		]
+	},
+	{
+		"Entity" : "Snatcher" ,
+		"EnemyType" : 2,
+		"filepath" : "images/Enemies3.png" ,
+		"frame-width" : 32 ,
+		"frame-height" : 32 ,
+		"Animations" :[
+			{
+				"name" : "idle" , 
+				"start-frame" : 0 ,
+				"max-frames" : 2 ,
+				"oscillate" : 1 
+			}
+		
+		]
+	}
+]
+}
+

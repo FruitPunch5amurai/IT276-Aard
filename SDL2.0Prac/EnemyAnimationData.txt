@@ -1,49 +1,26 @@
 #Chaser
-#NumAnimations 4
+#NumAnimations 2
 #Idle
 0
 0
 2
 1
 
-#WalkRight
+#Walk
 0
 0
 2
 1
 
-#WalkUp
-0
-0
-2
-1
-
-#WalkDown
-0
-0
-2
-1
 #Lurker
-#NumAnimations 4
+#NumAnimations 2
 #Idle
 0
 0
 3
 1
 
-#WalkRight
-0
-0
-3
-1
-
-#WalkUp
-0
-0
-3
-1
-
-#WalkDown
+#Walk
 0
 0
 3

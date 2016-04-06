@@ -90,8 +90,10 @@ Entity* Remove(ELink* e)
 {
 
 	Entity* ent = Next(e->curr)->curr;
-	SetNext(Prev(e->curr),Next(e->curr));
-	SetPrev(Next(e->curr),Prev(e->curr));
+	if(Next(e->curr) != NULL){
+		SetNext(Prev(e->curr),Next(e->curr));
+		SetPrev(Next(e->curr),Prev(e->curr));
+	}
 	e->curr = Prev(e->curr);
 	e->count--;
 

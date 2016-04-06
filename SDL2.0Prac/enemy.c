@@ -4,6 +4,7 @@
 #include <time.h>
 #include <math.h>
 #include <string>
+#include <jansson.h>
 #include "player.h"
 #include "vectors.h"
 #include "entity.h"
@@ -14,42 +15,86 @@ extern Map *map;
 extern Entity *playerEnt;
 extern Player *playerData;
 
-Entity *CreateEnemy(int x, int y, int type)
+Entity *CreateEnemy(int x, int y, EnemyType type)
 {
 	Entity *enemy = CreateEntity();
 	srand(time(NULL));
 
 	enemy->enemyType = type;
-	if(type == 0)
+	json_t *root;
+	json_error_t err;
+	root = json_load_file("AnimationData.json",0,&err);
+	if(!root)
 	{
-		enemy->sprite= LoadSprite("images/Ghostmove.png",31,31);
+		fprintf(stderr,"error: on line %d : %s\n", err.line,err.text);
+		exit(1);
+	}
+
+		json_t *data , *Entity, *Animations;
+		char *ENT ,*filepath; 
+		int frameW, frameH,id;
+		data = json_object_get(root,"AnimationData");
+		for(int i = 0;i < json_array_size(data);++i)
+		{
+			Entity = json_array_get(data,i);
+			json_unpack(Entity,"{s:s,s:i,s:s,s:i,s:i}","Entity",&ENT,"EnemyType",&id,"filepath",&filepath,"frame-width",&frameW,"frame-height",&frameH);
+			if(id == type){
+			enemy->sprite = LoadSprite(filepath,frameW,frameH);
+			data = json_object_get(Entity,"Animations");
+			if(!json_is_array(data))
+			{
+				fprintf(stderr, "error: commit %d: Not an array\n", 0);
+				json_decref(root);
+				exit(1);
+			}
+		for(int i = 0;i < json_array_size(data);++i)
+		{
+			Animations = json_array_get(data,i);	
+			if(!json_is_object(Animations))
+			{
+				fprintf(stderr, "error: commit %d: Not an object\n", 0);
+				json_decref(root);
+				exit(1);
+			}
+
+			enemy->sprite->animation[i].startFrame = json_number_value(json_object_get(Animations,"start-frame"));
+			enemy->sprite->animation[i].currentFrame = enemy->sprite->animation[i].startFrame;
+			enemy->sprite->animation[i].maxFrames = json_number_value(json_object_get(Animations,"max-frames"));
+			enemy->sprite->animation[i].oscillate = json_number_value(json_object_get(Animations,"oscillate"));
+			enemy->sprite->animation[i].holdFrame = 0;
+			enemy->sprite->animation[i].frameInc = 1;
+			if(json_object_get(Animations,"held-frame"))
+				enemy->sprite->animation[i].heldFrame = json_number_value(json_object_get(Animations,"held-frame"));
+			else
+				enemy->sprite->animation[i].heldFrame = -1;
+		}
+		}else{
+			continue;
+		}
+	}
+	json_decref(root);
+	if(type == Chaser)
+	{
 		enemy->sprite->fpl = 1;
-		SetEnemyAnimations(enemy,"EnemyAnimationData.txt");
 		enemy->speed = 2;
 		enemy->update = &UpdateEnemyChaser;	
 		enemy->think = &ThinkEnemyChaser;
 		enemy->currentAnimation = 0;
 	}
-	else if(type == 1){
-		enemy->sprite= LoadSprite("images/lurker.png",31,31);
+	else if(type == Lurker){
 		enemy->sprite->fpl = 1;
-		SetEnemyAnimations(enemy,"EnemyAnimationData.txt");
 		enemy->speed = 4;
 		enemy->update = &UpdateEnemyLurker;
 		enemy->think = &ThinkEnemyLurker;
 		enemy->currentAnimation = 0;
 	}
-	else if(type == 2)
+	else if(type == Snatcher)
 	{
-		enemy->sprite= LoadSprite("images/Enemies3.png",32,32);
-		SetEnemyAnimations(enemy,"EnemyAnimationData.txt");
 		enemy->update = &UpdateEnemySnatcher;	
 		enemy->think = &ThinkEnemySnatcher;
 		enemy->state = IDLE;
 		enemy->speed = 2;
-		enemy->currentAnimation = 0;
-		enemy->sprite->animation[0]->frameRate = 500;
-
+		enemy->sprite->animation[0].frameRate = 500;
 	}
 	enemy->dimensions.x = enemy->sprite->w;
 	enemy->dimensions.y = enemy->sprite->h;
@@ -77,6 +122,7 @@ Entity *CreateEnemy(int x, int y, int type)
 	enemy->moveIndicator = 0;
 	enemy->draw = &DrawEnemy;
 	enemy->touch = &TouchEnemy;
+	enemy->free = &FreeEnemy;
 
 	return enemy;
 }
@@ -169,11 +215,13 @@ void ThinkEnemyChaser(Entity *ent)
 			ent->nextMove = 0;
 			ent->moveIndicator = rand() % 4;
 			ent->state = MOVING;
+			ent->currentAnimation = 1;
 		}
 		else if(ent->nextMove >= 2 && ent->state != IDLE ) 
 		{
 			ent->nextMove = 0;
 			ent->state = IDLE;
+			ent->currentAnimation = 0;
 		}
 		ent->nextThink = SDL_GetTicks() + 500;
 	}	
@@ -319,79 +367,7 @@ void TouchEnemy(Entity *ent, Entity* other)
 void FreeEnemy(Entity *ent)
 {
 	FreeEntity(ent);
+	ent= NULL;
 }
-void SetEnemyAnimations(Entity *ent,char *filename)
-{
-	char buf[50];
-	int j;
-	int i,numAnimations;
-	FILE *file;
-	file = fopen(filename,"r");
-	if(!file)
-	{
-		printf("Unable to read EnemyAnimationData");
-		return;
-	}
-	i = 0;
-	if(ent->enemyType == 0){
-	while(fscanf(file,"%s",buf) != EOF){
-		if(strcmp(buf,"#Chaser") == 0)
-		{
-			fscanf(file,"%s",buf);
-			fscanf(file,"%d",&numAnimations);
-			for(i = 0;i < numAnimations;i++){ 
-				fscanf(file,"%s",buf);
-				fscanf(file,"%d",&j);
-				ent->sprite->animation[i]->currentFrame = j;
-				fscanf(file,"%d",&j);
-				ent->sprite->animation[i]->startFrame = j;
-				fscanf(file,"%d",&j);
-				ent->sprite->animation[i]->maxFrames = j;
-				fscanf(file,"%d",&j);
-				ent->sprite->animation[i]->oscillate = j;
-			}
-		}
-	}
-	}
-	if(ent->enemyType == 1){
-	while(fscanf(file,"%s",buf) != EOF){
-		if(strcmp(buf,"#Lurker") == 0)
-		{
-			fscanf(file,"%s",buf);
-			fscanf(file,"%d",&numAnimations);
-			for(i = 0;i < numAnimations;i++){ 
-				fscanf(file,"%s",buf);
-				fscanf(file,"%d",&j);
-				ent->sprite->animation[i]->currentFrame = j;
-				fscanf(file,"%d",&j);
-				ent->sprite->animation[i]->startFrame = j;
-				fscanf(file,"%d",&j);
-				ent->sprite->animation[i]->maxFrames = j;
-				fscanf(file,"%d",&j);
-				ent->sprite->animation[i]->oscillate = j;
-			}
-		}
-	}
-	}
-	if(ent->enemyType == 2){
-	while(fscanf(file,"%s",buf) != EOF){
-		if(strcmp(buf,"#Snatcher") == 0)
-		{
-			fscanf(file,"%s",buf);
-			fscanf(file,"%d",&numAnimations);
-			for(i = 0;i < numAnimations;i++){ 
-				fscanf(file,"%s",buf);
-				fscanf(file,"%d",&j);
-				ent->sprite->animation[i]->currentFrame = j;
-				fscanf(file,"%d",&j);
-				ent->sprite->animation[i]->startFrame = j;
-				fscanf(file,"%d",&j);
-				ent->sprite->animation[i]->maxFrames = j;
-				fscanf(file,"%d",&j);
-				ent->sprite->animation[i]->oscillate = j;
-			}
-		}
-	}
-	}
-}
+
 

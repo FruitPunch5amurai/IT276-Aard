@@ -11,10 +11,11 @@ typedef struct AnimationData{
 	int currentFrame;
 	int frameInc;
 	int frameRate;
+	int heldFrame;
 	long oldTime;
 	int maxFrames;
 	int oscillate;
-
+	int holdFrame;
 }Animation;
 	void Animate(Animation* animation,int startFrame);
 	void SetCurrentFrame(Animation* animation,int Frame);
@@ -25,7 +26,7 @@ typedef struct AnimationData{
 typedef struct SpriteData{
   SDL_Surface *surfaceImage;	
   SDL_Texture *image;		/*pointer to the actual image in memory*/
-  Animation* animation[MAX_ANIMATIONS];	/*Array of animations for sprite*/
+  Animation animation[MAX_ANIMATIONS];	/*Array of animations for sprite*/
   char filename[30];			/*the name of the file, keep them short*/
   int w, h;					/*the width and height of the frames of the sprites, not the file itself*/
   int fpl;			/*default is 16*/
@@ -33,6 +34,7 @@ typedef struct SpriteData{
 }Sprite;
 
 void InitSpriteList();
+void CloseSpriteSystem();
 void FreeSprite(Sprite *img);
 void FreeAnimations(Sprite *sprite);
 Sprite *LoadSprite(char *filename,int sizex, int sizey);	

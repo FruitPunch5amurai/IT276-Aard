@@ -11,7 +11,6 @@
 extern SDL_Rect * camera;
 static Sprite *SpriteList = NULL;
 int Num_Sprites;
-void CloseSpriteSystem();
 /**
 *@brief Initializes Sprite List
 */
@@ -23,13 +22,13 @@ void InitSpriteList()
 	for(x = 0;x < MAX_SPRITES;x++){
 		for(j = 0;j < 20;j++)
 	{
-		SpriteList[x].animation[j] = (Animation*) malloc(sizeof(Animation));
-		SpriteList[x].animation[j] ->currentFrame = 0;
-		SpriteList[x].animation[j]->maxFrames = 0;
-		SpriteList[x].animation[j]->frameInc = 1;
-		SpriteList[x].animation[j]->frameRate = 100;
-		SpriteList[x].animation[j]->oldTime = 0;
-		SpriteList[x].animation[j]->oscillate = false;
+		SpriteList[x].animation[j].currentFrame = 0;
+		SpriteList[x].animation[j].maxFrames = 0;
+		SpriteList[x].animation[j].frameInc = 1;
+		SpriteList[x].animation[j].holdFrame = 0;
+		SpriteList[x].animation[j].frameRate = 100;
+		SpriteList[x].animation[j].oldTime = 0;
+		SpriteList[x].animation[j].oscillate = false;
 	}
 	SpriteList[x].image = NULL;
 	}
@@ -49,13 +48,9 @@ void CloseSpriteSystem()
 	{
 		if(SpriteList[i].image != 0)
 		{
-			SDL_DestroyTexture(SpriteList[i].image);
+			FreeSprite(&SpriteList[i]);
 		}
-		if(SpriteList[i].animation != 0)
-		{
-			for(j = 0;j < 20;j++)
-			SpriteList[i].animation[j] = NULL;
-		}
+		
 	}
 	free(SpriteList);
 	SpriteList = NULL;
@@ -79,10 +74,15 @@ if(sprite->refCount <= 0)
   {
   strcpy(sprite->filename,"\0");
      /*just to be anal retentive, check to see if the image is already freed*/
-  if(sprite->image != NULL)SDL_DestroyTexture(sprite->image);
+	if(sprite->animation != NULL)
+		{
+		memset(&sprite->animation,0,sizeof(Animation));
+		}
+  if(sprite->image != NULL)
+	  SDL_DestroyTexture(sprite->image);
   sprite->image = NULL;
-  FreeAnimations(sprite);
   }
+
   sprite = NULL;
 }
 /**
@@ -93,7 +93,7 @@ void FreeAnimations(Sprite *sprite)
 	int i;
 	for(i = 0;i < MAX_ANIMATIONS;i++)
 	{
-		sprite->animation[i] = NULL;
+		//sprite->animation[i] = NULL;
 	}
 }
 /**
@@ -176,12 +176,16 @@ void Animate(Animation* animation,int startFrame) {
     }
  
     animation->oldTime = SDL_GetTicks();
- 
+	if(animation->holdFrame == 1)
+	{
+		animation->currentFrame = animation->startFrame + animation->heldFrame - 1;
+		return;
+	}
     animation->currentFrame += animation->frameInc;
  
     if(animation->oscillate) {
         if(animation->frameInc > 0) {
-			if(animation->currentFrame >= animation->maxFrames + startFrame) 
+			if(animation->currentFrame >= animation->maxFrames-1 + startFrame) 
 			{
                 animation->frameInc = -animation->frameInc;
             }
@@ -192,7 +196,7 @@ void Animate(Animation* animation,int startFrame) {
             }
         }
     }else{
-        if(animation->currentFrame >= animation->maxFrames) {
+        if(animation->currentFrame >= animation->maxFrames + startFrame) {
             animation->currentFrame = startFrame;
         }
     }

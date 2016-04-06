@@ -9,29 +9,31 @@
 
 extern Map* map;
 extern Entity* playerEnt;
-void CreateObject(int x, int y,int width, int height, int type)
+extern Entity* EntityList;
+
+Entity* CreateObject(Vec2D position,int width, int height, int type, int frame)
 {
 	Entity *object;
 	object= CreateEntity();
 	object->sprite = LoadSprite("images/BigWhiteRock.png",width,height);
-	object->sprite->animation[0]->startFrame = 0;
-	object->sprite->animation[0]->currentFrame = 0;
-	object->sprite->animation[0]->maxFrames = 1;
-	object->sprite->animation[0]->oscillate = 0;
-	object->sprite->animation[1]->startFrame = 16;
-	object->sprite->animation[1]->currentFrame = 16;
-	object->sprite->animation[1]->maxFrames = 7;
-	object->sprite->animation[1]->oscillate = 1;
+	object->sprite->animation[0].startFrame = frame;
+	object->sprite->animation[0].currentFrame = frame;
+	object->sprite->animation[0].maxFrames = 1;
+	object->sprite->animation[0].oscillate = 0;
+	object->sprite->animation[1].startFrame = 16;
+	object->sprite->animation[1].currentFrame = 16;
+	object->sprite->animation[1].maxFrames = 7;
+	object->sprite->animation[1].oscillate = 1;
 	object->currentAnimation = 0;
-	object->position.x = x;
-	object->position.y = y;
+	object->position.x = position.x;
+	object->position.y = position.y;
 	object->speed = 15;
 	object->dimensions.x = width;
 	object->dimensions.y = height;
 	object->hitBox.w = width;
 	object->hitBox.h = height;
-	object->hitBox.x = x;
-	object->hitBox.y = y;
+	object->hitBox.x = position.x;
+	object->hitBox.y = position.y;
 	for(int i =0;i < map->numberOfRooms;++i)
 	{
 		if(AABB(object->hitBox,map->rooms[i].boundary))
@@ -39,20 +41,22 @@ void CreateObject(int x, int y,int width, int height, int type)
 			object->room = &map->rooms[i];
 		}
 	}
-	if(type == 0){
+	if(type == 4){
 		object->whatAmI = BreakableObject;
 		object->think = &ThinkObject;
 		object->touch = &TouchObject;
 		object->draw = &DrawObject;
 		object->update = &UpdateObject;
+		object->free = &BreakObject;
 		object->nextThink = 0;
 	}
+	return object;
 }
 
 void DrawObject(Entity* ent)
 {
 	DrawEntity(ent,ent->currentAnimation,ent->position.x,ent->position.y);
-	if(ent->sprite->animation[1]->currentFrame == ent->sprite->animation[1]->startFrame + ent->sprite->animation[1]->maxFrames)
+	if(ent->sprite->animation[1].currentFrame == ent->sprite->animation[1].startFrame + ent->sprite->animation[1].maxFrames-1)
 	{
 		BreakObject(ent);
 	}
@@ -73,7 +77,8 @@ void ThinkObject(Entity* ent)
 		ent->hitBox.x = ent->position.x;
 		if(OverlapsMap(map,ent).x != 0 || OverlapsMap(map,ent).y != 0)
 		{
-			Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
+			//Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
+			ent->currentAnimation = 1;
 			ent->velocity.x = ent->velocity.y = 0;
 		}
 	}else if(ent->nextThink < SDL_GetTicks() && ent->temp == 1)
@@ -85,7 +90,7 @@ void ThinkObject(Entity* ent)
 		ent->currentAnimation = 1;
 	}
 
-
+	ent->currentFrame = ent->sprite->animation[ent->currentAnimation].currentFrame;
 }
 void TouchObject(Entity* ent,Entity* other)
 {
@@ -95,6 +100,7 @@ void TouchObject(Entity* ent,Entity* other)
 	{
 		//Do some damage;
 		ent->currentAnimation = 1;
+		ent->velocity.x = 0;ent->velocity.y = 0;
 		              
 	}
 }
@@ -108,4 +114,5 @@ void UpdateObject(Entity* ent)
 void BreakObject(Entity *ent)
 {
 	FreeEntity(ent);
+	ent= NULL;
 }

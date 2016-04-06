@@ -4,12 +4,14 @@
 
 
 
-void CreateSpirit(int x,int y);
+Entity* CreateSpirit(int x,int y);
 void DrawSpirit(Entity* ent);
 void UpdateSpirit(Entity* ent);
 void ThinkSpirit(Entity *ent);
 void TouchSpirit(Entity *ent,Entity *other);
 void FreeSpirit(Entity* ent);
+void ClearSpiritLink();
+
 
 
 #endif
