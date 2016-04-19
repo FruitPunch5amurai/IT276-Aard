@@ -237,10 +237,21 @@ PlayerSpawn: 300 , 520
 #Objects
 Frame: 0
 Type: Breakable
+Filename: images/Objects.png
 Count: 1
 Size: 64 x 64
 Location: 
 6 , 7
+
+Frame: 0
+Type: Chest
+Item: Key
+Filename: images/Chest.png
+Count: 1
+Size: 32 x 32
+Location: 
+9 , 7
+#end
 
 #Enemies
 Type: Chaser
@@ -249,17 +260,16 @@ Location:
 252 , 640
 1216 , 928
 
-#Enemies
 Type: Chaser
 Count: 1
 Location:
 192 , 892
 
-#Enemies
 Type: Snatcher 
 Count: 1
 Location:
 192 , 1100
+#end
 
 #Spirits
 Count: 5

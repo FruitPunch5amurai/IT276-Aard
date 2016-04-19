@@ -5,6 +5,8 @@
 #include "sprite.h"
 #include "vectors.h"
 #include "particle.h"
+#include "items.h"
+#include <glib.h>
 /**
 *@brief Core data of the entity system
 */
@@ -29,7 +31,10 @@ enum EntityType{
 	Enemy,
 	Portal,
 	BreakableObject,
-	Dungeon
+	Dungeon,
+	LockedDoor,
+	Light,
+	Chest
 };
 enum EnemyType{
 	Chaser,
@@ -48,6 +53,7 @@ typedef struct RoomData
 	int roomIDs[4];
 	SDL_Rect boundary;
 }Room;
+typedef struct ItemRefData ItemRef;
 typedef struct EntityData
 {
 	int		inuse;
@@ -57,6 +63,7 @@ typedef struct EntityData
 	float	stun;
 	int		knockback;
 	Entity* objectHolding;
+	ItemRef* itemHolding;
 	SDL_Rect hitBox;
 	SDL_Rect atkBox;
 	Vec2D	position;
@@ -92,6 +99,8 @@ typedef struct EntityData
 	int nextMove;
 	Uint32 temp;
 	int moveIndicator;
+	//Door
+	int doorId;
 
 	void (*update)(struct EntityData *ent);
 	void (*think)(struct EntityData *ent);
@@ -100,9 +109,25 @@ typedef struct EntityData
 	void(*draw)(struct EntityData *ent);
 }Entity;
 
+typedef struct
+{
+	char mapName[128];
+	int width;
+	int height;
+	Vec2D position[20];
+	int playerSpawnX;
+	int playerSpawnY;
+	int frame;
+	EntityType entType;
+	EnemyType enemyType;
+	int count;
+	
+}GEntityInfo;
+
+GEntityInfo* CreateGEntityInfo();
+
 typedef struct 
 {
-	Entity *EntityList;
 	Sprite *tiles;
 	int tileW,tileH;
 	int w,h;
@@ -110,6 +135,10 @@ typedef struct
 	int *data2;
 	int *data3;
 	int *solidLayer;
+	//int *specialLayer;
+	//int *specialLayerCopy;
+	Sprite *specialLayer;
+	int hasSpecialLayer;
 	int solidTiles[60];
 	int numSolidTiles;
 	int numOfSpirits;
@@ -118,6 +147,42 @@ typedef struct
 	char name[128];
 	int numOfEntities;
 }Map;
+
+enum ItemType{
+	Lantern,
+	Key,
+	NONE
+};
+
+typedef struct ItemData{
+	ItemType itemType;		
+	Entity* self;
+	int itemID;
+	int isEquiped;
+	void (*useItem)(struct ItemData *item);
+	void (*freeItem)(struct ItemData *item);
+
+}Items;
+
+typedef struct ItemRefData{
+	ItemType itemType;
+	Sprite* sprite;
+	Items *item;
+	Vec2D pos;
+}ItemRef;
+typedef struct{
+	Sprite* sprite;
+	GList* ref;
+}InventoryCursor;
+
+typedef struct InventoryData{
+	Sprite* sprite;
+	GList *inventory;
+	int keys;
+	//ItemRef inventory[MAX_INVENTORY];
+	int display;
+	InventoryCursor* cursor;
+}Inventory;
 //Map and Room Functions
 void InitMapList();
 void CloseMapList();
@@ -133,6 +198,8 @@ void GenerateSolidLayer(Map* map);
 void LoadBreakableObjects(int data[],FILE *file);
 bool IsTileSolid(Map* map,int tile);
 bool CheckSolid(Map* map,int x, int y);
+bool CheckTile(int* data,int x,int y);
+void DrawSpecialLayer(Map* map);
 void DrawMap(int layer ,int xOffset ,int yOffset);
 void SetUpMap(Map* map,FILE *file);
 Entity* CreateDungeonEntrance(int x,int y,int w, int h,char filename[128],int playerSpawnX,int playerSpawnY);
@@ -162,5 +229,19 @@ Entity *CreatePortal(int x, int y);
 void DrawPortal(Entity *ent);
 Entity* CreateTimer(Uint8 time);
 void ThinkTimer(Entity *ent);
+
+//Item Functions
+ItemRef* LoadItem(ItemType item);
+void UseItem(Items *item);
+void ItemLantern(Items *item);
+void FreeItem(ItemRef *item);
+void UpdateLantern(Entity* ent);
+void DrawLantern(Entity* ent);
+void DrawInventory(Inventory* i);
+void DrawCursor(Inventory* i);
+void DrawItemRef(Inventory* i);
+Inventory* InitInventory();
+void FreeInventory();
+
 
 #endif 

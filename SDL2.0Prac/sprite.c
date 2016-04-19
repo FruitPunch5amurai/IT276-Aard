@@ -11,6 +11,7 @@
 extern SDL_Rect * camera;
 static Sprite *SpriteList = NULL;
 int Num_Sprites;
+extern SDL_Texture* mainSceneTexture;
 /**
 *@brief Initializes Sprite List
 */
@@ -107,7 +108,7 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey)
 	SDL_Texture* temp2;
 	for(i = 0; i<Num_Sprites;i++)
 	{
-		if(strncmp(filename,SpriteList[i].filename,30) == 0)
+		if(strncmp(filename,SpriteList[i].filename,30) == 0 && SpriteList[i].w == sizex && SpriteList[i].h == sizey)
 		{
 			SpriteList[i].refCount++;
 			return &SpriteList[i];
@@ -123,7 +124,7 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey)
   {
     if(!SpriteList[i].refCount)break;
   }
-  temp = IMG_Load(filename);
+   temp = IMG_Load(filename);
   if(temp == NULL)
   {
     fprintf(stderr,"unable to load a vital sprite: %s\n",SDL_GetError());

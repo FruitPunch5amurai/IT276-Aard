@@ -6,14 +6,13 @@
 #include "graphics.h"
 #include "entity.h"
 
-//Study pass by reference
-//Study pass by value
-
 void ThinkObject(Entity* ent);
 void TouchObject(Entity* ent,Entity* other);
 void DrawObject(Entity* ent);
 void UpdateObject(Entity* ent);
 int MAX_ENTITIES	= 500;
+
+extern SDL_Texture* mainSceneTexture;
 extern SDL_Rect *camera;
 extern Entity* playerEnt;
 Entity* EntityList = NULL;
@@ -87,23 +86,26 @@ void ThinkEntities()
 void DrawEntities()
 {
 	int i;
+	
+	SDL_SetRenderTarget(GetRenderer(),mainSceneTexture);
 	for(i = 0;i < MAX_ENTITIES;i++)
 	{
-		if(!EntityList[i].inuse)
+		if(EntityList[i].inuse <= 0)
 		{
 			continue;
 		}
 		//Draw Only what the Camera can see
-		if(EntityList[i].position.x  - camera->x > 0 && 
-			EntityList[i].position.x < camera->x + camera->w
-			&& EntityList[i].position.y  - camera->y > 0 
-			&& EntityList[i].position.y < camera->y + camera->h
+		if(EntityList[i].position.x+ (EntityList[i].sprite->w/2)   - camera->x > 0 && 
+			EntityList[i].position.x + (EntityList[i].sprite->w/2) < camera->x + camera->w
+			&& EntityList[i].position.y + (EntityList[i].sprite->h/2)  - camera->y > 0 
+			&& EntityList[i].position.y + (EntityList[i].sprite->h/2) < camera->y + camera->h && EntityList[i].whatAmI != Light
 			)
 			{
 			if(EntityList[i].draw != NULL)
 				(*EntityList[i].draw)(&EntityList[i]);
 			}
 	}
+	SDL_SetRenderTarget(GetRenderer(),NULL);
 }
 /**
 *@brief Draws the entity to the main renderer
@@ -119,8 +121,6 @@ void DrawEntity(Entity *ent,int animationNum,int x, int y)
 		return
 	}
 	*/
-
-
 	Animate(&ent->sprite->animation[animationNum],ent->sprite->animation[animationNum].startFrame);
 	DrawSprite(ent->sprite,x
 		,y,GetCurrentFrame(&ent->sprite->animation[animationNum]),
@@ -155,8 +155,8 @@ void FreeEntity(Entity* ent)
 		ent->inuse--;
 		FreeSprite(ent->sprite);
 		ent->id =  NULL;
+		ent->update = NULL;
 		ent = NULL;
-		free(ent);
 	}
 }
 /**
@@ -328,5 +328,4 @@ void DrawPortal(Entity *ent)
 {
 	DrawEntity(ent,ent->currentAnimation,ent->position.x,ent->position.y);
 }
-
 

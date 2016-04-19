@@ -3,20 +3,11 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <string>
-#include "player.h"
-#include "spirit.h"
-#include "graphics.h"
-#include "enemy.h"
-#include "gamepad.h"
-#include "entity.h"
-#include "level.h"
-#include "sprite.h"
-#include "obj.h"
-#include "gamepad.h"
 #include "game.h"
 
 extern Map* map;
-
+Game *game;
+SDL_Rect worldSize;
 const int AREA_WIDTH = 2400;
 const int AREA_HEIGHT = 1800;
 const int SCROLL_SPEED = 10;
@@ -29,8 +20,13 @@ SDL_Rect *hotBox;
 extern Entity* playerEnt;
 extern Player *playerData;
 
+SDL_Texture* mainSceneTexture;
 SDL_Event* mainEvent = NULL;
 Sprite* temp = NULL;
+Vec2D SetCameraPosition;
+int (*gameState)();
+
+
 
 /**
 *@brief The Entry Point
@@ -46,15 +42,17 @@ int main(int arc,char *argv[])
 */
 void Init()
 {
+	game = (Game*)malloc(sizeof(Game));
+	memset(game,0,sizeof(Game));
 	float bgcolor[] = {1,1,1,1};
 	mainEvent = new SDL_Event();
 	camera = (SDL_Rect*)malloc(sizeof(camera));
 	memset(camera,0,sizeof(SDL_Rect));
 	camera->x = 0;
 	camera->y = 0;
-	InitMapList();
+	//InitMapList();
 	InitSpriteList();
-	Init_Graphics("Game Test",
+	Init_Graphics("Aard:GTS",
     800,
     600,
     800,
@@ -63,6 +61,11 @@ void Init()
 	InitEntityList();
 	InitKeyData();
 	Load("level.map","images/Resources1.png");
+	mainSceneTexture = SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,map->w * map->tileW,map->h * map->tileH);
+	worldSize.x = worldSize.y = 0;
+	worldSize.w =map->w * map->tileW;
+	worldSize.h = map->h * map->tileH;
+
 	CreatePlayer(400,400);
 	CreatePlayerData();
 	SetPlayerData();
@@ -74,13 +77,14 @@ void Init()
 */
 void Loop()
 {
-	gameState = Title;
-	int quit = 0;	
+	gameState = StateTitle;
+	int quit = 0;
 	do
 	{
-		quit = gameState();
 		SDL_PollEvent(mainEvent);
-		handleInput(gameState);		
+		handleInput(gameState);	
+		quit = gameState();
+			
 
 		}
 	while(!quit && mainEvent->type != SDL_QUIT);
@@ -120,6 +124,7 @@ void SetCamera(SDL_Rect &camera,SDL_Rect* box)
 {
 	if(playerEnt != NULL){
 	UpdateHotBox();
+	playerEnt->camera = &camera;
 
     camera.w = SCREEN_WIDTH;
     camera.h = SCREEN_HEIGHT;
@@ -144,7 +149,7 @@ void SetCamera(SDL_Rect &camera,SDL_Rect* box)
 /**
 *@brief Draws the Title Screen
 */
-int Title()
+int StateTitle()
 {
 	printf("In title screen\n");
 	//DrawTitle();
@@ -153,7 +158,7 @@ int Title()
 /**
 *@brief Draws the main game
 */
-int Game()
+int StateGame()
 {
 		SDL_RenderClear(GetRenderer());	
 		DrawMap(1,0,0);
@@ -164,9 +169,34 @@ int Game()
 		ThinkEntities();
 		UpdateEntities();
 		DrawEntities();
+		DrawMainScene();
+		DrawSpecialLayer(map);
+		UpdateGUI();
 		NextFrame();
-		SDL_RenderPresent(GetRenderer());
 	return 0;
+}
+/**
+*@brief Draws the main game in inventory
+*/
+int StateInventory()
+{
+		SDL_RenderClear(GetRenderer());	
+		DrawMap(1,0,0);
+		DrawMap(2,0,0);
+		DrawMap(3,0,0);
+		DrawMap(0,0,0);
+		SetCamera(*camera,hotBox);
+		DrawMainScene();
+		DrawEntities();
+		DrawSpecialLayer(map);
+		DrawInventory(playerData->inventory);
+		NextFrame();
+		return 0;
+}
+
+void DrawMainScene()
+{
+	SDL_RenderCopy(GetRenderer(),mainSceneTexture,&worldSize,&worldSize);
 }
 SDL_Rect* GetCamera()
 {

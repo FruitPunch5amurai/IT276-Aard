@@ -1,25 +1,45 @@
 #ifndef __GAME_H
 #define __GAME_H
 
+#include "player.h"
+#include "spirit.h"
+#include "vectors.h"
+#include "graphics.h"
+#include "enemy.h"
+#include "gamepad.h"
+#include "entity.h"
+#include "level.h"
+#include "sprite.h"
+#include "obj.h"
+#include "collision.h"
+#include "LList.h"
+#include "gamepad.h"
 
-Vec2D GetCameraPosition();
+
+typedef struct GameData{
+	//int (*gameState) ();
+	//SDL_Texture* mainSceneTexture;
+	//SDL_Event* mainEvent;
+	//TTF_Font *font;
+	//SDL_Rect *camera;
+}Game;
+
+
 Vec2D GetCameraSize();
-Vec2D SetCameraPosition;
 void SetCameraSize(Vec2D size);
 SDL_Rect* GetCamera();	
-
-
 void DrawTitle();
 void DrawGame();
+void DrawMainScene();
 void Init();
 void Loop();
 void SetCamera(SDL_Rect &camera,SDL_Rect *box);
 void UpdateHotBox();
 SDL_Rect *InitHotBox();
-int (*gameState)();
 void SetGameState(int (*state)());
-int Title();
-int Game();
+
 void SetUpMap(Map *map,FILE *file);
 
+
+extern Game *game;
 #endif

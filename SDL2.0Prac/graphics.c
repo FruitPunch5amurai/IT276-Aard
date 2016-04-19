@@ -89,10 +89,9 @@ SDL_Renderer* GetRenderer()
 {
 	return renderer;
 }
-
-SDL_Renderer* GetGUIRenderer()
+SDL_Window* GetWindow()
 {
-	return GUIRenderer;
+	return window;
 }
 
 void FrameDelay()
@@ -104,8 +103,10 @@ void FrameDelay()
     if (diff < Delay)
     {
         SDL_Delay(Delay - diff);
-    }
+	}
     FPS = 1000.0/MAX(SDL_GetTicks() - THEN,0.001);
+	printf("DELAY: %d\n",Delay-diff);
+	printf("FPS: %d\n",FPS);
 }
 
 void NextFrame()

@@ -4,15 +4,7 @@
 #include <stdlib.h>
 #include <string>
 #include <jansson.h>
-#include "sprite.h"
-#include "graphics.h"
-#include "vectors.h"
-#include "LList.h"
-#include "spirit.h"
-#include "gamepad.h"
-#include "collision.h"
-#include "obj.h"
-#include "player.h"
+#include "game.h"
 
 SDL_Color hp;
 SDL_Color hp2;
@@ -90,12 +82,18 @@ void CreatePlayerData()
 }
 void SetPlayerData()
 {
+	GList * elem;
+	ItemRef* ref;
+	int n;
+	Vec2D pos;
 		/*Set the PlayerData*/
+	playerData->inventory = InitInventory();
 	playerData->confidence = 20;
 	playerData->maxConfidence = 30;
 	playerData->rescuedSpirits = 0;
 	playerData->guidingSpirits = 0;
 	playerData->abandonSpirits = 0;
+	playerData->inventory->keys = 1;
 	playerData->EXP = 0;
 	for(int i = 0;i < 4;i++)
 	{
@@ -109,6 +107,20 @@ void SetPlayerData()
 	playerData->textRect.y = 40;
 	playerData->textRect.w = 10;
 	playerData->textRect.h = 10;
+	//playerData->inventory[0].inventory->item = LoadItem(Lantern);
+ 	for(n = 0; n < g_list_length(playerData->inventory->inventory);++n)
+	{
+		elem = g_list_nth(playerData->inventory->inventory,n);
+		ref = (ItemRef*)elem->data;
+		if(!ref->item)
+		{
+			pos = ref->pos;
+			ref = LoadItem(Lantern);
+			ref->pos = CreateVec2D(pos.x,pos.y);
+			elem->data = ref;
+			break;
+		}
+	}
 }
 /**
 *@brief Creates and Allocates memory for the player. Then initializes all the
@@ -157,6 +169,7 @@ void CreatePlayer(int x, int y)
 	moveToPos(SpiritLink,1);
 	Insert(SpiritLink,playerEnt);
 	Next(SpiritLink);
+	atexit(FreeInventory);
 }
 /**
 *@brief Draws specified Entity to main renderer
@@ -170,8 +183,6 @@ void DrawPlayer(Entity* ent)
 */
 void UpdatePlayer(Entity *ent)
 {
-	UpdateGUI();
-	ExecuteSkill();
 	if(playerData->confidence <= 0)
 		printf("Player is Dead");
 	ent->hitBox.x =ent->position.x;
@@ -192,6 +203,7 @@ void ThinkPlayer(Entity *ent)
 		Stun();
 		playerEnt->stun -=.1;
 	}
+	ExecuteSkill();
 	if(ent->nextThink < SDL_GetTicks())
 	{
 		for(int i = 0;i < 4;++i){
@@ -233,11 +245,19 @@ void ThinkPlayer(Entity *ent)
 }
 void TouchPlayer(Entity *ent,Entity *other)
 {
-	if(other->whatAmI == 5)
+	if(other->whatAmI == 6)
+	{
+		if(playerData->inventory->keys > 0)
+		{
+			(*other->free)(other);
+			playerData->inventory->keys--;
+		}
+	}
+	else if(other->whatAmI == 5)
 	{
 		LoadDungeon(other->dungeonName,other->savedPlayerPos);
 	}
-	if(other->whatAmI == 4)
+	else if((other->whatAmI == 4 || other->whatAmI == 8) && keyData->R == 1)
 		SkillPickUpObject(other);
 	if(ent->atkBox.w == 0 && ent->atkBox.h == 0)
 	{
@@ -331,6 +351,7 @@ void RenderHPBar(int x, int y, int w, int h, float Percent, SDL_Color FGColor, S
    int pw = (int)((float)w * Percent); 
    SDL_Rect fgrect = { x+1, y+1, pw, h-2 }; 
    SDL_RenderFillRect(GetRenderer(), &fgrect); 
+   SDL_SetRenderDrawColor(GetRenderer(), 0, 0, 0, 0); 
    } 
 void UpdateGUI()
 {
@@ -379,14 +400,25 @@ void SkillNEVERGONNAGIVEYOUUP()
 }
 void SkillPickUpObject(Entity* ent)
 {
-	if(keyData->R == 1 && playerEnt->objectHolding == NULL && playerData->abilities[3].cooldown == 0)
-	{
-		playerEnt->objectHolding = ent;
-		playerEnt->stun = 2;
-		playerEnt->objectHolding->hitBox.w = playerEnt->objectHolding->hitBox.h = 0;
-		playerEnt->objectHolding->hitBox.y = playerEnt->objectHolding->hitBox.x = 0;
-	}
-	printf("Picked up object\n");
+	if(ent->whatAmI == 4){
+		if(playerEnt->objectHolding == NULL && playerData->abilities[3].cooldown == 0)
+		{
+			playerEnt->objectHolding = ent;
+			playerEnt->stun = 2;
+			playerEnt->objectHolding->hitBox.w = playerEnt->objectHolding->hitBox.h = 0;
+			playerEnt->objectHolding->hitBox.y = playerEnt->objectHolding->hitBox.x = 0;
+			printf("Picked up object\n");
+		}
+	}else if(ent->whatAmI == 8)
+		{
+			ent->currentAnimation = 1;
+			if(ent->itemHolding != NULL){
+				if(ent->itemHolding->itemType == Key)
+				{
+					playerData->inventory->keys +=1;
+				}
+			}
+		}
 }
 
 void SkillThrowObject()
@@ -417,7 +449,7 @@ void ExecuteSkill()
 		printf("Whip used:%d\n" ,playerData->abilities[0].cooldown);
 		SkillWhip();
 	}
-	if(keyData->W == 1 && playerData->abilities[1].inuse == 0 
+	else if(keyData->W == 1 && playerData->abilities[1].inuse == 0 
 		&& playerData->abilities[1].cooldown == 0 && playerData->EXP >=4 && SpiritLink->count >1)
 	{
 		playerData->abilities[1].inuse = 1;
@@ -425,7 +457,7 @@ void ExecuteSkill()
 		printf("Retrieve used:%d\n" ,playerData->abilities[0].cooldown);
 		SkillRetrieve();
 	}
-		if(keyData->E == 1 && playerData->abilities[2].inuse == 0 
+		else if(keyData->E == 1 && playerData->abilities[2].inuse == 0 
 			&& playerData->abilities[2].cooldown == 0 && playerData->EXP >=6 && SpiritLink->count >1)
 	{
 		playerData->abilities[2].inuse = 1;
@@ -433,14 +465,25 @@ void ExecuteSkill()
 		printf("Immune used:%d\n" ,playerData->abilities[0].cooldown);
 		SkillNEVERGONNAGIVEYOUUP();
 	}
-		if(keyData->R == 1 && playerEnt->objectHolding != NULL && playerData->abilities[3].inuse == 0
+		else if(keyData->R == 1 && playerEnt->objectHolding != NULL && playerData->abilities[3].inuse == 0
 			&& playerData->abilities[3].cooldown == 0)
 		{
 			playerData->abilities[3].inuse = 1;
 			SkillThrowObject();
 		}
+		else if(keyData->Spacebar == 1)
+		{
+			UseItem();
+		}
 }
-
+void UseItem()
+{
+	if(playerData->currentItem != NULL)
+	{
+		(*playerData->currentItem->useItem)(playerData->currentItem);
+	}
+	keyData->Spacebar = 0;
+}
 Entity *CreateTimer(Uint8 time)
 {
 	Entity *timer;
@@ -472,5 +515,17 @@ void Stun()
 		keyData->W = 0;
 		keyData->E = 0;
 		keyData->R = 0;
+	}
+}
+void FreeInventory()
+{
+	if (playerData->inventory != NULL)
+	{
+		g_list_foreach(playerData->inventory->inventory,GFunc(FreeItem),(ItemRef*)playerData->inventory->inventory->data);
+		FreeSprite(playerData->inventory->sprite);
+		FreeSprite(playerData->inventory->cursor->sprite);
+		playerData->inventory->cursor = NULL;
+		playerData->inventory = NULL;
+		free(playerData->inventory);
 	}
 }

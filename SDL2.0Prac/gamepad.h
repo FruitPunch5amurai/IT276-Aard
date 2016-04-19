@@ -11,10 +11,15 @@ typedef struct{
 	Uint8 W;
 	Uint8 E;
 	Uint8 R;
+	Uint8 Spacebar;
+	Uint8 Enter;
 
 }KeyData;
 void InitKeyData();
 void CloseKeyData();
+int StateTitle();
+int StateGame();
+int StateInventory();
 void handleInput(int (*gameState)());
 
 #endif

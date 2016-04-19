@@ -1,217 +1,34 @@
-﻿Build started 4/5/2016 8:16:37 PM.
+﻿Build started 4/19/2016 4:21:39 PM.
      1>Project "C:\Users\Jason\Desktop\Aard-GTS\SDL2.0Prac\SDL2.0Prac.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Touching "Debug\Aard.unsuccessfulbuild".
+         Creating "Debug\Aard.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt level.c
-         level.c
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\vectors.h(70): warning C4005: 'MAX' : macro redefinition
-                 c:\users\jason\desktop\aard-gts\libraries\glib-2.28\include\glib-2.0\glib\gmacros.h(198) : see previous definition of 'MAX'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\vectors.h(71): warning C4005: 'MIN' : macro redefinition
-                 c:\users\jason\desktop\aard-gts\libraries\glib-2.28\include\glib-2.0\glib\gmacros.h(201) : see previous definition of 'MIN'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(36): warning C4101: 'i' : unreferenced local variable
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(55): warning C4804: '<=' : unsafe use of type 'bool' in operation
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(94): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(234) : see declaration of 'fopen'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(104): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(106): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(111): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(116): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(121): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(123): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(124): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(129): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(188) : see declaration of 'strncpy'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(142): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(199): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(200): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(201): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(202): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(205): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(206): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(207): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(208): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(209): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(210): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(211): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(213): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(214): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(215): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(216): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(216): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(230): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(227): warning C4101: 'buf' : unreferenced local variable
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(247): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(293): warning C4101: 'i' : unreferenced local variable
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(294): warning C4101: 'r' : unreferenced local variable
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(327): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(343): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(357): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(367): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(368): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(369): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(370): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(371): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(374): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(375): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(387): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(388): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(389): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(390): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(391): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(392): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(393): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(398): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(399): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(401): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(404): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(405): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(406): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(413): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(414): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(417): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(418): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(419): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(421): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(422): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(423): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(430): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(431): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(432): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(434): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(435): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(436): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(442): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(443): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(444): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(446): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(447): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(448): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(455): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(456): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(457): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(458): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(463): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(464): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(465): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(466): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(467): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(468): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(469): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(470): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(471): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(472): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(473): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(474): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(475): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(476): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(253) : see declaration of 'fscanf'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(566): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(567): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(568): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(569): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(570): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(571): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(576): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(188) : see declaration of 'strncpy'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(597): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(188) : see declaration of 'strncpy'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(614): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(614): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(628): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(628): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(632): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(632): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(647): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(647): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(647): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(647): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(651): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(651): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(68): warning C4715: 'CreateMap' : not all control paths return a value
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(547): warning C4715: 'FindRoomWithID' : not all control paths return a value
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt player.c
+         player.c
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(51): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(61): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(63): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(64): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(70): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(111): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(135): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(136): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(139): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(140): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(141): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(142): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(179): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(179): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(188): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(189): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(204): warning C4305: '-=' : truncation from 'double' to 'float'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(359): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _itoa. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdlib.h(867) : see declaration of 'itoa'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(369): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(371): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(373): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(375): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(339): warning C4715: 'GetPlayer' : not all control paths return a value
        Link:
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.exe" /NOLOGO SDL2.lib jansson_d.lib "glib-2.0.lib" SDL2main.lib SDL2_image.lib SDL2_ttf.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST:NO /DEBUG /PDB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.lib" /MACHINE:X86 Debug\collision.obj
          Debug\enemy.obj
@@ -219,6 +36,7 @@
          Debug\game.obj
          Debug\gamepad.obj
          Debug\graphics.obj
+         Debug\items.obj
          Debug\level.obj
          Debug\LList.obj
          Debug\obj.obj
@@ -237,4 +55,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.10
+Time Elapsed 00:00:03.32

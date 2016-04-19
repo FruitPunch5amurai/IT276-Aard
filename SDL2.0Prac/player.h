@@ -1,7 +1,7 @@
 #ifndef __PLAYER_H_
 #define __PLAYER_H_
 #include "entity.h"
-	
+#include "items.h"
 
 typedef struct{
 	int cooldown;
@@ -22,6 +22,8 @@ typedef struct PlayerData{
 	SDL_Rect textRect;
 	Ability abilities[4];
 	SDL_Rect* camera;
+	Inventory* inventory;
+	Items *currentItem;
 
 }Player;
 void CreatePlayerData();
@@ -37,6 +39,7 @@ void SetPlayerAnimations(Entity* ent);
 void RenderHPBar(int x, int y, int w, int h, float Percent, SDL_Color FGColor, SDL_Color BGColor) ;
 void UpdateGUI();
 void ExecuteSkill();
+void UseItem();
 void SkillWhip();
 void SkillRetrieve();
 void SkillNEVERGONNAGIVEYOUUP();

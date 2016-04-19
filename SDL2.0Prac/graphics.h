@@ -19,6 +19,7 @@ void RenderFont(char *message,SDL_Rect &rect,TTF_Font *f,SDL_Color *fg);
 
 Uint32 GetSystemTime();
 SDL_Renderer* GetRenderer();
+SDL_Window* GetWindow();
 
 
 
