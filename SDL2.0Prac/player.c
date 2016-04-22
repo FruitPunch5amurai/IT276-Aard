@@ -4,7 +4,21 @@
 #include <stdlib.h>
 #include <string>
 #include <jansson.h>
+
+#include "spirit.h"
+#include "vectors.h"
+#include "graphics.h"
+#include "enemy.h"
+#include "gamepad.h"
+#include "entity.h"
+#include "level.h"
+#include "sprite.h"
+#include "obj.h"
+#include "collision.h"
+#include "LList.h"
+#include "gamepad.h"
 #include "game.h"
+#include "player.h"
 
 SDL_Color hp;
 SDL_Color hp2;
@@ -93,7 +107,7 @@ void SetPlayerData()
 	playerData->rescuedSpirits = 0;
 	playerData->guidingSpirits = 0;
 	playerData->abandonSpirits = 0;
-	playerData->inventory->keys = 1;
+	playerData->inventory->keys = 0;
 	playerData->EXP = 0;
 	for(int i = 0;i < 4;i++)
 	{
@@ -102,7 +116,6 @@ void SetPlayerData()
 		playerData->abilities[i].inuse =0;
 		playerData->abilities[i].unlocked = 1; 
 	}
-	playerData->font = TTF_OpenFont("Tahoma.ttf",20);
 	playerData->textRect.x = 20;
 	playerData->textRect.y = 40;
 	playerData->textRect.w = 10;
@@ -150,6 +163,7 @@ void CreatePlayer(int x, int y)
 	playerEnt->position2.y = playerEnt->position.y+playerEnt->dimensions.y-1;
 	playerEnt->speed = 5;
 	playerEnt->penalty = 0;
+	playerEnt->camera = game->camera;
 	for(int i =0;i < map->numberOfRooms;++i)
 	{
 		if(AABB(playerEnt->hitBox,map->rooms[i].boundary))
@@ -358,7 +372,7 @@ void UpdateGUI()
 	whiteFont.r = 255,whiteFont.g = 255,whiteFont.b = 255,whiteFont.a = 0;
 	itoa(map->numOfSpirits,numOfSpirits,10);
 	RenderHPBar( 10, 10, playerData->maxConfidence,25,(float)playerData->confidence/playerData->maxConfidence, hp ,hp2);
-	RenderFont(numOfSpirits,playerData->textRect,playerData->font,&whiteFont);
+	RenderFont(numOfSpirits,playerData->textRect,game->font,&whiteFont);
 }
 void SkillWhip()
 {
@@ -409,7 +423,7 @@ void SkillPickUpObject(Entity* ent)
 			playerEnt->objectHolding->hitBox.y = playerEnt->objectHolding->hitBox.x = 0;
 			printf("Picked up object\n");
 		}
-	}else if(ent->whatAmI == 8)
+	}else if(ent->whatAmI == 8 && ent->currentAnimation != 1)
 		{
 			ent->currentAnimation = 1;
 			if(ent->itemHolding != NULL){

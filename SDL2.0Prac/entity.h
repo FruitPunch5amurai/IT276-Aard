@@ -33,8 +33,10 @@ enum EntityType{
 	BreakableObject,
 	Dungeon,
 	LockedDoor,
-	Light,
-	Chest
+	LitTorch,
+	Chest,
+	Torch,
+	Item
 };
 enum EnemyType{
 	Chaser,
@@ -72,6 +74,7 @@ typedef struct EntityData
 	Vec2D	dimensions;
 	Vec2D facing;				/**<*/
 	Sprite*	sprite;
+	Sprite* sprite2;				/**< Used for entities that need an additional sprite*/
 	int	currentAnimation;
 	int currentFrame;
 	SDL_RendererFlip flipped;
@@ -177,6 +180,7 @@ typedef struct{
 
 typedef struct InventoryData{
 	Sprite* sprite;
+	Sprite* keySprite;
 	GList *inventory;
 	int keys;
 	//ItemRef inventory[MAX_INVENTORY];

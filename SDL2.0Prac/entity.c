@@ -4,6 +4,7 @@
 #include <string>
 #include "collision.h"
 #include "graphics.h"
+#include "game.h"
 #include "entity.h"
 
 void ThinkObject(Entity* ent);
@@ -12,8 +13,6 @@ void DrawObject(Entity* ent);
 void UpdateObject(Entity* ent);
 int MAX_ENTITIES	= 500;
 
-extern SDL_Texture* mainSceneTexture;
-extern SDL_Rect *camera;
 extern Entity* playerEnt;
 Entity* EntityList = NULL;
 /**
@@ -87,18 +86,19 @@ void DrawEntities()
 {
 	int i;
 	
-	SDL_SetRenderTarget(GetRenderer(),mainSceneTexture);
+	SDL_SetRenderTarget(GetRenderer(),game->mainSceneTexture);
 	for(i = 0;i < MAX_ENTITIES;i++)
 	{
-		if(EntityList[i].inuse <= 0)
+		if(EntityList[i].inuse <= 0 || EntityList[i].sprite == NULL)
 		{
 			continue;
 		}
 		//Draw Only what the Camera can see
-		if(EntityList[i].position.x+ (EntityList[i].sprite->w/2)   - camera->x > 0 && 
-			EntityList[i].position.x + (EntityList[i].sprite->w/2) < camera->x + camera->w
-			&& EntityList[i].position.y + (EntityList[i].sprite->h/2)  - camera->y > 0 
-			&& EntityList[i].position.y + (EntityList[i].sprite->h/2) < camera->y + camera->h && EntityList[i].whatAmI != Light
+		if(EntityList[i].position.x+ (EntityList[i].sprite->w/2)   - game->camera->x > 0 && 
+			EntityList[i].position.x + (EntityList[i].sprite->w/2) < game->camera->x + game->camera->w
+			&& EntityList[i].position.y + (EntityList[i].sprite->h/2)  - game->camera->y > 0 
+			&& EntityList[i].position.y + (EntityList[i].sprite->h/2) < game->camera->y + game->camera->h 
+			
 			)
 			{
 			if(EntityList[i].draw != NULL)
@@ -114,9 +114,9 @@ void DrawEntity(Entity *ent,int animationNum,int x, int y)
 {
 	/*
 	Vec2D position;
-	SDL_Rec camera;
-	camera = GetCamera();
-	if(!entity_intersect_rect(ent,camera))
+	SDL_Rec game->camera;
+	game->camera = GetCamera();
+	if(!entity_intersect_rect(ent,game->camera))
 	{
 		return
 	}

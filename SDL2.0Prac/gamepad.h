@@ -20,6 +20,7 @@ void CloseKeyData();
 int StateTitle();
 int StateGame();
 int StateInventory();
+int StateEditor();
 void handleInput(int (*gameState)());
 
 #endif

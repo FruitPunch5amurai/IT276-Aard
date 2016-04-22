@@ -4,6 +4,7 @@
 #include <string>
 #include "entity.h"
 #include "player.h"
+#include "editor.h"
 #include "gamepad.h"
 
 KeyData * keyData = NULL;
@@ -135,6 +136,13 @@ void handleInput(int (*gameState)())
 		if(mainEvent->type == SDL_KEYDOWN){
 			if(mainEvent->key.keysym.sym == SDLK_SPACE)
 				SetGameState(StateGame); 
+			else if(mainEvent->key.keysym.sym == SDLK_LEFT){
+				SetGameState(StateEditor); 
+				//Put Init Editor stuff HERE
+				
+				Init_Editor();
+
+			}
 		}
 	}
 	if(gameState == &StateInventory)
@@ -200,6 +208,12 @@ void handleInput(int (*gameState)())
 			}
 		}
 		}
+	}
+
+	if(gameState == &StateEditor)
+	{
+
+
 	}
 }
 

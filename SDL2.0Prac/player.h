@@ -18,7 +18,6 @@ typedef struct PlayerData{
 	int rescuedSpirits;
 	int guidingSpirits;
 	int abandonSpirits;
-	TTF_Font *font;
 	SDL_Rect textRect;
 	Ability abilities[4];
 	SDL_Rect* camera;

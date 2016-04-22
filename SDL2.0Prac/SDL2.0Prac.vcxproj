@@ -73,6 +73,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="collision.c" />
+    <ClCompile Include="editor.c" />
+    <ClCompile Include="editor_panel.c" />
     <ClCompile Include="enemy.c" />
     <ClCompile Include="entity.c" />
     <ClCompile Include="game.c" />
@@ -80,6 +82,7 @@
     <ClCompile Include="graphics.c" />
     <ClCompile Include="items.c" />
     <ClCompile Include="level.c" />
+    <ClCompile Include="light.c" />
     <ClCompile Include="LList.c" />
     <ClCompile Include="obj.c" />
     <ClCompile Include="particle.c" />
@@ -92,6 +95,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collision.h" />
+    <ClInclude Include="editor.h" />
+    <ClInclude Include="editor_panel.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="game.h" />
@@ -99,6 +104,7 @@
     <ClInclude Include="graphics.h" />
     <ClInclude Include="items.h" />
     <ClInclude Include="level.h" />
+    <ClInclude Include="light.h" />
     <ClInclude Include="LList.h" />
     <ClInclude Include="obj.h" />
     <ClInclude Include="particle.h" />

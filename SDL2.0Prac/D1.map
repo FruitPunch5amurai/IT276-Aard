@@ -242,6 +242,15 @@ Count: 1
 Size: 32 x 64
 Location: 
 25 , 31
+
+Frame: 0
+Type: LitTorch
+Filename: images/Torch.png
+Count: 1
+Size 16 x 22
+Location:
+4 , 13
+
 #end
 
 #Dungeons

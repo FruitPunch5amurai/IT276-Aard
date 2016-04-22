@@ -5,11 +5,13 @@
 #include <glib.h>
 #include "vectors.h"
 #include "graphics.h"
-#include"spirit.h"
+#include "spirit.h"
 #include "enemy.h"
 #include "obj.h"
 #include "collision.h"
 #include "player.h"
+#include "game.h"
+#include "light.h"
 #include "level.h"
 
 Map *map;
@@ -17,7 +19,6 @@ Map *MapList = NULL;
 extern Entity* playerEnt;
 extern int  MAX_ENTITIES;
 extern Entity* EntityList;
-extern SDL_Texture* mainSceneTexture;
 GHashTable *GMaps = g_hash_table_new_full(g_str_hash,g_str_equal,NULL,NULL);
 
 /**
@@ -231,6 +232,14 @@ void LoadBreakableObjects(FILE *file)
 			ref = LoadItem(Key);
 		}
 	}
+	else if(strcmp(buf,"LitTorch")== 0)
+	{
+		type = LitTorch;
+	}
+	else if(strcmp(buf,"Torch")== 0)
+	{
+		type = Torch;
+	}
 	fscanf(file,"%s",buf);
 	fscanf(file,"%s",filename);
 	fscanf(file,"%s",buf);
@@ -244,7 +253,7 @@ void LoadBreakableObjects(FILE *file)
 		fscanf(file,"%d",&x);
 		fscanf(file,"%s",buf);
 		fscanf(file,"%d",&y);
- 		CreateObject(CreateVec2D(x*33,y*28),w,h,type,frame,filename,ref);
+ 		CreateObject(CreateVec2D(x*32,y*32),w,h,type,frame,filename,ref);
 		map->numOfEntities++;
 	}
 	fscanf(file,"%s",buf);
@@ -305,25 +314,8 @@ void DrawSpecialLayer(Map* map)
 	if(map->hasSpecialLayer)
 	{
 		DrawSprite(map->specialLayer,playerEnt->room->boundary.x,playerEnt->room->boundary.y,0,GetRenderer(),SDL_FLIP_NONE);
-		for(i = 0;i < MAX_ENTITIES;i++)
-		{
-			if(!EntityList[i].inuse)
-			{
-				continue;
-			}
-			//Draw Only what the Camera can see
-			if(EntityList[i].whatAmI == Light)
-				{
-				if(EntityList[i].position.x+ (EntityList[i].sprite->w/2)   - playerEnt->camera->x > 0 && 
-			EntityList[i].position.x + (EntityList[i].sprite->w/2) < playerEnt->camera->x + playerEnt->camera->w
-			&& EntityList[i].position.y + (EntityList[i].sprite->h/2)  - playerEnt->camera->y > 0 
-			&& EntityList[i].position.y + (EntityList[i].sprite->h/2) < playerEnt->camera->y + playerEnt->camera->h
-			){
-				if(EntityList[i].draw != NULL)
-					(*EntityList[i].draw)(&EntityList[i]);
-				}
-			}
-		}
+		DrawLights();
+
 	}
 
 }
@@ -345,8 +337,8 @@ void DrawMap(int layer, int xOffset ,int yOffset)
 	if(layer == 3)
 		drawLayer = map->data3;
 
-	int startY = yOffset/map->tileH*2;
-	int startX = xOffset/map->tileW*2;
+	int startY = yOffset/map->tileH;
+	int startX = xOffset/map->tileW;
 	int frame;
 	
 	int columns = (800/map->tileW)+2;
@@ -354,30 +346,11 @@ void DrawMap(int layer, int xOffset ,int yOffset)
 
 	int y,x,i;
 	SDL_Rect r;
-	SDL_SetRenderTarget(GetRenderer(),mainSceneTexture);
+	SDL_SetRenderTarget(GetRenderer(),game->mainSceneTexture);
 	for( y = startY; y < 600; y++){
 		for(x = startX;x < 800; x++)
 		{
 			frame = -1;
-			//Check to see if its the special layer, if so handle it (used for fake lighting)
-		/*	if(layer == 4){
-			for(i = 0;i < 4;i++)
-			{
-					if(EntityList[i].whatAmI == Light){
-						if(x*map->tileW >= EntityList[i].position.x && x*map->tileW <= EntityList[i].position.x + EntityList[i].dimensions.x
-							&& y*map->tileH >= EntityList[i].position.y && y*map->tileH <= EntityList[i].position.y + EntityList[i].dimensions.y){
-								draw = 0;
-					}
-					}if(draw == 0){break;}
-			}if(draw == 1)
-			{
-				if(x >= 0 && y >= 0 && x < map->w && y < map->h){
-					frame = drawLayer[y*map->w+x]-1;
-					DrawSprite(map->tiles,x*map->tileW,y*map->tileH,frame,GetRenderer(),SDL_FLIP_NONE);
-				}
-			}
-			draw = 1;
-		}else{*/
 			if(x >= 0 && y >= 0 && x < map->w && y < map->h){
 					frame = drawLayer[y*map->w+x]-1;
 			}
@@ -396,7 +369,6 @@ void DrawMap(int layer, int xOffset ,int yOffset)
 				DrawSprite(map->tiles,x*map->tileW,y*map->tileH,frame,GetRenderer(),SDL_FLIP_NONE);
 			}
 			}
-		//}
 	}
 	}
 }
@@ -522,7 +494,6 @@ void SetUpMap(Map* map,FILE *file)
 						fscanf(file,"%d",&k);
 						fscanf(file,"%s",buf);
 						fscanf(file,"%d",&l);
-\
 					CreateEnemy(k,l,Snatcher);
 					map->numOfEntities++;
 					}
@@ -709,66 +680,17 @@ void LoadDungeon(char *filename,Vec2D playerSpawn)
 {
 	char dungeonName[120];
 	strncpy(dungeonName,filename,120);
-	/*
-	if(g_hash_table_lookup(GMaps,filename))
-		{
-			//map = (Map*)g_hash_table_lookup(GMaps,filename);
-			//map->tiles = LoadSprite("images/Resources1.png",map->tileW,map->tileH);
-			CloseEntityList();
-			InitEntityList();
-			LoadEntities();		
-			CreatePlayer(playerSpawn.x,playerSpawn.y);
-	}else{*/
 		CloseEntityList();
+		CloseLightList();
+		InitLightList();
 		InitEntityList();
 		Load(dungeonName,"images/Resources1.png");
-		CreatePlayer(playerSpawn.x,playerSpawn.y);
-	//}
-		
+		CreatePlayer(playerSpawn.x,playerSpawn.y);		
 }
 /**
 *@brief Loads in all the entities associated with the current map
 */
 void LoadEntities()
 {
-
-	/*
-	int i;
-	for(i = 0; i < MAX_ENTITIES;++i)
-	{
-		if(map->EntityList[i].whatAmI == Enemy)
-		{
-			CreateEnemy(map->EntityList[i].position.x,map->EntityList[i].position.y,map->EntityList[i].enemyType);
-		}
-		else if(map->EntityList[i].whatAmI == Spirit)
-		{
-			CreateSpirit(map->EntityList[i].position.x,map->EntityList[i].position.y);
-		}
-		else if(map->EntityList[i].whatAmI == BreakableObject)
-		{
-			CreateObject(map->EntityList[i].position,map->EntityList[i].sprite->w,map->EntityList[i].sprite->h
-				, 4,map->EntityList[i].currentFrame);
-		}
-		else if(map->EntityList[i].whatAmI == Dungeon)
-		{
-			CreateDungeonEntrance(map->EntityList[i].position.x,
-				map->EntityList[i].position.y,
-				map->EntityList[i].sprite->w, 
-				map->EntityList[i].sprite->h,
-				map->EntityList[i].dungeonName,
-				map->EntityList[i].savedPlayerPos.x,
-				map->EntityList[i].savedPlayerPos.y);
-		}
-		else if(map->EntityList[i].whatAmI == Portal)
-		{
-			CreatePortal(map->EntityList[i].position.x,map->EntityList[i].position.y);
-		}
-		/*
-		EntityList[i] = map->EntityList[i];
-		if(EntityList[i].inuse)
-		EntityList[i].sprite = LoadSprite(map->EntityList[i].sprite->filename,
-			map->EntityList[i].sprite->w,map->EntityList[i].sprite->h);
-	*/
-	//}
 
 }

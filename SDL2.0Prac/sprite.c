@@ -4,14 +4,13 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include "graphics.h"
+#include "game.h"
 #include "sprite.h"
 
 //Stack is were all the core parts of a program go to
 
-extern SDL_Rect * camera;
 static Sprite *SpriteList = NULL;
 int Num_Sprites;
-extern SDL_Texture* mainSceneTexture;
 /**
 *@brief Initializes Sprite List
 */
@@ -158,8 +157,8 @@ void DrawSprite(Sprite *sprite,int sx,int sy, int frame,SDL_Renderer *renderer,S
     src.y = frame/sprite->fpl * sprite->h;
     src.w =sprite->w;
     src.h =sprite->h;
-	dest.x = sx - camera->x;
-    dest.y = sy - camera->y;
+	dest.x = sx - game->camera->x;
+    dest.y = sy - game->camera->y;
     dest.w = sprite->w;
     dest.h = sprite->h;
 	SDL_RenderCopyEx(renderer, sprite->image,&src,&dest,0,0,flip);

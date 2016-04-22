@@ -1,36 +1,36 @@
-﻿Build started 4/19/2016 4:21:39 PM.
+﻿Build started 4/21/2016 10:09:48 PM.
      1>Project "C:\Users\Jason\Desktop\Aard-GTS\SDL2.0Prac\SDL2.0Prac.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Creating "Debug\Aard.unsuccessfulbuild" because "AlwaysCreate" was specified.
+         Touching "Debug\Aard.unsuccessfulbuild".
        ClCompile:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt player.c
-         player.c
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(51): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(61): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(63): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(64): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(70): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(111): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(135): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(136): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(139): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(140): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(141): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(142): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(179): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(179): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(188): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(189): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(204): warning C4305: '-=' : truncation from 'double' to 'float'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(359): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _itoa. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdlib.h(867) : see declaration of 'itoa'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(369): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(371): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(373): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(375): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\player.c(339): warning C4715: 'GetPlayer' : not all control paths return a value
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt level.c
+         level.c
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\vectors.h(70): warning C4005: 'MAX' : macro redefinition
+                 c:\users\jason\desktop\aard-gts\libraries\glib-2.28\include\glib-2.0\glib\gmacros.h(198) : see previous definition of 'MAX'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\vectors.h(71): warning C4005: 'MIN' : macro redefinition
+                 c:\users\jason\desktop\aard-gts\libraries\glib-2.28\include\glib-2.0\glib\gmacros.h(201) : see previous definition of 'MIN'
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(38): warning C4101: 'i' : unreferenced local variable
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(256): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(256): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(269): warning C4101: 'buf' : unreferenced local variable
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(312): warning C4101: 'i' : unreferenced local variable
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(347): warning C4101: 'i' : unreferenced local variable
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(348): warning C4101: 'r' : unreferenced local variable
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(383): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(399): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(651): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(652): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(653): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(654): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(655): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(656): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(688): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(688): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\level.c(632): warning C4715: 'FindRoomWithID' : not all control paths return a value
        Link:
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.exe" /NOLOGO SDL2.lib jansson_d.lib "glib-2.0.lib" SDL2main.lib SDL2_image.lib SDL2_ttf.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST:NO /DEBUG /PDB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.lib" /MACHINE:X86 Debug\collision.obj
+         Debug\editor.obj
+         Debug\editor_panel.obj
          Debug\enemy.obj
          Debug\entity.obj
          Debug\game.obj
@@ -38,6 +38,7 @@
          Debug\graphics.obj
          Debug\items.obj
          Debug\level.obj
+         Debug\light.obj
          Debug\LList.obj
          Debug\obj.obj
          Debug\particle.obj
@@ -55,4 +56,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.32
+Time Elapsed 00:00:02.90

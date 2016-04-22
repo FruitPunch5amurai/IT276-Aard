@@ -5,12 +5,14 @@
 #include <glib.h>
 #include "sprite.h"
 #include "graphics.h"
+#include "game.h"
+#include "light.h"
 #include "items.h"
+char keys[5];
 extern Entity* playerEnt;
 extern Map* map;
-extern SDL_Texture* mainSceneTexture;
-extern SDL_Rect *camera;
-extern TTF_Font *globalFont;
+extern SDL_Texture* LightBuffer;
+extern SDL_Color whiteFont;
 ItemRef* LoadItem(ItemType item)
 {
 	//json_t *root;
@@ -47,12 +49,12 @@ ItemRef* LoadItem(ItemType item)
 	i->itemID = -1;
 	i->self = NULL;
 	i->self = CreateEntity();
-	i->self->whatAmI = Light;
+	i->self->whatAmI =Item;
 	
-	i->self->sprite = LoadSprite("images/lightsource1.png",255,255);
-	i->self->sprite->animation[0].currentFrame = 0;
-	i->self->sprite->animation[0].maxFrames = 0;
-	i->self->sprite->animation[0].startFrame = 0;
+	i->self->sprite2 = LoadSprite("images/lightsource1.png",255,255);
+	i->self->sprite2->animation[0].currentFrame = 0;
+	i->self->sprite2->animation[0].maxFrames = 0;
+	i->self->sprite2->animation[0].startFrame = 0;
 	
 	i->self->currentAnimation = 0;
 	i->isEquiped = 1;
@@ -92,9 +94,11 @@ void ItemLantern(Items *item)
 			item->self = LoadItem(Lantern)->item->self;
  		item->isEquiped = 1;
 		item->self->update = &UpdateLantern;
-		item->self->draw = &DrawLantern;
+		item->self->draw = NULL;
 		item->self->position.x = playerEnt->position.x + 50;
 		item->self->position.y = playerEnt->position.y + 50;
+		item->self->value = 1;
+		CreateLight(item->self);
 		printf("Used Lantern!\n");
 	}else
 	{
@@ -108,22 +112,37 @@ void UpdateLantern(Entity* ent)
 {
 	ent->savedPlayerPos.x = playerEnt->position.x;
 	ent->savedPlayerPos.y = playerEnt->position.y;
-	ent->position.x =ent->savedPlayerPos.x - ent->sprite->w/2;
-	ent->position.y =ent->savedPlayerPos.y - ent->sprite->h/2;
+	ent->position.x =ent->savedPlayerPos.x ;
+	ent->position.y =ent->savedPlayerPos.y ;
 }
 void DrawLantern(Entity* ent)
-{
-	SDL_Rect dest;
+{/*
+	SDL_Rect dest,src;
+	dest.x = (ent->savedPlayerPos.x - ent->sprite2->w/2) - game->camera->x;
+	dest.y = (ent->savedPlayerPos.y - ent->sprite2->h/2) - game->camera->y;
+	dest.w = ent->sprite2->w;
+	dest.h = ent->sprite2->h;
+ 	src.x = 0;
+	src.y = 0;
+	src.w = ent->sprite2->w;
+	src.h = ent->sprite2->h;
+	if(dest.x <= 0)
+	{
 
-	dest.x = (ent->savedPlayerPos.x - ent->sprite->w/2) - camera->x;
-	dest.y = (ent->savedPlayerPos.y - ent->sprite->h/2) - camera->y;
-	dest.w = ent->sprite->w;
-	dest.h = ent->sprite->h;
- 	SDL_SetRenderTarget(GetRenderer(),ent->sprite->image);
-	SDL_SetTextureBlendMode(ent->sprite->image,SDL_BLENDMODE_ADD); 
-	SDL_RenderCopy(GetRenderer(),mainSceneTexture,&dest,&dest);
+	}
+	if(dest.y <= 0)
+	{
+
+	}
+	
+	SDL_SetRenderTarget(GetRenderer(),LightBuffer);
+	SDL_RenderClear(GetRenderer());
+	SDL_RenderCopy(GetRenderer(),ent->sprite->image,&src,&dest);
+	SDL_SetTextureBlendMode(game->mainSceneTexture,SDL_BLENDMODE_ADD); 
+	SDL_RenderCopy(GetRenderer(),game->mainSceneTexture,&dest,&dest);
 	SDL_SetRenderTarget(GetRenderer(),NULL);	
-	DrawEntity(ent,0,ent->position.x,ent->position.y);
+	SDL_RenderCopy(GetRenderer(),LightBuffer,&dest,&dest);
+	*/
 }
 Inventory* InitInventory()
 {
@@ -139,6 +158,7 @@ Inventory* InitInventory()
 	i->inventory = NULL;
 	i->display = 0;
 	i->sprite = LoadSprite("images/InventoryBackground.png",319,250);
+	i->keySprite = LoadSprite("images/Key.png",16,32);
 	i->cursor = c;
 	i->cursor->ref = g_list_first(i->inventory);
 	for(k = 0;k < 12;++k)
@@ -173,6 +193,14 @@ void DrawInventory(Inventory* i)
 	dst.x = 100;
 	dst.y = 100;
 	SDL_RenderCopy(GetRenderer(),i->sprite->image,&src,&dst);
+	DrawSprite(i->keySprite,130,240,0,GetRenderer(),SDL_FLIP_NONE);
+	itoa(i->keys,keys,10);	
+	dst.x = 150;
+	dst.y = 240;
+	dst.w = dst.h = 30;
+	RenderFont(keys,dst,game->font,&whiteFont);
+
+
 	DrawCursor(i);
 	DrawItemRef(i);
 }

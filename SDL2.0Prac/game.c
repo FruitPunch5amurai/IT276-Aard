@@ -3,30 +3,43 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <string>
+
+#include "player.h"
+#include "spirit.h"
+#include "vectors.h"
+#include "graphics.h"
+#include "enemy.h"
+#include "gamepad.h"
+#include "entity.h"
+#include "level.h"
+#include "sprite.h"
+#include "obj.h"
+#include "collision.h"
+#include "LList.h"
+#include "gamepad.h"
+#include "editor.h"
+#include "editor_panel.h"
 #include "game.h"
 
 extern Map* map;
-Game *game;
-SDL_Rect worldSize;
+extern Entity* playerEnt;
+extern Player *playerData;
+
 const int AREA_WIDTH = 2400;
 const int AREA_HEIGHT = 1800;
 const int SCROLL_SPEED = 10;
 
 const int SCREEN_WIDTH =800;
 const int SCREEN_HEIGHT =600;
-SDL_Rect *camera;
+
+Game *game;
+SDL_Rect worldSize;
+
 SDL_Rect *hotBox;
-
-extern Entity* playerEnt;
-extern Player *playerData;
-
-SDL_Texture* mainSceneTexture;
 SDL_Event* mainEvent = NULL;
+SDL_Texture* LightBuffer;
 Sprite* temp = NULL;
 Vec2D SetCameraPosition;
-int (*gameState)();
-
-
 
 /**
 *@brief The Entry Point
@@ -46,10 +59,10 @@ void Init()
 	memset(game,0,sizeof(Game));
 	float bgcolor[] = {1,1,1,1};
 	mainEvent = new SDL_Event();
-	camera = (SDL_Rect*)malloc(sizeof(camera));
-	memset(camera,0,sizeof(SDL_Rect));
-	camera->x = 0;
-	camera->y = 0;
+	game->camera = (SDL_Rect*)malloc(sizeof(SDL_Rect));
+	memset(game->camera,0,sizeof(SDL_Rect));
+	game->camera->x = 0;
+	game->camera->y = 0;
 	//InitMapList();
 	InitSpriteList();
 	Init_Graphics("Aard:GTS",
@@ -60,30 +73,36 @@ void Init()
     bgcolor);
 	InitEntityList();
 	InitKeyData();
+	game->font = TTF_OpenFont("Tahoma.ttf",20);
 	Load("level.map","images/Resources1.png");
-	mainSceneTexture = SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,map->w * map->tileW,map->h * map->tileH);
+	game->mainSceneTexture = SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,map->w * map->tileW,map->h * map->tileH);
+	LightBuffer = 
+		SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,
+		map->w * map->tileW,map->h * map->tileH);
+	SDL_SetTextureBlendMode(LightBuffer,SDL_BLENDMODE_BLEND);	
 	worldSize.x = worldSize.y = 0;
 	worldSize.w =map->w * map->tileW;
 	worldSize.h = map->h * map->tileH;
-
 	CreatePlayer(400,400);
 	CreatePlayerData();
 	SetPlayerData();
 	playerData->camera = GetCamera();
 	hotBox = InitHotBox();
+	
+	game->gameState = StateTitle;
+	
 }
 /**
 *@brief Main game loop
 */
 void Loop()
 {
-	gameState = StateTitle;
 	int quit = 0;
 	do
 	{
 		SDL_PollEvent(mainEvent);
-		handleInput(gameState);	
-		quit = gameState();
+		handleInput(game->gameState);	
+		quit = game->gameState();
 			
 
 		}
@@ -161,11 +180,11 @@ int StateTitle()
 int StateGame()
 {
 		SDL_RenderClear(GetRenderer());	
-		DrawMap(1,0,0);
-		DrawMap(2,0,0);
-		DrawMap(3,0,0);
+		DrawMap(1,game->camera->x,game->camera->y);
+		DrawMap(2,game->camera->x,game->camera->y);
+		DrawMap(3,game->camera->x,game->camera->y);
 		DrawMap(0,0,0);
-		SetCamera(*camera,hotBox);
+		SetCamera(*game->camera,hotBox);
 		ThinkEntities();
 		UpdateEntities();
 		DrawEntities();
@@ -185,40 +204,32 @@ int StateInventory()
 		DrawMap(2,0,0);
 		DrawMap(3,0,0);
 		DrawMap(0,0,0);
-		SetCamera(*camera,hotBox);
-		DrawMainScene();
+		SetCamera(*game->camera,hotBox);
 		DrawEntities();
+		DrawMainScene();
 		DrawSpecialLayer(map);
 		DrawInventory(playerData->inventory);
 		NextFrame();
 		return 0;
 }
+int StateEditor()
+{
+	SDL_RenderClear(GetRenderer());
+	DrawEditorPanels(MainEditorPanels);
+	NextFrame();
+	return 0;
 
+}
 void DrawMainScene()
 {
-	SDL_RenderCopy(GetRenderer(),mainSceneTexture,&worldSize,&worldSize);
+	SDL_RenderCopy(GetRenderer(),game->mainSceneTexture,&worldSize,&worldSize);
+
 }
 SDL_Rect* GetCamera()
 {
-	return camera;
+	return game->camera;
 }
 void SetGameState(int (*state)())
 {
-	gameState = state;
+	game->gameState = state;
 }
-/*
-Vec2D GetCameraPosition()
-{
-	return CreateVec2D(camera.x,camera.y);
-}
-Vec2D GetCameraSize()
-{
-	return CreateVec2D(camera.w,camera.h);
-}
-
-void SetCameraSize(Vec2D size)
-{
-	camera.w = size.x;
-	camera.y = size.y;
-}
-*/

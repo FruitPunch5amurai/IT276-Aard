@@ -11,7 +11,7 @@ void TouchObject(Entity* ent,Entity* other);
 void UpdateObject(Entity* ent);
 void DrawObject(Entity* ent);
 void BreakObject(Entity* ent);
-;
+
 
 
 #endif

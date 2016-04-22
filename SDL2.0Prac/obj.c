@@ -6,14 +6,17 @@
 #include "entity.h"
 #include "collision.h"
 #include "player.h"
-#include"graphics.h"
+#include "graphics.h"
+#include "game.h"
+#include "items.h"
+#include "light.h"
 #include "obj.h"
 
 extern Map* map;
+extern SDL_Texture* LightBuffer;
 extern Entity* playerEnt;
 extern Entity* EntityList;
 extern Player* playerData;
-extern SDL_Texture* mainSceneTexture;
 Entity* CreateObject(Vec2D position,
 	int width, int height, 
 	int type, int frame,char* filename, ItemRef *item)
@@ -92,6 +95,33 @@ Entity* CreateObject(Vec2D position,
 		object->sprite->animation[1].maxFrames = 1;
 		object->sprite->animation[1].oscillate = 0;
 	}
+	if(type == Torch || type == LitTorch)
+	{
+		if(type	==	Torch)
+			object->whatAmI = Torch;
+		else
+			object->whatAmI = LitTorch;
+		object->sprite2 = LoadSprite("images/lightsource1.png",255,255);
+		object->value = 1;
+		object->draw = &DrawObject;
+		object->update = UpdateObject;
+		object->think = &ThinkObject;
+		object->free = &BreakObject;
+		object->touch = &TouchObject;
+
+		
+		object->currentAnimation = 0;
+		object->sprite->animation[0].startFrame = frame;
+		object->sprite->animation[0].currentFrame = frame;
+		object->sprite->animation[0].maxFrames = 1;
+		object->sprite->animation[0].oscillate = 0;
+
+		
+		object->sprite->animation[1].startFrame = frame+1;
+		object->sprite->animation[1].currentFrame = frame+1;
+		object->sprite->animation[1].maxFrames = 4;
+		object->sprite->animation[1].oscillate = 1;
+	}
 	return object;
 }
 
@@ -148,7 +178,7 @@ void ThinkObject(Entity* ent)
 			ent->temp = 1;
 		}
 		if(ent->currentAnimation == 1 && ent->nextThink > SDL_GetTicks()){
-			SDL_SetRenderTarget(GetRenderer(),mainSceneTexture);
+			SDL_SetRenderTarget(GetRenderer(),game->mainSceneTexture);
 			DrawSprite(ent->itemHolding->sprite,ent->position.x+10,ent->position2.y-=ent->speed,0,GetRenderer(),SDL_FLIP_NONE);
 			ent->speed-=1;
 			SDL_SetRenderTarget(GetRenderer(),NULL);
@@ -158,7 +188,12 @@ void ThinkObject(Entity* ent)
 			ent->itemHolding = NULL;
 			ent->think = NULL;
 		}
-			
+		
+	}else if(ent->whatAmI == LitTorch)
+	{
+		CreateLight(ent);
+		ent->currentAnimation = 1;
+		ent->think = NULL;
 	}
 	ent->currentFrame = ent->sprite->animation[ent->currentAnimation].currentFrame;
 }
