@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <glib.h>
 #include <string>
 #include "graphics.h"
 #include "vectors.h"
@@ -14,8 +15,7 @@ int MaxSpirits = 6;
 extern Map *map;
 extern Entity* playerEnt;
 extern Player* playerData;
-Link *l  = CreateLink(NULL,NULL,NULL);
-ELink *SpiritLink = CreateELink();
+GList *SpiritTrain = NULL;
 int MAXSPIRITPARTICLES = 2;
 Entity* CreateSpirit(int x, int y)
 {
@@ -132,15 +132,12 @@ void UpdateSpirit(Entity* ent)
 	}
 	Vec2DAdd(ent->position,ent->position ,ent->velocity);
 	Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
-	DrawSpirit(ent);
 	EntityIntersectAll(ent);
 }
 void ThinkSpirit(Entity *ent)
 {
 	if(ent->spiritIndex >= 0){
-		moveToPos(SpiritLink,ent->spiritIndex);
-		if(Prev(SpiritLink->curr)->curr)
-			ent->follow = Prev(SpiritLink->curr)->curr;
+		ent->follow =  (Entity*)g_list_nth_data(SpiritTrain,ent->spiritIndex-1);
 	}
 	if(ent->spiritState == BeingGuided && ent->nextThink < SDL_GetTicks() )
 	{		
@@ -154,19 +151,7 @@ void ThinkSpirit(Entity *ent)
 			ent->think = &ThinkEnemyLurker;
 			ent->update = &UpdateEnemyLurker;
 			ent->speed = 1;
-			moveToPos(SpiritLink,ent->spiritIndex);
-			Remove(SpiritLink);
-			if(Next(SpiritLink->curr)->curr != NULL)
-			{
-			for(int i = SpiritLink->curr->curr->spiritIndex+1; i <= SpiritLink->count;i++) 
-			{
-				moveToPos(SpiritLink,i);
-				if(SpiritLink->curr != NULL)
-				{
-					SpiritLink->curr->curr->spiritIndex--;
-				}
-			}
-			}
+			SpiritTrain = g_list_remove(SpiritTrain,ent);
 		}
 	}
 
@@ -198,35 +183,32 @@ void TouchSpirit(Entity *ent,Entity *other)
 	{
 		if(ent->spiritState == Untouched)
 		{
-			moveToEnd(SpiritLink);
-			Insert(SpiritLink,ent);
 			ent->spiritState= BeingGuided;	
-			ent->spiritIndex = SpiritLink->count;
-			playerData->guidingSpirits	+=	1;
+			ent->spiritIndex = g_list_length(SpiritTrain);
+			playerData->guidingSpirits+=1;
 			ent->speed = 4;
+			SpiritTrain = g_list_append(SpiritTrain,ent);
 		}
 		if(ent->spiritState == Lost){
 			playerEnt->penalty += playerEnt->penalty < 0 ? 1 : 0;
-			moveToEnd(SpiritLink);
-			Insert(SpiritLink,ent);
-			playerData->guidingSpirits	-=	1;
+			playerData->guidingSpirits	+=	1;
 			ent->spiritState= BeingGuided;	
-			ent->spiritIndex = SpiritLink->count;
+			ent->spiritIndex = g_list_length(SpiritTrain);
 			ent->think = &ThinkSpirit;
 			ent->update = &UpdateSpirit;
 			ent->speed = 4;
+			SpiritTrain = g_list_append(SpiritTrain,ent);
 		}
 	}
 }
 void ClearSpiritLink()
 {
-	moveToEnd(SpiritLink);
-	for(int i = SpiritLink->count; i > 1;--i)
+	Entity* ent;
+	for(int i = 1; i > g_list_length(SpiritTrain);++i)
 	{
-		SpiritLink->curr->curr->spiritState = Lost;
-		SpiritLink->curr->curr->spiritIndex = 0;
-		Remove(SpiritLink);
-		FreeSpirit(SpiritLink->curr->curr);
+		ent = (Entity*)g_list_nth_data(SpiritTrain,i);
+		SpiritTrain = g_list_remove(SpiritTrain,g_list_nth_data(SpiritTrain,i));
+		FreeSpirit(ent);
 	}
 }
 void FreeSpirit(Entity* ent)
@@ -234,36 +216,8 @@ void FreeSpirit(Entity* ent)
 	int i ;
 	if(ent->spiritIndex > 0)
 	{
-	moveToPos(SpiritLink,ent->spiritIndex);
-	Remove(SpiritLink);
-	playerData->guidingSpirits	-=	1;
-	moveToPos(SpiritLink,1);
-	if(Next(SpiritLink->curr)->curr != NULL)
-	{
-		for(int i = 2;i <= SpiritLink->count;++i)
-		{
-			Next(SpiritLink);
-			SpiritLink->curr->curr->spiritIndex = Prev(SpiritLink->curr)->curr->spiritIndex+1;
-		}
+	SpiritTrain = g_list_remove(SpiritTrain,ent);
 	}
-	}
-	/*
-	if(Next(SpiritLink->curr)->curr != NULL)
-	{
-		for(i = SpiritLink->curr->curr->spiritIndex+1; i <= SpiritLink->count;i++) 
-		{
-			if(SpiritLink->curr->curr->spiritIndex != -1)
-			{
-			moveToPos(SpiritLink,i);
-			if(SpiritLink->curr != NULL)
-			{
-				SpiritLink->curr->curr->spiritIndex--;
-			}
-			}
-		}
-	}
-	}
-	*/
 	ent->spiritIndex = NULL;
 	FreeEntity(ent);
 	ent= NULL;

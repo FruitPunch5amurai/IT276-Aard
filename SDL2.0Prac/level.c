@@ -17,6 +17,7 @@
 Map *map;
 Map *MapList = NULL;
 extern Entity* playerEnt;
+extern Player* playerData;
 extern int  MAX_ENTITIES;
 extern Entity* EntityList;
 GHashTable *GMaps = g_hash_table_new_full(g_str_hash,g_str_equal,NULL,NULL);
@@ -678,14 +679,21 @@ Entity* CreateDungeonEntrance(int x,int y,int w, int h,char filename[128],int pl
 */
 void LoadDungeon(char *filename,Vec2D playerSpawn)
 {
+	int x;
 	char dungeonName[120];
 	strncpy(dungeonName,filename,120);
 		CloseEntityList();
 		CloseLightList();
+
 		InitLightList();
 		InitEntityList();
 		Load(dungeonName,"images/Resources1.png");
-		CreatePlayer(playerSpawn.x,playerSpawn.y);		
+		CreatePlayer(playerSpawn.x,playerSpawn.y);
+		playerEnt->savedPlayerPos = playerSpawn;
+		for(x = 0;x < playerData->guidingSpirits;++x)
+		{
+			AddSpiritToPlayer();
+		}
 }
 /**
 *@brief Loads in all the entities associated with the current map

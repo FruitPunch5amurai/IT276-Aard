@@ -80,6 +80,7 @@ Entity *CreateEnemy(int x, int y, EnemyType type)
 		enemy->update = &UpdateEnemyChaser;	
 		enemy->think = &ThinkEnemyChaser;
 		enemy->currentAnimation = 0;
+		enemy->EnemyHP = 10;
 	}
 	else if(type == Lurker){
 		enemy->sprite->fpl = 1;
@@ -87,6 +88,7 @@ Entity *CreateEnemy(int x, int y, EnemyType type)
 		enemy->update = &UpdateEnemyLurker;
 		enemy->think = &ThinkEnemyLurker;
 		enemy->currentAnimation = 0;
+		enemy->EnemyHP = 10;
 	}
 	else if(type == Snatcher)
 	{
@@ -95,6 +97,7 @@ Entity *CreateEnemy(int x, int y, EnemyType type)
 		enemy->state = IDLE;
 		enemy->speed = 2;
 		enemy->sprite->animation[0].frameRate = 500;
+		enemy->EnemyHP = 10;
 	}
 	enemy->dimensions.x = enemy->sprite->w;
 	enemy->dimensions.y = enemy->sprite->h;
@@ -132,6 +135,7 @@ void DrawEnemy(Entity *ent)
 }
 void UpdateEnemyChaser(Entity *ent)
 {
+	Vec2D n;
 	ent->hitBox.x =ent->position.x;
 	ent->hitBox.y =ent->position.y;
 	if(ent->state == MOVING && !ent->knockback){
@@ -146,23 +150,12 @@ void UpdateEnemyChaser(Entity *ent)
 		}
 	else if (ent->state == CHASING &&!ent->knockback)
 		{
-			if(ent->savedPlayerPos.x < ent->position.x)
-			{
-				ent->velocity.x = -ent->speed;
-			}
-			if(ent->savedPlayerPos.x > ent->position.x)
-			{	
-				ent->velocity.x = +ent->speed;
-			}
-			if(ent->savedPlayerPos.y< ent->position.y)
-			{
-				ent->velocity.y = -ent->speed;
-			}
-			if(ent->savedPlayerPos.y > ent->position.y)
-			{
-				ent->velocity.y = +ent->speed;
-			}
-	
+			Vec2DSub(n,ent->savedPlayerPos,ent->position,);
+			Vec2DNormalize(&n);
+			n.x = n.x < 0 ? floor(n.x): ceil(n.x);
+			n.y = n.y < 0 ? floor(n.y): ceil(n.y);
+			ent->velocity.x = ent->speed * n.x ;
+			ent->velocity.y = ent->speed * n.y ;
 			}
 	else if(ent->state == IDLE && !ent->knockback)
 		{
@@ -192,7 +185,8 @@ void UpdateEnemyChaser(Entity *ent)
 }
 void ThinkEnemyChaser(Entity *ent)
 {
-	
+	if(ent->EnemyHP <= 0)
+		FreeEnemy(ent);
 	if(ent->nextThink < SDL_GetTicks()){
 		ent->savedPlayerPos = playerEnt->position;
 		ent->nextMove += 1;
@@ -202,7 +196,7 @@ void ThinkEnemyChaser(Entity *ent)
 		}
 		if(ent->knockback == 1)
 		{
-			ent->nextThink =  SDL_GetTicks() + 2000;
+			ent->nextThink =  SDL_GetTicks() + 500;
 			ent->knockback = 2;
 		}
 		else if(DistanceBetweenLessThan2D(ent->position,ent->savedPlayerPos,150))
@@ -274,6 +268,8 @@ void UpdateEnemyLurker(Entity *ent)
 }
 void ThinkEnemyLurker(Entity *ent)
 {
+	if(ent->EnemyHP <= 0)
+		FreeEnemy(ent);
 	if(ent->nextThink < SDL_GetTicks()){
 		if(ent->knockback == 2)
 		{
@@ -281,7 +277,7 @@ void ThinkEnemyLurker(Entity *ent)
 		}
 		if(ent->knockback == 1)
 		{
-			ent->nextThink =  SDL_GetTicks() + 1000;
+			ent->nextThink =  SDL_GetTicks() + 500;
 			ent->knockback = 2;
 		}else
 		{
@@ -302,6 +298,7 @@ void ThinkEnemyLurker(Entity *ent)
 }
 void UpdateEnemySnatcher(Entity *ent)
 {
+
  if (ent->state == GOINGUP && ent->temp > SDL_GetTicks())
 	{
 	ent->hitBox.w= 0;
@@ -334,6 +331,8 @@ void UpdateEnemySnatcher(Entity *ent)
 }
 void ThinkEnemySnatcher(Entity *ent)
 {
+	if(ent->EnemyHP <= 0)
+		FreeEnemy(ent);
 	if(ent->nextThink < SDL_GetTicks()){
 		if(ent->state == IDLE || ent->state == GOINGUP)
 			ent->savedPlayerPos = playerEnt->position ;
@@ -357,6 +356,7 @@ void TouchEnemy(Entity *ent, Entity* other)
 	{
 		FreeSpirit(other);
 		map->numOfSpirits--;
+		playerData->guidingSpirits	-=	1;
 		playerData->confidence -= 10;
 		FreeEnemy(ent);
 	}else if(other->whatAmI == 0)

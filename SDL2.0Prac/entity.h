@@ -54,6 +54,7 @@ typedef struct RoomData
 	int id;
 	int roomIDs[4];
 	SDL_Rect boundary;
+	Entity *Entities;
 }Room;
 typedef struct ItemRefData ItemRef;
 typedef struct EntityData
@@ -99,6 +100,7 @@ typedef struct EntityData
 	//Enemy Stuff
 	EnemyState state;			/**< State of enemy*/
 	EnemyType enemyType;				/**< 0 for Lurker, 1 for Ghost,2 for Chaser*/
+	int EnemyHP;
 	int nextMove;
 	Uint32 temp;
 	int moveIndicator;

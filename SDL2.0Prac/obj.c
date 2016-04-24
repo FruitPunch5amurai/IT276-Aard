@@ -17,6 +17,13 @@ extern SDL_Texture* LightBuffer;
 extern Entity* playerEnt;
 extern Entity* EntityList;
 extern Player* playerData;
+
+/**
+*@brief Creates an entity thats an object
+*@param width for width,height for height, type for what type of
+*@param object, frame for its current frame, filename for the sprite
+*@param file name, and a ref to an item if it contains one
+*/
 Entity* CreateObject(Vec2D position,
 	int width, int height, 
 	int type, int frame,char* filename, ItemRef *item)
@@ -124,7 +131,10 @@ Entity* CreateObject(Vec2D position,
 	}
 	return object;
 }
-
+/**
+*@brief Draw functon for objects
+*@param the entity calling it
+*/
 void DrawObject(Entity* ent)
 {
 	DrawEntity(ent,ent->currentAnimation,ent->position.x,ent->position.y);
@@ -135,6 +145,10 @@ void DrawObject(Entity* ent)
 		}
 	}
 }
+/**
+*@brief Think functon for objects
+*@param the entity calling it
+*/
 void ThinkObject(Entity* ent)
 {
 	ent->room = 
@@ -197,6 +211,10 @@ void ThinkObject(Entity* ent)
 	}
 	ent->currentFrame = ent->sprite->animation[ent->currentAnimation].currentFrame;
 }
+/**
+*@brief Toucg functon for objects
+*@param the entity calling it and the entity it touched
+*/
 void TouchObject(Entity* ent,Entity* other)
 {
 	if(ent->whatAmI == 4){
@@ -207,7 +225,14 @@ void TouchObject(Entity* ent,Entity* other)
 			//Do some damage;
 			ent->currentAnimation = 1;
 			ent->velocity.x = 0;ent->velocity.y = 0;
+			other->EnemyHP -=5;
 		              
+		}
+	}else if(ent->whatAmI == Torch)
+	{
+		if(other->whatAmI == Aard && playerData->currentItem->itemType == Lantern)
+		{
+			ent->whatAmI = LitTorch;
 		}
 	}else
 	{
@@ -226,6 +251,11 @@ void UpdateObject(Entity* ent)
 	}
 	EntityIntersectAll(ent);
 }
+
+/**
+*@brief Free functon for objects
+*@param the entity calling it
+*/
 void BreakObject(Entity *ent)
 {
 	FreeEntity(ent);

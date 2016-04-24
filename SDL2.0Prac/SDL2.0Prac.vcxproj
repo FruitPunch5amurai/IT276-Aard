@@ -38,10 +38,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Jason\Desktop\Aard-GTS\libraries\glib-2.28\include\glib-2.0;C:\Users\Jason\Desktop\JanssonSource\include;C:\vs_dev_lib\SDL2_image-2.0.1\include;C:\vs_dev_lib\SDL2_ttf-2.0.13\include;C:\vs_dev_lib\SDL2-2.0.4\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Jason\Downloads\Chipmunk-6.2.2\include\chipmunk;C:\Users\Jason\Desktop\Aard-GTS\libraries\glib-2.28\include\glib-2.0;C:\Users\Jason\Desktop\JanssonSource\include;C:\vs_dev_lib\SDL2_image-2.0.1\include;C:\vs_dev_lib\SDL2_ttf-2.0.13\include;C:\vs_dev_lib\SDL2-2.0.4\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>C:\Users\Jason\Desktop\Aard-GTS\libraries\glib-2.28\lib;C:\Users\Jason\Desktop\JanssonSource\lib\Debug;C:\vs_dev_lib\SDL2_ttf-2.0.13\lib\x86;C:\vs_dev_lib\SDL2_image-2.0.1\lib\x86;C:\vs_dev_lib\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Users\Jason\Desktop\Chipmunk Binaries\src\Debug;C:\Users\Jason\Desktop\Aard-GTS\libraries\glib-2.28\lib;C:\Users\Jason\Desktop\JanssonSource\lib\Debug;C:\vs_dev_lib\SDL2_ttf-2.0.13\lib\x86;C:\vs_dev_lib\SDL2_image-2.0.1\lib\x86;C:\vs_dev_lib\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -54,7 +54,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;jansson_d.lib;glib-2.0.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;chipmunk.lib;jansson_d.lib;glib-2.0.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>

@@ -193,10 +193,15 @@
 
 #MapEntities
 #RoomIds
+
 RoomId: -1
 LinksTo: 0 , 3 , 0 , 0
 Boundary: 800 , 600
 Location: 0 , 0
+Entities:
+Count: 2
+Type: Chaser Count: 2 Location: 252 , 640 1216 , 928
+
 
 RoomId: 1
 LinksTo: 0 , 4 , 0 , 0

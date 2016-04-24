@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <string>
+#include <chipmunk.h>
 
 #include "player.h"
 #include "spirit.h"
@@ -88,9 +89,8 @@ void Init()
 	SetPlayerData();
 	playerData->camera = GetCamera();
 	hotBox = InitHotBox();
-	
 	game->gameState = StateTitle;
-	
+
 }
 /**
 *@brief Main game loop
@@ -180,6 +180,9 @@ int StateTitle()
 int StateGame()
 {
 		SDL_RenderClear(GetRenderer());	
+		SDL_SetRenderTarget(GetRenderer(),game->mainSceneTexture);
+		SDL_RenderClear(GetRenderer());
+		SDL_SetRenderTarget(GetRenderer(),NULL);
 		DrawMap(1,game->camera->x,game->camera->y);
 		DrawMap(2,game->camera->x,game->camera->y);
 		DrawMap(3,game->camera->x,game->camera->y);
@@ -200,6 +203,9 @@ int StateGame()
 int StateInventory()
 {
 		SDL_RenderClear(GetRenderer());	
+		SDL_SetRenderTarget(GetRenderer(),game->mainSceneTexture);
+		SDL_RenderClear(GetRenderer());
+		SDL_SetRenderTarget(GetRenderer(),NULL);
 		DrawMap(1,0,0);
 		DrawMap(2,0,0);
 		DrawMap(3,0,0);
@@ -223,6 +229,7 @@ int StateEditor()
 void DrawMainScene()
 {
 	SDL_RenderCopy(GetRenderer(),game->mainSceneTexture,&worldSize,&worldSize);
+
 
 }
 SDL_Rect* GetCamera()

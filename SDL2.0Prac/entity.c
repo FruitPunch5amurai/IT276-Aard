@@ -166,6 +166,7 @@ void FreeEntity(Entity* ent)
 Vec2D OverlapsMap(Map *map,Entity *ent)
 {
 	Vec2D dir;
+	Vec2D mid = CreateVec2D(ent->position.x + ent->dimensions.x/2,ent->position.y + ent->dimensions.y/2);
 	dir.x = dir.y = 0;
 	int x,y,
 		x2 = ent->position.x+ent->dimensions.x-1,
@@ -178,14 +179,28 @@ Vec2D OverlapsMap(Map *map,Entity *ent)
 				if(CheckSolid(map,x/map->tileW,y2/map->tileH)){
 					dir.x = ent->speed;
 				}
+				else if(CheckTile(map->data,x/map->tileW,y2/map->tileH))
+				{
+					//printf("I fell down a hole!");
+
+					
+				}
 				dir.y = ent->speed;
 				return dir;
+			}else if(CheckTile(map->data,x/map->tileW,y/map->tileH))
+			{
+				//printf("I fell down a hole!");
+
 			}
 		}
 		if(CheckSolid(map,x/map->tileW,y2/map->tileH)){
 			dir.y = -ent->speed;
 			return dir;
-		}
+		}else if(CheckTile(map->data,x/map->tileW,y2/map->tileH))
+			{
+				//printf("I fell down a hole!");
+
+			}
 	}
 	for(y = ent->position.y;y < y2;y+=map->tileH)
 	{
@@ -194,6 +209,10 @@ Vec2D OverlapsMap(Map *map,Entity *ent)
 			dir.x = -ent->speed;
 			dir.y = ent->speed;
 			return dir;
+		}else if(CheckTile(map->data,x2/map->tileW,y/map->tileH))
+		{
+			//printf("I fell down a hole!");
+
 		}
 	}
 		if(CheckSolid(map,x2/map->tileW,y2/map->tileH))
@@ -201,6 +220,10 @@ Vec2D OverlapsMap(Map *map,Entity *ent)
 			dir.x = -ent->speed;
 			dir.y = -ent->speed;
 			return dir;
+		}else if(CheckTile(map->data,x2/map->tileW,y2/map->tileH))
+		{
+			//printf("I fell down a hole!");
+
 		}
 		return dir;
 }

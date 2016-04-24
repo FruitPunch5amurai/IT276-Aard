@@ -7,6 +7,7 @@
 typedef struct lightData{
 	Sprite* sprite;
 	Entity* source;
+	SDL_Rect src;
 
 
 }LightSource;

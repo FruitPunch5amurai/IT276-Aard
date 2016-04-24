@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <glib.h>
 #include <stdlib.h>
 #include <string>
 #include <jansson.h>
@@ -25,8 +26,7 @@ SDL_Color hp2;
 SDL_Color whiteFont;
 Player *playerData = NULL;
 Entity* playerEnt= NULL;
-extern Link *l;
-extern ELink *SpiritLink;
+extern GList *SpiritTrain;
 extern Map *map;
 extern KeyData *keyData;
 char numOfSpirits[256];
@@ -102,6 +102,7 @@ void SetPlayerData()
 	Vec2D pos;
 		/*Set the PlayerData*/
 	playerData->inventory = InitInventory();
+	playerData->currentItem = NULL;
 	playerData->confidence = 20;
 	playerData->maxConfidence = 30;
 	playerData->rescuedSpirits = 0;
@@ -115,6 +116,7 @@ void SetPlayerData()
 		playerData->abilities[i].maxCooldown = 10;
 		playerData->abilities[i].inuse =0;
 		playerData->abilities[i].unlocked = 1; 
+		playerData->abilities[i].dmg = 2;
 	}
 	playerData->textRect.x = 20;
 	playerData->textRect.y = 40;
@@ -179,10 +181,8 @@ void CreatePlayer(int x, int y)
 	playerEnt->free = &FreePlayer;
 	playerEnt->spiritIndex = 1;
 
- 	SetElement(l,playerEnt);
-	moveToPos(SpiritLink,1);
-	Insert(SpiritLink,playerEnt);
-	Next(SpiritLink);
+ 	SpiritTrain= g_list_append(SpiritTrain,playerEnt);
+
 	atexit(FreeInventory);
 }
 /**
@@ -204,11 +204,9 @@ void UpdatePlayer(Entity *ent)
 	
 	Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
 	Vec2DAdd(ent->position,ent->position,ent->velocity);
+	CheckPitFalls(map,ent);
 	EntityIntersectAll(ent);
-	if(ent->atkBox.x > 0)
-	{
-		AttackBoxIntersectAll(ent);
-	}
+
 }
 
 void ThinkPlayer(Entity *ent)
@@ -229,8 +227,12 @@ void ThinkPlayer(Entity *ent)
 		playerData->confidence += playerEnt->penalty;
 		ent->nextThink = SDL_GetTicks() +1000;
 	}
-	playerData->guidingSpirits = SpiritLink->count;
+	playerData->guidingSpirits = g_list_length(SpiritTrain)-1;
 	Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
+	if(ent->atkBox.x > 0)
+	{
+		AttackBoxIntersectAll(ent);
+	}
 	ent->atkBox.x = 0;
 	ent->atkBox.y = 0;
 	ent->atkBox.w = 0;
@@ -239,14 +241,13 @@ void ThinkPlayer(Entity *ent)
 	{
 		FreePlayer(ent);
 	}
-
-	ent->room = 
-		   ent->position.x > ent->room->boundary.x + ent->room->boundary.w ? ent->room = ent->room->west 
-		:  ent->position.x < ent->room->boundary.x ? ent->room = ent->room->east
-		:  ent->position.y > ent->room->boundary.y + ent->room->boundary.h ? ent->room = ent->room->south
-		:  ent->position.y < ent->room->boundary.y ? ent->room = ent->room->north
+		   ent->position.x > ent->room->boundary.x + ent->room->boundary.w ? TransitionRoom(ent,ent->room->west)
+		:  ent->position.x < ent->room->boundary.x ?TransitionRoom(ent,ent->room->east)
+		:  ent->position.y > ent->room->boundary.y + ent->room->boundary.h ? TransitionRoom(ent,ent->room->south)
+		:  ent->position.y < ent->room->boundary.y ?TransitionRoom(ent, ent->room->north)
 		:  ent->room;
-	
+
+
 //Handle Animation Change
 	ent->currentAnimation = keyData->ArrowKeyLeft != 0 || keyData->ArrowKeyRight != 0 ? 2:
 		keyData->ArrowKeyUp == 1 ? 1:
@@ -277,12 +278,12 @@ void TouchPlayer(Entity *ent,Entity *other)
 	{
 	if(other->whatAmI == 3)
 	{
-		moveToEnd(SpiritLink);
-		for(int i = 1;i < SpiritLink->count;++i)
+		for(int i = 1;i < g_list_length(SpiritTrain);++i)
 		{
-			playerData->EXP += (SpiritLink->count-1) % 2 == 0 && SpiritLink->count != 1? 1 * (SpiritLink->count-1)/2: 0;
-			playerData->confidence +=(SpiritLink->count-1) % 2 == 0 && SpiritLink->count != 1? 1 * (SpiritLink->count-1)/2: 0;
-			FreeSpirit(SpiritLink->curr->curr);
+			playerData->EXP += ( g_list_length(SpiritTrain)-1) % 2 == 0 &&  g_list_length(SpiritTrain) != 1? 1 * ( g_list_length(SpiritTrain)-1)/2: 0;
+			playerData->confidence +=( g_list_length(SpiritTrain)-1) % 2 == 0 &&  g_list_length(SpiritTrain)!= 1? 1 * ( g_list_length(SpiritTrain)-1)/2: 0;
+			FreeSpirit((Entity*)g_list_nth_data(SpiritTrain,i));
+			playerData->guidingSpirits	-=	1;
 			playerData->confidence = playerData->confidence < playerData->maxConfidence 
 				? playerData->confidence+1 : playerData->maxConfidence;
 			map->numOfSpirits--;
@@ -299,14 +300,15 @@ void TouchPlayer(Entity *ent,Entity *other)
 			Vec2DAdd(ent->position,ent->position,
 				-CreateVec2D(ent->speed * ent->velocity.x ,ent->speed* ent->velocity.y));
 			//Move Spirits back as well
-			if(SpiritLink->count >=2){
-			moveToPos(SpiritLink,2);
-			for(int i = 1; i< SpiritLink->count;++i)
+			if( g_list_length(SpiritTrain) >=2){
+			for(int i = 1; i<  g_list_length(SpiritTrain);++i)
 			{
+				Entity* sp;
+				sp = (Entity*)g_list_nth_data(SpiritTrain,i);
 					ent->velocity.x == 0 && ent->velocity.y == 0 ?
-			Vec2DAdd(SpiritLink->curr->curr->position,SpiritLink->curr->curr->position,
+			Vec2DAdd(sp->position,sp->position,
 				CreateVec2D(other->speed*6*other->velocity.x,other->speed*6*other->velocity.y)):
-			Vec2DAdd(SpiritLink->curr->curr->position,SpiritLink->curr->curr->position,
+			Vec2DAdd(sp->position,sp->position,
 				-CreateVec2D(ent->speed * ent->velocity.x ,ent->speed* ent->velocity.y));
 			}
 			}
@@ -321,6 +323,7 @@ void TouchPlayer(Entity *ent,Entity *other)
 		//whipATK
 			other->knockback = 1;
 			other->velocity = CreateVec2D(other->speed*2*playerEnt->facing.x,-other->speed*2*playerEnt->facing.y);
+			other->EnemyHP-= playerData->abilities[0].dmg;
 		}
 	}
 
@@ -330,12 +333,10 @@ void TouchPlayer(Entity *ent,Entity *other)
 */
 void FreePlayer(Entity* ent)
 {
-	FreeEntity(ent);
-	moveToPos(SpiritLink,1);
-	if(SpiritLink->curr->curr == ent)
-		Remove(SpiritLink);
-	if(SpiritLink->count != 0)
+ 	if(g_list_length(SpiritTrain) != 0)
 		ClearSpiritLink();
+	SpiritTrain = g_list_remove(SpiritTrain,g_list_nth_data(SpiritTrain,0));
+	FreeEntity(ent);
 	ent= NULL;
 
 }
@@ -377,6 +378,7 @@ void UpdateGUI()
 void SkillWhip()
 {
 	SDL_Rect rect; 
+	whiteFont.r = 255,whiteFont.g = 255,whiteFont.b = 255,whiteFont.a = 0;
 	rect.w = playerEnt->facing.x < 0 || playerEnt->facing.x > 0 ? 132 : 50;
 	rect.h = playerEnt->facing.y < 0 || playerEnt->facing.y > 0 ? 132 : 50;
 	rect.x = playerEnt->facing.x < 0 && playerEnt->facing.x != 0?
@@ -390,26 +392,26 @@ void SkillWhip()
 	playerEnt->atkBox.w = rect.w;
 	playerEnt->atkBox.h = rect.h;
 	SDL_SetRenderDrawColor(GetRenderer(), whiteFont.r, whiteFont.g, whiteFont.b, whiteFont.a); 
+	SDL_SetRenderTarget(GetRenderer(),game->mainSceneTexture);
 	SDL_RenderDrawRect(GetRenderer(), &rect);
+	SDL_SetRenderTarget(GetRenderer(),NULL);
 }
 void SkillRetrieve()
 {
-		moveToEnd(SpiritLink);
-		for(int i = SpiritLink->count;i > 0;--i)
+		for(int i = 1;i < g_list_length(SpiritTrain);++i)
 		{
-			SpiritLink->curr->curr->position = playerEnt->position;
-			Prev(SpiritLink);
+			Entity *sp = (Entity*)g_list_nth_data(SpiritTrain,i);
+			sp->position = playerEnt->position;
 		}
 }
 void SkillNEVERGONNAGIVEYOUUP()
 {
 	Entity* timer = CreateTimer(4);
-	moveToEnd(SpiritLink);
-			for(int i = SpiritLink->count;i > 1;--i)
+		for(int i = 1;i < g_list_length(SpiritTrain);++i)
 		{
-			SpiritLink->curr->curr->timer = timer;
-			SpiritLink->curr->curr->immunity = 1;
-			Prev(SpiritLink);
+			Entity *sp = (Entity*)g_list_nth_data(SpiritTrain,i);
+			sp->timer = timer;
+			sp->immunity = 1;
 		}
 }
 void SkillPickUpObject(Entity* ent)
@@ -459,12 +461,12 @@ void ExecuteSkill()
 		&& playerData->abilities[0].cooldown == 0 && playerData->EXP >=2)
 	{
 		playerData->abilities[0].inuse = 1;
-		playerData->abilities[0].cooldown = 3;
+		playerData->abilities[0].cooldown = 1;
 		printf("Whip used:%d\n" ,playerData->abilities[0].cooldown);
 		SkillWhip();
 	}
 	else if(keyData->W == 1 && playerData->abilities[1].inuse == 0 
-		&& playerData->abilities[1].cooldown == 0 && playerData->EXP >=4 && SpiritLink->count >1)
+		&& playerData->abilities[1].cooldown == 0 && playerData->EXP >=4 && g_list_length(SpiritTrain) >1)
 	{
 		playerData->abilities[1].inuse = 1;
 		playerData->abilities[1].cooldown = 3;
@@ -472,7 +474,7 @@ void ExecuteSkill()
 		SkillRetrieve();
 	}
 		else if(keyData->E == 1 && playerData->abilities[2].inuse == 0 
-			&& playerData->abilities[2].cooldown == 0 && playerData->EXP >=6 && SpiritLink->count >1)
+			&& playerData->abilities[2].cooldown == 0 && playerData->EXP >=6 && g_list_length(SpiritTrain) >1)
 	{
 		playerData->abilities[2].inuse = 1;
 		playerData->abilities[2].cooldown = 10;
@@ -542,4 +544,68 @@ void FreeInventory()
 		playerData->inventory = NULL;
 		free(playerData->inventory);
 	}
+}
+void TransitionRoom(Entity *ent,Room* room)
+{
+	ent->room = room;
+	ent->savedPlayerPos = ent->position;
+}
+void AddSpiritToPlayer()
+{
+	Entity* sp = CreateSpirit(playerEnt->position.x,playerEnt->position.y);
+	sp->spiritState= BeingGuided;	
+	sp->spiritIndex = g_list_length(SpiritTrain);
+	sp->speed = 4;
+	SpiritTrain = g_list_append(SpiritTrain,sp);
+
+}
+void RespawnPlayer()
+{
+	Entity* ent;
+	playerEnt->position = playerEnt->savedPlayerPos;
+	for(int i = 1; i < g_list_length(SpiritTrain);++i)
+	{
+		ent = (Entity*)g_list_nth_data(SpiritTrain,i);
+		ent->position = playerEnt->position;
+	}
+}
+
+void CheckPitFalls(Map *map,Entity *ent)
+{
+	Vec2D dir;
+	Vec2D mid = CreateVec2D(ent->position.x + ent->dimensions.x/2,ent->position.y + ent->dimensions.y/2);
+	dir.x = dir.y = 0;
+	int x,y,
+		x2 = ent->position.x+ent->dimensions.x-1,
+		y2 = ent->position.y+ent->dimensions.y-1;
+	for(x = ent->position.x; x < x2;x+=map->tileW)
+	{
+		for( y = ent->position.y; y < y2;y+=map->tileH)
+		{
+
+		if(CheckTile(map->data,x/map->tileW,y/map->tileH))
+			{
+				printf("I fell down a hole!");
+				RespawnPlayer();
+			}
+		}
+		if(CheckTile(map->data,x/map->tileW,y2/map->tileH))
+			{
+				printf("I fell down a hole!");
+				RespawnPlayer();
+			}
+	}
+	for(y = ent->position.y;y < y2;y+=map->tileH)
+	{
+		if(CheckTile(map->data,x2/map->tileW,y/map->tileH))
+		{
+			printf("I fell down a hole!");
+			RespawnPlayer();
+		}
+	}
+	if(CheckTile(map->data,x2/map->tileW,y2/map->tileH))
+		{
+			printf("I fell down a hole!");
+			RespawnPlayer();
+		}
 }

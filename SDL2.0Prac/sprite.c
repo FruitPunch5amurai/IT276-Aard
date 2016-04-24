@@ -74,10 +74,6 @@ if(sprite->refCount <= 0)
   {
   strcpy(sprite->filename,"\0");
      /*just to be anal retentive, check to see if the image is already freed*/
-	if(sprite->animation != NULL)
-		{
-		memset(&sprite->animation,0,sizeof(Animation));
-		}
   if(sprite->image != NULL)
 	  SDL_DestroyTexture(sprite->image);
   sprite->image = NULL;
@@ -85,17 +81,7 @@ if(sprite->refCount <= 0)
 
   sprite = NULL;
 }
-/**
-*@brief Free Animations
-*/
-void FreeAnimations(Sprite *sprite)
-{
-	int i;
-	for(i = 0;i < MAX_ANIMATIONS;i++)
-	{
-		//sprite->animation[i] = NULL;
-	}
-}
+
 /**
 *@brief Load in data for a sprite
 */

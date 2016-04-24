@@ -8,6 +8,7 @@ typedef struct{
 	int maxCooldown;
 	int inuse;
 	int unlocked;
+	int dmg;
 
 }Ability;
 
@@ -44,5 +45,9 @@ void SkillRetrieve();
 void SkillNEVERGONNAGIVEYOUUP();
 void SkillPickUpObject(Entity* ent);
 void SkillThrowObject();
+void TransitionRoom(Entity* ent,Room* room);
+void AddSpiritToPlayer();
+void RespawnPlayer();
+void CheckPitFalls(Map *map,Entity *ent);
 
 #endif _PLAYER_H_

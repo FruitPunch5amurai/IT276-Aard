@@ -114,35 +114,10 @@ void UpdateLantern(Entity* ent)
 	ent->savedPlayerPos.y = playerEnt->position.y;
 	ent->position.x =ent->savedPlayerPos.x ;
 	ent->position.y =ent->savedPlayerPos.y ;
+	ent->room = playerEnt->room;
 }
 void DrawLantern(Entity* ent)
-{/*
-	SDL_Rect dest,src;
-	dest.x = (ent->savedPlayerPos.x - ent->sprite2->w/2) - game->camera->x;
-	dest.y = (ent->savedPlayerPos.y - ent->sprite2->h/2) - game->camera->y;
-	dest.w = ent->sprite2->w;
-	dest.h = ent->sprite2->h;
- 	src.x = 0;
-	src.y = 0;
-	src.w = ent->sprite2->w;
-	src.h = ent->sprite2->h;
-	if(dest.x <= 0)
-	{
-
-	}
-	if(dest.y <= 0)
-	{
-
-	}
-	
-	SDL_SetRenderTarget(GetRenderer(),LightBuffer);
-	SDL_RenderClear(GetRenderer());
-	SDL_RenderCopy(GetRenderer(),ent->sprite->image,&src,&dest);
-	SDL_SetTextureBlendMode(game->mainSceneTexture,SDL_BLENDMODE_ADD); 
-	SDL_RenderCopy(GetRenderer(),game->mainSceneTexture,&dest,&dest);
-	SDL_SetRenderTarget(GetRenderer(),NULL);	
-	SDL_RenderCopy(GetRenderer(),LightBuffer,&dest,&dest);
-	*/
+{
 }
 Inventory* InitInventory()
 {
