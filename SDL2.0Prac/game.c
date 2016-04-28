@@ -60,10 +60,7 @@ void Init()
 	memset(game,0,sizeof(Game));
 	float bgcolor[] = {1,1,1,1};
 	mainEvent = new SDL_Event();
-	game->camera = (SDL_Rect*)malloc(sizeof(SDL_Rect));
-	memset(game->camera,0,sizeof(SDL_Rect));
-	game->camera->x = 0;
-	game->camera->y = 0;
+
 	//InitMapList();
 	InitSpriteList();
 	Init_Graphics("Aard:GTS",
@@ -74,23 +71,8 @@ void Init()
     bgcolor);
 	InitEntityList();
 	InitKeyData();
-	game->font = TTF_OpenFont("Tahoma.ttf",20);
-	Load("level.map","images/Resources1.png");
-	game->mainSceneTexture = SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,map->w * map->tileW,map->h * map->tileH);
-	LightBuffer = 
-		SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,
-		map->w * map->tileW,map->h * map->tileH);
-	SDL_SetTextureBlendMode(LightBuffer,SDL_BLENDMODE_BLEND);	
-	worldSize.x = worldSize.y = 0;
-	worldSize.w =map->w * map->tileW;
-	worldSize.h = map->h * map->tileH;
-	CreatePlayer(400,400);
-	CreatePlayerData();
-	SetPlayerData();
-	playerData->camera = GetCamera();
-	hotBox = InitHotBox();
 	game->gameState = StateTitle;
-
+	game->font = TTF_OpenFont("Tahoma.ttf",20);
 }
 /**
 *@brief Main game loop
@@ -187,13 +169,15 @@ int StateGame()
 		DrawMap(2,game->camera->x,game->camera->y);
 		DrawMap(3,game->camera->x,game->camera->y);
 		DrawMap(0,0,0);
-		SetCamera(*game->camera,hotBox);
 		ThinkEntities();
 		UpdateEntities();
 		DrawEntities();
 		DrawMainScene();
 		DrawSpecialLayer(map);
 		UpdateGUI();
+		SetCamera(*game->camera,hotBox);
+		if(playerEnt->room->script != NULL)
+			RunScript(playerEnt->room->script);
 		NextFrame();
 	return 0;
 }
@@ -220,7 +204,10 @@ int StateInventory()
 }
 int StateEditor()
 {
+
 	SDL_RenderClear(GetRenderer());
+	UpdateMousePosition();
+	UpdateEditorPanel(MainEditorPanels); 
 	DrawEditorPanels(MainEditorPanels);
 	NextFrame();
 	return 0;
@@ -238,5 +225,27 @@ SDL_Rect* GetCamera()
 }
 void SetGameState(int (*state)())
 {
+
+	if (state == &StateGame && game->gameState == &StateTitle)
+	{
+		game->camera = (SDL_Rect*)malloc(sizeof(SDL_Rect));
+		memset(game->camera,0,sizeof(SDL_Rect));
+		game->camera->x = 0;
+		game->camera->y = 0;
+		Load("level.map","images/Resources1.png");
+		game->mainSceneTexture = SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,map->w * map->tileW,map->h * map->tileH);
+		LightBuffer = 
+			SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,
+			map->w * map->tileW,map->h * map->tileH);
+		SDL_SetTextureBlendMode(LightBuffer,SDL_BLENDMODE_BLEND);	
+		worldSize.x = worldSize.y = 0;
+		worldSize.w =map->w * map->tileW;
+		worldSize.h = map->h * map->tileH;
+		CreatePlayerData();
+		CreatePlayer(400,400);
+		SetPlayerData();
+		playerData->camera = GetCamera();
+		hotBox = InitHotBox();
+	}
 	game->gameState = state;
 }

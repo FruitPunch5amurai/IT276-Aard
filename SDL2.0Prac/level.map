@@ -199,91 +199,53 @@ LinksTo: 0 , 3 , 0 , 0
 Boundary: 800 , 600
 Location: 0 , 0
 Entities:
-Count: 2
-Type: Chaser Count: 2 Location: 252 , 640 1216 , 928
-
+Type: Chaser Count: 1 Location: 5 , 5
+Type: Spirit Count: 1 Locations: 10, 10
+Type: Breakable Frame: 0  Filename: images/Objects.png Count: 1 Size: 64 x 64 Location: 6 , 7
+Type: Chest Item: Key Frame: 0 Filename: images/Chest.png Count: 1 Size: 32 x 32 Location: 9 , 7
+#end
 
 RoomId: 1
 LinksTo: 0 , 4 , 0 , 0
 Boundary: 800 , 600
 Location: 800 , 0
+#end
 
 RoomId: 2
 LinksTo: 0 , 5 , 0 , 0
 Boundary: 800 , 600
 Location: 1600 , 0
+#end
 
 RoomId: 3
 LinksTo: -1 , 0 , 0 , 4
 Boundary: 800 , 1200
 Location: 0 , 600
+#end
 
 RoomId: 4
 LinksTo: 1 , 6 , 3 , 5
 Boundary: 800 , 600
 Location: 800 , 600
+#end
 
 RoomId: 5
 LinksTo: 2 , 0 , 4 , 0
 Boundary: 800 , 1200
 Location: 1600 , 600
+#end
 
 RoomId: 6
 LinksTo: 4 , 0 , 0 , 5 
 Boundary: 800 , 600
 Location: 800 , 1200
+#end
 
 #Dungeons
 To: D1.map
 Size: 16 x 16
 Location: 230 , 300
 PlayerSpawn: 300 , 520
-
-#Objects
-Frame: 0
-Type: Breakable
-Filename: images/Objects.png
-Count: 1
-Size: 64 x 64
-Location: 
-6 , 7
-
-Frame: 0
-Type: Chest
-Item: Key
-Filename: images/Chest.png
-Count: 1
-Size: 32 x 32
-Location: 
-9 , 7
-#end
-
-#Enemies
-Type: Chaser
-Count: 2
-Location:
-252 , 640
-1216 , 928
-
-Type: Chaser
-Count: 1
-Location:
-192 , 892
-
-Type: Snatcher 
-Count: 1
-Location:
-192 , 1100
-#end
-
-#Spirits
-Count: 5
-Locations: 
-360 , 300
-300 , 300 
-420 , 300
-460 , 300
-520 , 300
 
 #Portal
 Location: 

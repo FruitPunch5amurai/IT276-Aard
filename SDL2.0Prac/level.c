@@ -2,7 +2,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <glib.h>
+#include <string>
+#include <stdio.h>
 #include "vectors.h"
 #include "graphics.h"
 #include "spirit.h"
@@ -202,11 +203,11 @@ bool Load(char *mapName, char *imageName)
 	return true;
 }
 
-void LoadBreakableObjects(FILE *file)
+void LoadObjects(FILE *file ,char *buf,int roomId)
 {
 	int j = 0,i = 0;
 	int frame = 0;
-	int type = 0;
+	EntityType type;
 	int count = 0;
 	char filename[128];
 	int w = 0;
@@ -214,18 +215,14 @@ void LoadBreakableObjects(FILE *file)
 	int x = 0;
 	int y = 0;
 	ItemRef* ref = NULL;
-	char buf[500];
-	fscanf(file,"%s",buf);
-	while(strcmp(buf,"#end") != 0){
-	fscanf(file,"%d",&frame);
-	fscanf(file,"%s",buf);
-	fscanf(file,"%s",buf);
 	if(strcmp(buf,"Breakable") == 0)
-		type = 4;
+		type = BreakableObject;
 	else if(strcmp(buf,"LockedDoor") == 0)
-		type = 6;
+		type = LockedDoor;
+	else if(strcmp(buf,"Door") == 0)
+		type = Door;
 	else if(strcmp(buf,"Chest") == 0){
-		type = 8;
+		type = Chest;
 		fscanf(file,"%s",buf);
 		fscanf(file,"%s",buf);
 		if(strcmp(buf,"Key") == 0)
@@ -242,6 +239,8 @@ void LoadBreakableObjects(FILE *file)
 		type = Torch;
 	}
 	fscanf(file,"%s",buf);
+	fscanf(file,"%d",&frame);
+	fscanf(file,"%s",buf);
 	fscanf(file,"%s",filename);
 	fscanf(file,"%s",buf);
 	fscanf(file,"%d",&count);
@@ -254,10 +253,8 @@ void LoadBreakableObjects(FILE *file)
 		fscanf(file,"%d",&x);
 		fscanf(file,"%s",buf);
 		fscanf(file,"%d",&y);
- 		CreateObject(CreateVec2D(x*32,y*32),w,h,type,frame,filename,ref);
+ 		CreateBluePrint(type,None,x*32,y*32,roomId,frame,filename,w,h,ref);
 		map->numOfEntities++;
-	}
-	fscanf(file,"%s",buf);
 	}
 }
 /**
@@ -422,14 +419,13 @@ void SetUpMap(Map* map,FILE *file)
 {
 	char buf[500];
 	int j,k,l,i,m,a,RoomId,LinksTo[4];
+	int localx,localy;
 	char filename[128];
 	SDL_Rect *roomDimensions = (SDL_Rect*)malloc(sizeof(SDL_Rect));
-
+	Room* room;
+	int numberOfEnts;
 	while(fscanf(file,"%s",buf) != EOF){
-		if(strcmp(buf,"#Objects") == 0)
-		{
- 			LoadBreakableObjects(file);
-		}
+
 		if(strcmp(buf,"#RoomIds") == 0)
 		{
 			for(i = 0; i < map->numberOfRooms;++i)
@@ -463,79 +459,128 @@ void SetUpMap(Map* map,FILE *file)
 				fscanf(file,"%s",buf);
 				fscanf(file,"%d",&roomDimensions->y);
 				CreateRoom(RoomId,roomDimensions,LinksTo);
+				fscanf(file,"%s",&buf);
+				if(strcmp(buf,"Entities:") == 0)
+				{
+					fscanf(file,"%s",buf);
+					while(strcmp(buf,"#end") != 0 && strcmp(buf,"Script:") != 0){
+						fscanf(file,"%s",buf);
+					if(strcmp(buf,"Snatcher") == 0)
+					{
+
+						fscanf(file,"%s",buf);
+						fscanf(file,"%d",&j);
+						fscanf(file,"%s",buf);
+
+						for(int i = 0;i < j ; i++ ){
+							fscanf(file,"%d",&k);
+							fscanf(file,"%s",buf);
+							fscanf(file,"%d",&l);
+						//CreateEnemy(k*32,l*32,Snatcher);
+						CreateBluePrint(Enemy,Snatcher,k*32,l*32,RoomId,0,NULL,0,0,NULL);
+						map->numOfEntities++;
+						}
+
+					fscanf(file,"%s",buf);
+					}
+					else if(strcmp(buf,"Lurker")== 0)
+					{
+
+						fscanf(file,"%s",buf);
+						fscanf(file,"%d",&j);
+						fscanf(file,"%s",buf);
+
+						for(int i = 0;i < j ; i++ ){
+							fscanf(file,"%d",&k);
+							fscanf(file,"%s",buf);
+							fscanf(file,"%d",&l);
+
+						//CreateEnemy(k*32,l*32,Lurker);
+						CreateBluePrint(Enemy,Lurker,k*32,l*32,RoomId,0,NULL,0,0,NULL);
+						map->numOfEntities++;
+						}
+						fscanf(file,"%s",buf);
+					}
+					else if(strcmp(buf,"Chaser")== 0)
+					{
+						fscanf(file,"%s",buf);
+						fscanf(file,"%d",&j);
+						fscanf(file,"%s",buf);
+						for(int i = 0;i < j ; i++ ){
+							fscanf(file,"%d",&k);
+							fscanf(file,"%s",buf);
+							fscanf(file,"%d",&l);
+						//CreateEnemy(k*32,l*32,Chaser);
+						CreateBluePrint(Enemy,Chaser,k*32,l*32,RoomId,0,NULL,0,0,NULL);
+						map->numOfEntities++;
+						}
+					}
+					else if(strcmp(buf,"Spirit") == 0){
+						fscanf(file,"%s",buf);
+						fscanf(file,"%d",&j);
+						map->numOfSpirits = j;
+						fscanf(file,"%s",buf);
+						for(int i = 0;i < map->numOfSpirits;i++)
+						{
+							fscanf(file,"%d",&j);
+							fscanf(file,"%s",buf);
+							fscanf(file,"%d", &k);
+
+							CreateBluePrint(Spirit,None,k*32,l*32,RoomId,0,NULL,0,0,NULL);
+							map->numOfEntities++;
+						}
+					}else if(strcmp(buf,"Breakable") == 0)
+						{
+  							LoadObjects(file,buf,RoomId);
+						}
+					else if(strcmp(buf,"Chest") == 0)
+						{
+ 							LoadObjects(file,buf,RoomId);
+						}
+					else if(strcmp(buf,"Torch") == 0)
+						{
+ 							LoadObjects(file,buf,RoomId);
+						}
+					else if(strcmp(buf,"LitTorch") == 0)
+						{
+ 							LoadObjects(file,buf,RoomId);
+						}
+					else if(strcmp(buf,"LockedDoor") == 0)
+						{
+ 							LoadObjects(file,buf,RoomId);
+						}
+					else if(strcmp(buf,"Door") == 0)
+						{
+ 							LoadObjects(file,buf,RoomId);
+						}
+					fscanf(file,"%s",buf);
+
+		}	
+		}if(strcmp(buf,"Script:") == 0)
+				{
+					fscanf(file,"%s",buf);
+					fscanf(file,"%s",buf);
+					if(strcmp(buf,"DefeatFoes") == 0)
+					{
+						fscanf(file,"%s",buf);
+						fscanf(file,"%s",&filename);
+						fscanf(file,"%s",buf);
+						fscanf(file,"%d",&j);
+						fscanf(file,"%s",buf);
+						fscanf(file,"%d",&k);
+						fscanf(file,"%s",buf);
+						fscanf(file,"%d",&localx);
+						fscanf(file,"%s",buf);
+						fscanf(file,"%d",&localy);
+
+						CreateScript(DefeatMonsters,filename,RoomId,localx*32,localy*32,j,k);
+					}
+					fscanf(file,"%s",buf);
+
+				}
 			}
 		}
-		if(strcmp(buf,"#Spirits") == 0){
-			fscanf(file,"%s",buf);
-			fscanf(file,"%d",&j);
-			map->numOfSpirits = j;
-			fscanf(file,"%s",buf);
-			for(i = 0;i < map->numOfSpirits;i++)
-			{
-				fscanf(file,"%d",&j);
-				fscanf(file,"%s",buf);
-				fscanf(file,"%d", &k);
-
-				CreateSpirit(j,k);
-				map->numOfEntities++;
-			}
-		}
-		if(strcmp(buf,"#Enemies") == 0){
-				fscanf(file,"%s",buf);
-				while(strcmp(buf,"#end") != 0){
-				fscanf(file,"%s",buf);
-				if(strcmp(buf,"Snatcher") == 0)
-				{
-
-					fscanf(file,"%s",buf);
-					fscanf(file,"%d",&j);
-					fscanf(file,"%s",buf);
-
-					for(int i = 0;i < j ; i++ ){
-						fscanf(file,"%d",&k);
-						fscanf(file,"%s",buf);
-						fscanf(file,"%d",&l);
-					CreateEnemy(k,l,Snatcher);
-					map->numOfEntities++;
-					}
-
-				fscanf(file,"%s",buf);
-				}
-				if(strcmp(buf,"Lurker")== 0)
-				{
-
-					fscanf(file,"%s",buf);
-					fscanf(file,"%d",&j);
-					fscanf(file,"%s",buf);
-
-					for(int i = 0;i < j ; i++ ){
-						fscanf(file,"%d",&k);
-						fscanf(file,"%s",buf);
-						fscanf(file,"%d",&l);
-
-					CreateEnemy(k,l,Lurker);
-					map->numOfEntities++;
-					}
-					fscanf(file,"%s",buf);
-				}
-				if(strcmp(buf,"Chaser")== 0)
-				{
-					fscanf(file,"%s",buf);
-					fscanf(file,"%d",&j);
-					fscanf(file,"%s",buf);
-					for(int i = 0;i < j ; i++ ){
-						fscanf(file,"%d",&k);
-						fscanf(file,"%s",buf);
-						fscanf(file,"%d",&l);
-					CreateEnemy(k,l,Chaser);
-					map->numOfEntities++;
-					}
-				fscanf(file,"%s",buf);
-				}
-
-		}
-			
-		}
+		
 		if(strcmp(buf,"#Portal") == 0){
 			fscanf(file,"%s",buf);
 			fscanf(file,"%d",&j);
@@ -609,10 +654,15 @@ Room *CreateRoom(int id,SDL_Rect *boundary,int linksTo[])
 	if(id == -1)
 	{
 		map->rooms[0] = *room;
+		map->rooms[0].script = NULL;
+		map->rooms[0].Entities = NULL;
 	}else
 	{
 		map->rooms[id] = *room;
+		map->rooms[id].script = NULL;
+		map->rooms[id].Entities = NULL;
 	}
+	room->script = NULL;
 	return room;
 }
 /**
@@ -690,15 +740,66 @@ void LoadDungeon(char *filename,Vec2D playerSpawn)
 		Load(dungeonName,"images/Resources1.png");
 		CreatePlayer(playerSpawn.x,playerSpawn.y);
 		playerEnt->savedPlayerPos = playerSpawn;
-		for(x = 0;x < playerData->guidingSpirits;++x)
-		{
-			AddSpiritToPlayer();
-		}
 }
-/**
-*@brief Loads in all the entities associated with the current map
-*/
-void LoadEntities()
-{
 
+EntityBluePrint* CreateBluePrint(EntityType entType,EnemyType enemyType,int x, int y,int roomId,
+	int frame,char *filename, int sizex,int sizey,ItemRef* ref)
+{
+	EntityBluePrint *b;
+	b = (EntityBluePrint*)malloc(sizeof(EntityBluePrint));
+	memset(b,0,sizeof(EntityBluePrint));
+	b->enemyType = enemyType;
+	b->entType = entType;
+	b->location.x = x;
+	b->location.y = y;
+	b->frame = frame;
+	if(filename != NULL)
+		strcpy(b->filename,filename);
+	b->sizex = sizex;
+	b->sizey = sizey;
+	b->ref = ref;
+	if(roomId == -1)
+	{
+		map->rooms[0].Entities = g_list_append(map->rooms[0].Entities,b);
+	}else{
+		map->rooms[roomId].Entities = g_list_append(map->rooms[roomId].Entities,b);
+	}
+	return b;
+	atexit(FreeEntityBluePrintsAll);
+}
+
+void FreeEntityBluePrints(Room* room)
+{
+	EntityBluePrint* b;
+	EntityBluePrint** bp;
+
+	for(int i = 0; i < g_list_length(room->Entities);++i)
+	{
+		b = (EntityBluePrint*)g_list_nth_data(room->Entities,i);
+		*bp = b;
+		free(*bp);
+		bp = NULL;
+	}
+}
+void FreeBluePrint(Entity* ent)
+{
+	free(ent->bp);
+
+}
+void FreeEntityBluePrintsAll()
+{
+	EntityBluePrint* b;
+	EntityBluePrint** bp;
+	int i,j;
+	Room* room;
+	for(j = 0;j < map->numberOfRooms;++j){
+		room = &map->rooms[j];
+		for(i = 0; i < g_list_length(room->Entities);++i)
+		{
+			b = (EntityBluePrint*)g_list_nth_data(room->Entities,i);
+			*bp = b;
+			free(*bp);
+			bp = NULL;
+		}
+	}
 }

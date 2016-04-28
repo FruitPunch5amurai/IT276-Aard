@@ -224,6 +224,9 @@ bool DistanceBetweenLessThan2D(Vec2D p1,Vec2D p2,float size);
 bool DistanceBetweenLessThan3D(Vec3D p1,Vec3D p2,float size);
 bool DistanceBetweenLessThan4D(Vec3D p1,Vec3D p2,float size);
 
+
+bool DistanceBetweenGreaterThan2D(Vec2D p1,Vec2D p2,float size);
+
 /**
  * @brief random macro taken from Id Software's Quake 2 Source.
  * This macro exposes the more random bits from the rand() function

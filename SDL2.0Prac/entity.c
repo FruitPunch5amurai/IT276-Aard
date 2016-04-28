@@ -4,6 +4,7 @@
 #include <string>
 #include "collision.h"
 #include "graphics.h"
+#include "script.h"
 #include "game.h"
 #include "entity.h"
 
@@ -11,9 +12,9 @@ void ThinkObject(Entity* ent);
 void TouchObject(Entity* ent,Entity* other);
 void DrawObject(Entity* ent);
 void UpdateObject(Entity* ent);
-int MAX_ENTITIES	= 500;
 
 extern Entity* playerEnt;
+int MAX_ENTITIES	= 500;
 Entity* EntityList = NULL;
 /**
 *@brief Initializes an Entity List
@@ -47,6 +48,7 @@ void CloseEntityList()
 	free(EntityList);
 	EntityList = NULL;
 }
+
 /**
 *@brief Goes through the Entity List and calls each of their update functions
 */
@@ -153,6 +155,7 @@ void FreeEntity(Entity* ent)
 {
 	if(ent != NULL){
 		ent->inuse--;
+		ent->whatAmI = NoType;
 		FreeSprite(ent->sprite);
 		ent->id =  NULL;
 		ent->update = NULL;
@@ -241,8 +244,10 @@ Entity* EntityIntersectAll(Entity *a)
 			if(a->room->id == playerEnt->room->id)
 			{
 			if(AABB(a->hitBox,EntityList[i].hitBox)){
-				(a->touch)(a,&EntityList[i]);
-				return &EntityList[i];
+				if(a->touch != NULL){
+					(a->touch)(a,&EntityList[i]);
+					return &EntityList[i];
+				}
 			}
 		}
 	}
@@ -350,5 +355,21 @@ Entity *CreatePortal(int x, int y)
 void DrawPortal(Entity *ent)
 {
 	DrawEntity(ent,ent->currentAnimation,ent->position.x,ent->position.y);
+}
+
+void ClearRoom()
+{
+	int i;
+	for(i = 0;i<MAX_ENTITIES;i++)
+	{
+		if(EntityList[i].room == playerEnt->room && EntityList[i].whatAmI != Aard
+			&& EntityList[i].whatAmI != Dungeon){
+			if(EntityList[i].sprite != NULL)
+			{
+			if(EntityList[i].free != NULL)
+				(*EntityList[i].free)(&EntityList[i]);
+			}
+		}
+	}
 }
 

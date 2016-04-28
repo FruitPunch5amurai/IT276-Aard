@@ -194,69 +194,62 @@
 
 #MapEntities
 #RoomIds
+
 RoomId: -1
 LinksTo: 0 , 0 , 0 , 1
 Boundary: 800 , 600
 Location: 0 , 0
+Entities:
+Type: Chaser Count: 1 Location: 3 , 3
+Type: Torch Frame: 0 Filename: images/Torch.png Count: 1 Size 16 x 22 Location: 2 , 13
+#end
 
 RoomId: 1
 LinksTo: 0 , 4 , -1 , 2
 Boundary: 800 , 600
 Location: 800 , 0
+#end
 
 RoomId: 2
 LinksTo: 0 , 0 , 1 , 0
 Boundary: 800 , 600
 Location: 1600 , 0
+#end
 
 RoomId: 3
 LinksTo: 0 , 6 , 0 , 4
 Boundary: 800 , 600
 Location: 0 , 600
+Entities:
+Type: Chaser Count: 1 Location: 5 , 25
+Script: 
+Type: DefeatFoes Filename: images/Resources1.png Size 32 x 64 Location: 24 , 27
+#end
 
 RoomId: 4
 LinksTo: 1 , 0 , 3 , 0
 Boundary: 800 , 1200
 Location: 800 , 600
+Entities:
+Type: LockedDoor Frame: 67 Filename: images/Resources1.png Count: 1 Size: 32 x 64 Location: 26 , 27
+#end
 
 RoomId: 5
 LinksTo: 0 , 7 , 0 , 0
 Boundary: 800 , 600 
 Location: 1600 , 600
+#end
 
 RoomId: 6
 LinksTo: 3 , 0 , 0 , 0 
 Boundary: 800 , 600
 Location: 0 , 1200
+#end
 
 RoomId: 7
 LinksTo: 5 , 0 , 4 , 0 
 Boundary: 800 , 600
 Location: 1600 , 1200
-
-#Objects
-Frame: 67
-Type: LockedDoor
-Filename: images/Resources1.png
-Count: 1
-Size: 32 x 64
-Location: 
-25 , 31
-
-Frame: 0
-Type: Torch
-Filename: images/Torch.png
-Count: 1
-Size 16 x 22
-Location:
-2 , 13
-#end
-
-#Enemies
-Type: Chaser
-Count: 1
-Location:
-100 , 100
 #end
 
 #Dungeons

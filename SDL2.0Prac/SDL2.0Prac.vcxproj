@@ -88,6 +88,7 @@
     <ClCompile Include="particle.c" />
     <ClCompile Include="player.c" />
     <ClCompile Include="save.c" />
+    <ClCompile Include="script.c" />
     <ClCompile Include="spawn.c" />
     <ClCompile Include="spirit.c" />
     <ClCompile Include="sprite.c" />
@@ -110,6 +111,7 @@
     <ClInclude Include="particle.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="save.h" />
+    <ClInclude Include="script.h" />
     <ClInclude Include="spawn.h" />
     <ClInclude Include="spirit.h" />
     <ClInclude Include="sprite.h" />

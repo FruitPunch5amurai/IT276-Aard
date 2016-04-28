@@ -26,7 +26,7 @@ extern Player* playerData;
 */
 Entity* CreateObject(Vec2D position,
 	int width, int height, 
-	int type, int frame,char* filename, ItemRef *item)
+	int type, int frame,char* filename, ItemRef *item,EntityBluePrint* bp)
 {
 	Entity *object;
 	object= CreateEntity();
@@ -41,7 +41,8 @@ Entity* CreateObject(Vec2D position,
 	object->hitBox.h = height;
 	object->hitBox.x = position.x;
 	object->hitBox.y = position.y;
-	for(int i =0;i < map->numberOfRooms;++i)
+	object->bp = bp;
+  	for(int i =0;i < map->numberOfRooms;++i)
 	{
 		if(AABB(object->hitBox,map->rooms[i].boundary))
 		{
@@ -65,11 +66,14 @@ Entity* CreateObject(Vec2D position,
 		object->sprite->animation[1].maxFrames = 7;
 		object->sprite->animation[1].oscillate = 1;
 	}
-	if(type == 6)
+	if(type == 6 || type == 13)
 	{
-		object->whatAmI = LockedDoor;
+		if(type == 6)
+			object->whatAmI = LockedDoor;
+		else
+			object->whatAmI = Door;
 		object->think = &ThinkObject;
-		object->touch = &TouchObject;
+		object->touch = &TouchObject;	
 		object->draw = &DrawObject;
 		object->update = &UpdateObject;
 		object->free = &BreakObject;
@@ -233,8 +237,21 @@ void TouchObject(Entity* ent,Entity* other)
 		if(other->whatAmI == Aard && playerData->currentItem->itemType == Lantern)
 		{
 			ent->whatAmI = LitTorch;
+			ent->bp->entType = LitTorch;
 		}
-	}else
+	}else if(ent->whatAmI == LockedDoor)
+	{
+		if(other->whatAmI == Aard){
+			if(playerData->inventory->keys > 0)
+			{
+				ent->whatAmI = UnlockedDoor;
+				FreeBluePrint(ent);
+				(*ent->free)(ent);
+				playerData->inventory->keys--;
+			}
+		}
+	}
+	else
 	{
 		Vec2DAdd(other->position,other->position,CollisionObject(ent,other));
 	}

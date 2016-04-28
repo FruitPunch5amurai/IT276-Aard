@@ -26,6 +26,7 @@ static Uint8 PrintFps = false;
 static Uint32 FPS = 0; 
 
 static int bitdepth;
+SDL_Color Color ;
 static Uint32 rmask;
 static Uint32 gmask;
 static Uint32 bmask;
@@ -104,8 +105,6 @@ void FrameDelay()
         SDL_Delay(Delay - diff);
 	}
     FPS = 1000.0/MAX(SDL_GetTicks() - THEN,0.001);
-	printf("DELAY: %d\n",Delay-diff);
-	printf("FPS: %d\n",FPS);
 }
 
 void NextFrame()
@@ -161,6 +160,14 @@ void RenderFont(char *message,SDL_Rect &rect,TTF_Font *f,SDL_Color *fg)
 	SDL_QueryTexture(texture,NULL,NULL,&rect.w,&rect.h);
 	SDL_RenderCopy(GetRenderer(),texture,NULL,&rect);
 
+}
+SDL_Color GetColor(const char* color)
+{
+	if(strcmp(color,"white") == 0){
+		Color.r = 255;Color.b = 0;Color.g = 0;
+		return Color;
+	}
+	
 }
 
 

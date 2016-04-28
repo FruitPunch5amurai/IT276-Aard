@@ -74,6 +74,9 @@
     <ClCompile Include="light.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="script.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graphics.h">
@@ -134,6 +137,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="script.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

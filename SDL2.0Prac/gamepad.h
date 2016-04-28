@@ -13,6 +13,8 @@ typedef struct{
 	Uint8 R;
 	Uint8 Spacebar;
 	Uint8 Enter;
+	Uint8 BackSpace;
+	Uint8 MouseButtonUp;
 
 }KeyData;
 void InitKeyData();
@@ -22,5 +24,7 @@ int StateGame();
 int StateInventory();
 int StateEditor();
 void handleInput(int (*gameState)());
+Uint32 GetMouseState();
+KeyData* GetKeyData();
 
 #endif

@@ -182,7 +182,7 @@ void CreatePlayer(int x, int y)
 	playerEnt->spiritIndex = 1;
 
  	SpiritTrain= g_list_append(SpiritTrain,playerEnt);
-
+  	TransitionRoom(playerEnt,playerEnt->room);
 	atexit(FreeInventory);
 }
 /**
@@ -260,15 +260,8 @@ void ThinkPlayer(Entity *ent)
 }
 void TouchPlayer(Entity *ent,Entity *other)
 {
-	if(other->whatAmI == 6)
-	{
-		if(playerData->inventory->keys > 0)
-		{
-			(*other->free)(other);
-			playerData->inventory->keys--;
-		}
-	}
-	else if(other->whatAmI == 5)
+	
+	if(other->whatAmI == 5)
 	{
 		LoadDungeon(other->dungeonName,other->savedPlayerPos);
 	}
@@ -371,7 +364,7 @@ void RenderHPBar(int x, int y, int w, int h, float Percent, SDL_Color FGColor, S
 void UpdateGUI()
 {
 	whiteFont.r = 255,whiteFont.g = 255,whiteFont.b = 255,whiteFont.a = 0;
-	itoa(map->numOfSpirits,numOfSpirits,10);
+	itoa(playerData->guidingSpirits,numOfSpirits,10);
 	RenderHPBar( 10, 10, playerData->maxConfidence,25,(float)playerData->confidence/playerData->maxConfidence, hp ,hp2);
 	RenderFont(numOfSpirits,playerData->textRect,game->font,&whiteFont);
 }
@@ -547,8 +540,57 @@ void FreeInventory()
 }
 void TransitionRoom(Entity *ent,Room* room)
 {
+	int x;
+	if(room != playerEnt->room)
+	{
+		ClearRoom();
+	}
 	ent->room = room;
-	ent->savedPlayerPos = ent->position;
+	if(ent->facing.x == -1){
+		ent->savedPlayerPos = ent->position;
+		ent->savedPlayerPos.x -= 40;
+	}else if(ent->facing.x == 1){
+		ent->savedPlayerPos = ent->position;
+		ent->savedPlayerPos.x += 40;
+	}else if(ent->facing.y == -1){
+		ent->savedPlayerPos = ent->position;
+		ent->savedPlayerPos.y += 40;
+	}else if(ent->facing.y == 1){
+		ent->savedPlayerPos = ent->position;
+		ent->savedPlayerPos.y -= 40;
+	}
+	for(x = 0;x < playerData->guidingSpirits;++x)
+		{
+			AddSpiritToPlayer();
+		}
+	EntityBluePrint *b;
+	for(int i = 0;i < g_list_length(room->Entities);++i)
+	{
+		b = (EntityBluePrint*)g_list_nth_data(room->Entities,i);
+		if(b->entType == Enemy)
+		{
+			CreateEnemy(b->location.x,b->location.y,b->enemyType);
+		}else if(b->entType == Spirit)
+		{
+			CreateSpirit(b->location.x,b->location.y);
+		}else if (b->entType == Chest){
+			CreateObject(b->location,b->sizex,b->sizey,b->entType,b->frame,b->filename,b->ref,b);
+		}
+		else if (b->entType == Torch){
+			CreateObject(b->location,b->sizex,b->sizey,b->entType,b->frame,b->filename,b->ref,b);
+		}
+		else if (b->entType == LitTorch){
+			CreateObject(b->location,b->sizex,b->sizey,b->entType,b->frame,b->filename,b->ref,b);
+		}
+		else if (b->entType == LockedDoor){
+			CreateObject(b->location,b->sizex,b->sizey,b->entType,b->frame,b->filename,b->ref,b);
+		}else if (b->entType == BreakableObject){
+			CreateObject(b->location,b->sizex,b->sizey,b->entType,b->frame,b->filename,b->ref,b);
+		}
+
+
+
+	}
 }
 void AddSpiritToPlayer()
 {
@@ -586,12 +628,14 @@ void CheckPitFalls(Map *map,Entity *ent)
 		if(CheckTile(map->data,x/map->tileW,y/map->tileH))
 			{
 				printf("I fell down a hole!");
+				playerData->confidence-=2;
 				RespawnPlayer();
 			}
 		}
 		if(CheckTile(map->data,x/map->tileW,y2/map->tileH))
 			{
 				printf("I fell down a hole!");
+				playerData->confidence-=2;
 				RespawnPlayer();
 			}
 	}
@@ -600,12 +644,14 @@ void CheckPitFalls(Map *map,Entity *ent)
 		if(CheckTile(map->data,x2/map->tileW,y/map->tileH))
 		{
 			printf("I fell down a hole!");
+			playerData->confidence-=2;
 			RespawnPlayer();
 		}
 	}
 	if(CheckTile(map->data,x2/map->tileW,y2/map->tileH))
 		{
 			printf("I fell down a hole!");
+			playerData->confidence-=2;
 			RespawnPlayer();
 		}
 }

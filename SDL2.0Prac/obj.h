@@ -5,7 +5,7 @@
 
 
 Entity* CreateObject(Vec2D position,int width, int height, int type,int frame,
-	char* filename, ItemRef *item);
+	char* filename, ItemRef *item,EntityBluePrint* bp);
 void ThinkObject(Entity* ent);
 void TouchObject(Entity* ent,Entity* other);
 void UpdateObject(Entity* ent);

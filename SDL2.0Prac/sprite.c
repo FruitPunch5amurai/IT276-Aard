@@ -213,6 +213,10 @@ void SetColor(Sprite *sprite,Uint8 red, Uint8 green, Uint8 blue)
 	SDL_SetTextureColorMod(sprite->image,red,green,blue);
 
 }
+Sprite* GetSpriteList()
+{
+	return SpriteList;
+}
 
 
 

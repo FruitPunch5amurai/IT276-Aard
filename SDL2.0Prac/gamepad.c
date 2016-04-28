@@ -1,18 +1,21 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <glib.h>
 #include <string>
 #include "entity.h"
 #include "player.h"
+#include"editor_panel.h"
 #include "editor.h"
 #include "gamepad.h"
 
 KeyData * keyData = NULL;
+extern GList* MainEditorPanels;
+extern Editor_Panel *currentPanel;
 extern SDL_Event* mainEvent;
 extern Entity *playerEnt;
 extern Player *playerData;
 extern void SetGameState(int (*state)());
-
 
 void InitKeyData()
 {
@@ -210,11 +213,61 @@ void handleInput(int (*gameState)())
 		}
 	}
 
-	if(gameState == &StateEditor)
+	else if(gameState == &StateEditor)
 	{
+		GList *elem,*elem2;
+		Editor_Panel* ref,*ref2;
+		int x,y,n;
+		if(mainEvent->type == SDL_MOUSEBUTTONUP){
+				SDL_GetMouseState(&x,&y);
+				if( x > currentPanel->rect.x && x < (currentPanel->rect.x +  currentPanel->rect.w) 
+					&& y >  currentPanel->rect.y &&   y <  (currentPanel->rect.y + currentPanel->rect.h))
+				{
+				
+				}
+				
+				else{
+					if(g_list_length(MainEditorPanels) != 0){
+						for(n = 0; n < g_list_length(MainEditorPanels);++n)
+						{
+							elem = g_list_nth(MainEditorPanels,n);
+							ref = (Editor_Panel*)elem->data;
+							if( x > ref->rect.x && x < (ref->rect.x +  ref->rect.w) 
+							&& y >  ref->rect.y &&   y <  (ref->rect.y + ref->rect.h))
+							{
+								currentPanel->focus = 0;
+								currentPanel = ref;
+								currentPanel->focus = 1;
+								break;
+							}
+						}
+					}
+				}
+			}
 
+		}
+		if(mainEvent->type == SDL_KEYDOWN)
+		{
+			switch(mainEvent->key.keysym.sym)
+			{
+			case SDLK_BACKSPACE:
+				if(keyData->BackSpace <= 0)
+					keyData->BackSpace = 1;
+				break;
+			}
+		}else if(mainEvent->type == SDL_KEYUP){
+			switch(mainEvent->key.keysym.sym)
+			{
+			case SDLK_BACKSPACE:
+					keyData->BackSpace = 0;
+				break;
+				}
+		}
 
-	}
 }
 
+KeyData* GetKeyData()
+{
+	return keyData;
+}
 

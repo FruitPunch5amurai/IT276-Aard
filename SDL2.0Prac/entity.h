@@ -1,16 +1,19 @@
 
 #ifndef __ENTITY_H_
 #define __ENTITY_H_
+#include <glib.h>
 #include "level.h"
 #include "sprite.h"
 #include "vectors.h"
 #include "particle.h"
 #include "items.h"
-#include <glib.h>
-/**
-*@brief Core data of the entity system
-*/
+
+
 typedef struct EntityData Entity;
+
+enum ScriptType{
+	DefeatMonsters
+};
 enum EnemyState{
 	IDLE,
 	MOVING,
@@ -36,15 +39,40 @@ enum EntityType{
 	LitTorch,
 	Chest,
 	Torch,
-	Item
+	Item,
+	UnlockedDoor,
+	NoType,
+	Door
 };
 enum EnemyType{
 	Chaser,
 	Lurker,
-	Snatcher
+	Snatcher,
+	None
 };
-typedef struct RoomData Room;
+/**
+*@brief Struct for Scripts
+*/
+typedef struct ScriptData Script;
+typedef struct ScriptData{
+	int count;
+	Entity* ent;
+	ScriptType type;
+	SDL_Rect location;
+	int activated;
+	char filename[128];
+	int (*update)(Script* script);
+}Script;
 
+int DefeatFoes(Script* script);
+Script* CreateScript(ScriptType type, char *filename,int RoomId,int x, int y,int w,int h);
+void RunScript(Script* script);
+
+
+/**
+*@brief Struct for rooms
+*/
+typedef struct RoomData Room;
 typedef struct RoomData
 {
 	Room *north;
@@ -54,9 +82,34 @@ typedef struct RoomData
 	int id;
 	int roomIDs[4];
 	SDL_Rect boundary;
-	Entity *Entities;
+	Script* script;
+	GList *Entities;
 }Room;
 typedef struct ItemRefData ItemRef;
+
+/**
+*@brief Struct for EntityBluePrints
+*/
+typedef struct EntityBluePrintData{
+	EntityType entType;
+	EnemyType enemyType;
+	Vec2D location;
+	int frame;
+	char filename[128];
+	int count;
+	int sizex;
+	int sizey;
+	ItemRef* ref;
+}EntityBluePrint;
+EntityBluePrint* CreateBluePrint(EntityType entType,EnemyType enemyType,int x, int y,int roomId,
+	int frame,char *filename, int sizex,int sizey,ItemRef* ref);
+void FreeEntityBluePrints(Room* room);
+void FreeBluePrint(Entity* ent);
+void FreeEntityBluePrintsAll();
+
+/**
+*@brief Struct for Entity
+*/
 typedef struct EntityData
 {
 	int		inuse;
@@ -85,6 +138,7 @@ typedef struct EntityData
 	int penalty;
 	Room *room;
 	char dungeonName[128];
+	EntityBluePrint* bp;
 	
 	//Spirit stuff
 	GuidedState spiritState;
@@ -114,23 +168,9 @@ typedef struct EntityData
 	void(*draw)(struct EntityData *ent);
 }Entity;
 
-typedef struct
-{
-	char mapName[128];
-	int width;
-	int height;
-	Vec2D position[20];
-	int playerSpawnX;
-	int playerSpawnY;
-	int frame;
-	EntityType entType;
-	EnemyType enemyType;
-	int count;
-	
-}GEntityInfo;
-
-GEntityInfo* CreateGEntityInfo();
-
+/**
+*@brief Struct for Map
+*/
 typedef struct 
 {
 	Sprite *tiles;
@@ -159,6 +199,9 @@ enum ItemType{
 	NONE
 };
 
+/**
+*@brief Struct for Items
+*/
 typedef struct ItemData{
 	ItemType itemType;		
 	Entity* self;
@@ -169,17 +212,27 @@ typedef struct ItemData{
 
 }Items;
 
+/**
+*@brief Struct for Item References
+*/
 typedef struct ItemRefData{
 	ItemType itemType;
 	Sprite* sprite;
 	Items *item;
 	Vec2D pos;
 }ItemRef;
+
+/**
+*@brief Struct for Inventory Cursor
+*/
 typedef struct{
 	Sprite* sprite;
 	GList* ref;
 }InventoryCursor;
 
+/**
+*@brief Struct for Inventory
+*/
 typedef struct InventoryData{
 	Sprite* sprite;
 	Sprite* keySprite;
@@ -194,6 +247,7 @@ void InitMapList();
 void CloseMapList();
 Room *CreateRoom(int id,SDL_Rect *boundary,int *linksTo);
 void ConnectRooms();
+void ClearRoom();
 Room *FindRoomWithID(int id);
 Map* CreateMap(int tileW, int tileH,int mapWidth,int mapHeight,int numOfRooms);
 void FreeMap();
@@ -201,7 +255,7 @@ bool Load(char *mapName,char *imageName);
 void LoadLayer(int data[],FILE *file);
 void LoadSolidTiles(int data[],FILE *file,int NumSolidTiles);
 void GenerateSolidLayer(Map* map);
-void LoadBreakableObjects(int data[],FILE *file);
+void LoadObjects(FILE *file ,char *buf,int roomdId);
 bool IsTileSolid(Map* map,int tile);
 bool CheckSolid(Map* map,int x, int y);
 bool CheckTile(int* data,int x,int y);
@@ -211,6 +265,7 @@ void SetUpMap(Map* map,FILE *file);
 Entity* CreateDungeonEntrance(int x,int y,int w, int h,char filename[128],int playerSpawnX,int playerSpawnY);
 void LoadDungeon(char *filename,Vec2D playerSpawn);
 void LoadEntities();
+
 //Entity Functions
 void DrawEntity(Entity *ent,int animationNum, int x, int y);	
 Entity* CreateEntity();

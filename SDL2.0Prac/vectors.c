@@ -201,6 +201,20 @@ bool DistanceBetweenLessThan2D(Vec2D p1,Vec2D p2,float size)
 	}
 
 }
+bool DistanceBetweenGreaterThan2D(Vec2D p1,Vec2D p2,float size)
+{
+		float i; 
+	i = sqrt(pow((p2.x - p1.x),2) + pow((p2.y - p1.y),2));
+	if(sqrt(pow((p2.x - p1.x),2) + pow((p2.y - p1.y),2)) > size)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
+}
 void Vec2DReflect(Vec2D *out, Vec2D normal,Vec2D in)
 {
   float f;

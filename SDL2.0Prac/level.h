@@ -4,7 +4,9 @@
 
 #include <string>
 #include <stdio.h>
+#include <glib.h>
 #include "sprite.h"
+#include "entity.h"
 
 
 #endif
