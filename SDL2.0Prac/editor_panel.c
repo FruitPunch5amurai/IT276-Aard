@@ -11,19 +11,30 @@
 extern Game* game;
 extern SDL_Event *mainEvent;
 extern Workspace* workSpace;
+extern Map *map;
 GList* MainEditorPanels = NULL;
 Editor_Panel* currentPanel = NULL;
 TextBox* currentTextBox = NULL;
 SDL_Rect MousePosition;
 int ButtonDown = 0;
+/*
+*@brief Creates the Workspace
+*@return a pointer to the Workspace
+*/
 Workspace* CreateEditorWorkspace()
 {
 	Workspace *ws;
 	ws = (Workspace*)malloc(sizeof(Workspace));
 	memset(ws,0,sizeof(Workspace));
+	ws->map = NULL;
 	ws->activeLayer = 0;
 	return ws;
 }
+/*
+*@brief Creates the TileSelector
+*@param SDL_Rect which is the dimensions and location
+*@return a pointer to the TileSelector
+*/
 TileSelector* CreateTileSelector(SDL_Rect pos)
 {
 	TileSelector *t;
@@ -47,6 +58,11 @@ TileSelector* CreateTileSelector(SDL_Rect pos)
 
 	return t;
 }
+/*
+*@brief Creates a Panel
+*@param SDL_Rect which is the dimensions and location of the panel
+*@return a pointer to the Panel
+*/
 Editor_Panel* CreateEditorPanel(SDL_Rect rect)
 {
 	Editor_Panel* p;
@@ -61,6 +77,11 @@ Editor_Panel* CreateEditorPanel(SDL_Rect rect)
 	p->focus = 0;
 	return p;
 }
+/*
+*@brief Creates a Label
+*@param SDL_Rect which is the dimensions and location of the panel, Char* which is its text
+*@return a pointer to the Label
+*/
 Label* CreateEditorLabel(char* text,SDL_Rect rect)
 {
 	Label* l;
@@ -70,6 +91,11 @@ Label* CreateEditorLabel(char* text,SDL_Rect rect)
 	l->rect = rect;
 	return l;
 }
+/*
+*@brief Creates a Button
+*@param SDL_Rect which is the dimensions and location of the panel, char* which is its text
+*@return a pointer to the Button
+*/
 Button* CreateEditorButton(char* text,SDL_Rect rect)
 {
 	Button *b;
@@ -82,6 +108,11 @@ Button* CreateEditorButton(char* text,SDL_Rect rect)
 	b->sprite = LoadSprite(text,32,16);							/*< for now */
 	return b;
 }
+/*
+*@brief Creates a Textbox
+*@param SDL_Rect which is the dimensions and location of the panel
+*@return a pointer to the Textbox
+*/
 TextBox* CreateEditorTextBox(SDL_Rect rect)
 {
 	TextBox *b;
@@ -92,7 +123,10 @@ TextBox* CreateEditorTextBox(SDL_Rect rect)
 	strcpy(b->value ,"Enter Value Here");
 	return b;
 }
-
+/*
+*@brief Updates a panels buttons, checks to see if it has been pressed, if so call its function
+*@param The GList of buttons of a panel
+*/
 void UpdateEditorButtons(GList* buttons)
 {
 	GList *elem;
@@ -133,7 +167,11 @@ void UpdateEditorButtons(GList* buttons)
 					return;
 				}
 }
-
+/*
+*@brief Updates a TextBox
+*@param The GList of textboxes of a panel
+*@return returns the textbox that is now the focus
+*/
 TextBox* UpdateEditorTextBoxes(GList* texts)
 {
 	GList *elem;
@@ -168,10 +206,17 @@ TextBox* UpdateEditorTextBoxes(GList* texts)
 	return NULL;
 
 	}
+/*
+*@brief Updates a tile selector
+*/
 void UpdateTileSelector()
 {
 	UpdateEditorButtons(workSpace->tileSelector->buttons);
 }
+/*
+*@brief Updates the G_List of panels. This only supports a two tier panel System.
+*@param The GList of panels to update
+*/
 void UpdateEditorPanel(GList* panels)
 {
 	GList *elem,*elem2;
@@ -179,12 +224,7 @@ void UpdateEditorPanel(GList* panels)
 	TextBox* textBox;
 	int n,m;
 	UpdateTileSelector();
-	if(currentPanel == NULL)
-	{
-		elem = g_list_last(MainEditorPanels);
-		ref = (Editor_Panel*)elem->data;
-		currentPanel = ref;
-	}else
+	if(currentPanel != NULL)
 	{
 		if(mainEvent->type == SDL_MOUSEBUTTONDOWN)
 		{
@@ -195,7 +235,23 @@ void UpdateEditorPanel(GList* panels)
 			SDL_StopTextInput();
 			}
 		}
-		if(g_list_length(currentPanel->panels) != 0){
+		/*
+		//Recursive Panel Check
+		while(currentPanel->panels != NULL)
+		{
+			elem = currentPanel->panels;
+			for(m = 0; m < g_list_length(elem);++m)
+			{
+				elem2 = g_list_nth(elem,m);
+				ref = (Editor_Panel*)elem2->data;
+				currentPanel = ref;
+				if(ref->panels == NULL)
+					continue;
+				else
+					break;
+			}
+		}*/
+			if(g_list_length(currentPanel->panels) != 0){
 				for(m = 0; m < g_list_length(currentPanel->panels);++m)
 				{
 					elem2 = g_list_nth(currentPanel->panels,m);
@@ -261,7 +317,11 @@ void UpdateEditorPanel(GList* panels)
 							
 	}
 }
-
+/*
+*@brief Creates an SDL_Rect
+*@param Dimensions and location
+*@return SDL_Rect
+*/
 SDL_Rect CreateSDL_Rect(int x,int y,int w,int h)
 {
 	SDL_Rect rect;
@@ -271,6 +331,10 @@ SDL_Rect CreateSDL_Rect(int x,int y,int w,int h)
 	rect.h = h;
 	return rect;
 }
+/*
+*@brief Decreases the frame number for the TileSelector
+*@param The Button which has been called
+*/
 void DecrementFrameNumber(Button* button)
 {
 	if(workSpace->tileSelector->frameNum >0)
@@ -281,10 +345,32 @@ void DecrementFrameNumber(Button* button)
 	sprintf((char*)button->data,"%d",x);
 	*/
 }
+/*
+*@brief Increases the frame number for the TileSelector
+*@param The Button which has been called
+*/
 void IncrementFrameNumber(Button* button)
 {
 	workSpace->tileSelector->frameNum+=1;
 }
+/*
+*@brief Removes a Panel and Frees it
+*@param The Panel to remove and free
+*/
+void RemovePanel(Editor_Panel* panel)
+{
+	GList* elem;
+	Editor_Panel* ref;
+	MainEditorPanels = g_list_remove(panel->siblingPanels,panel);
+	FreeEditorPanel(panel);
+	elem = g_list_last(MainEditorPanels);
+	ref = (Editor_Panel*)elem->data;
+	currentPanel = ref;
+}
+/*
+*@brief Changes the currentSprite Sheet to the next on the SpriteSheetList
+*@param The Button which has been called
+*/
 void ChangeSpriteSheet(Button* button)
 {
 	int i;
@@ -320,6 +406,10 @@ void LoadSpriteSheet(Button* button)
 {
 
 }
+/*
+*@brief Loads the panel for the Loading of a Map
+*@param The Button which has been called
+*/
 void LoadEditorMapPanel(Button* button)
 {
 	Editor_Panel* panel;
@@ -341,48 +431,183 @@ void LoadEditorMapPanel(Button* button)
 	}
 
 	panel = CreateEditorPanel(CreateSDL_Rect(100,100,400,130));
+	panel->siblingPanels = MainEditorPanels;
 	mapName = CreateEditorTextBox(CreateSDL_Rect(130,130,100,100));
 	newMap = CreateEditorButton("images/ButtonNew.png",CreateSDL_Rect(400,200,30,16));
 	newMap->function = &LoadEditorMapNew;
+	newMap->data = mapName;
+	newMap->parentPanel = panel;
+
+	loadMap = CreateEditorButton("images/ButtonLoad.png",CreateSDL_Rect(440,200,30,16));
+	loadMap->function = &LoadEditorMap;
+	loadMap->data = mapName;
+	loadMap->parentPanel = panel;
+
+	panel->buttons = g_list_append(panel->buttons,loadMap);
 	panel->buttons = g_list_append(panel->buttons,newMap);
-
-
 	strcpy(panel->name ,"MapLoadPanel");
 	panel->texts = g_list_append(panel->texts,mapName);
 	MainEditorPanels = g_list_append(MainEditorPanels,panel);
 }
-
+/*
+*@brief Loads the map from the data pointed to by the button
+*@param The Button which has been called
+*/
 void LoadEditorMap(Button* button)
 {
-
+	char mapName[255];
+	TextBox* textBox;
+	textBox = (TextBox*)button->data;
+	char imageName[255];
+	char buf[500];
+	int j;
+	int NumSolidTiles = 0;
+	int mapWidth,mapHeight,tileH,tileW;
+	
+	FILE * file;
+	file = fopen(textBox->value,"r");
+	if(!file)
+	 {
+		 printf("Map Does Not Exist\n");
+		 return;
+	 }else
+	 {	
+		printf("Map Successfully Loaded\n");
+	 }
+	while(strcmp(buf,"#SolidTiles") != 0)
+	{
+		fscanf(file,"%s",buf);
+		if(strcmp(buf,"#MapWidth") == 0){
+			fscanf(file,"%d",&j);
+			mapWidth = j;	
+			}
+		if(strcmp(buf,"#MapHeight") == 0)
+		{
+			fscanf(file,"%d",&j);
+			mapHeight = j;
+		}
+		if(strcmp(buf,"#TileWidth") == 0)
+		{
+			fscanf(file,"%d",&j);
+			tileW = j;
+		}
+		if(strcmp(buf,"#TileHeight") == 0)
+		{
+			fscanf(file,"%d",&j);
+			tileH = j;
+			fscanf(file,"%s",buf);
+			fscanf(file,"%d",&j);
+			if(map != NULL)
+			{
+				FreeMap();
+			}
+			workSpace->map = CreateMap(tileW,tileH,mapWidth,mapHeight,j);
+			map = workSpace->map;
+			workSpace->map->hasSpecialLayer = 0;
+			
+			strncpy(workSpace->map->name,textBox->value,128);
+			workSpace->map->solidLayer = (int*)malloc(sizeof(int) * workSpace->map->w * workSpace->map->h);
+			workSpace->map->data = (int*)malloc(sizeof(int) * workSpace->map->w * workSpace->map->h);
+			workSpace->map->data2 = (int*)malloc(sizeof(int) * workSpace->map->w * workSpace->map->h);
+			workSpace->map->data3 = (int*)malloc(sizeof(int) * workSpace->map->w * workSpace->map->h);
+			
+	
+			memset(workSpace->map->solidLayer,0,sizeof(workSpace->map->solidLayer));
+			memset(workSpace->map->data,0,sizeof(workSpace->map->data));
+			memset(workSpace->map->data2,0,sizeof(workSpace->map->data2));
+			memset(workSpace->map->data3,0,sizeof(workSpace->map->data3));
+		
+		}
+		if(strcmp(buf,"#SpriteSheet") == 0)
+		{
+			fscanf(file,"%s" ,imageName);
+			map->tiles = LoadSprite(imageName,tileW,tileH);
+		}
+		if(strcmp(buf,"#NumSolidTiles") == 0)
+		{
+			fscanf(file,"%d",&j);
+			NumSolidTiles = j;
+			workSpace->map->numSolidTiles = j;
+		}
+		if(strcmp(buf,"#Layer1") == 0)
+		{
+		LoadLayer(workSpace->map->data,file);
+		}
+		if(strcmp(buf,"#Layer2") == 0)
+		{
+		LoadLayer(workSpace->map->data2,file);
+		}
+		if(strcmp(buf,"#Layer3") == 0)
+		{
+		LoadLayer(workSpace->map->data3,file);
+		}
+		if(strcmp(buf,"#SpecialLayer") == 0)
+		{
+			workSpace->map->specialLayer = LoadSprite("images/Shroud.png",800,600);
+			workSpace->map->hasSpecialLayer = 1;
+		}
+		if(strcmp(buf,"#SolidTiles") == 0)
+		{
+		LoadSolidTiles(workSpace->map->solidTiles,file,NumSolidTiles);
+		}	
+	}
+	workSpace->buffer = SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,map->w * map->tileW,map->h * map->tileH);
+	RemovePanel(button->parentPanel);
 }
+/*
+*@brief Creates a new Map with the data pointed to by the button
+*@param The Button which has been called
+*/
 void LoadEditorMapNew(Button* button)
 {
 
 
 }
+
+/*
+*@brief Updates the MousesPosition
+*/
 void UpdateMousePosition()
 {
 	SDL_GetMouseState(&MousePosition.x,&MousePosition.y);
 }
+/*
+*@brief Gets the mouses current Position
+*@return SDL_Rect representing the mouses Position
+*/
 SDL_Rect* GetMousePosition()
 {
 	return &MousePosition;
 }
+/*
+*@brief Frees a buttion
+*@param The Button to be freed
+*/
 void FreeButton(Button* button)
 {
 	FreeSprite(button->sprite);
 	free(button);
 }
+/*
+*@brief Frees a label
+*@param The label to be freed
+*/
 void FreeLabel(Label* label)
 {
 	free(label);
 }
-
+/*
+*@brief Frees a Textbox
+*@param The textbox to be freed
+*/
 void FreeTextBox(TextBox* text)
 {
 	free(text);
 }
+/*
+*@brief Frees a panel
+*@param The panel to be freed
+*/
 void FreeEditorPanel(Editor_Panel *panel)
 {
 	free(panel);
@@ -395,11 +620,17 @@ void FreeEditorPanel(Editor_Panel *panel)
 	if(panel->texts == NULL)
 		g_list_free(panel->texts);
 }
+/*
+*@brief Frees the workspace
+*/
 void FreeWorkSpace()
 {
 
 
 }
+/*
+*@brief Frees all the panels,buttons,labels,textboxes, and workspace in the editor
+*/
 void FreeEveryThing()
 {
 	GList *elem,*elem2,*elem3;

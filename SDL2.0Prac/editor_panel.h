@@ -5,10 +5,16 @@
 #include "entity.h"
 #include "gamepad.h"
 #include "game.h"
+/*
+*@brief Structures for Map Editor, Supports a two tier panel system. Each Structures functions 
+*@brief are below each structure
+*/
 typedef struct ButtonData Button;
+typedef struct Editor_PanelData Editor_Panel;
 typedef struct ButtonData{
 	Sprite* sprite;
 	SDL_Rect rect;
+	Editor_Panel* parentPanel;
 	char name[255];
 	int clicked;
 
@@ -52,6 +58,7 @@ typedef struct Editor_PanelData {
 	int visible;
 	char name[255];
 	SDL_Rect rect;
+	GList* siblingPanels;
 	GList* panels;
 	GList* labels;
 	GList* buttons;
@@ -61,6 +68,8 @@ typedef struct Editor_PanelData {
 void UpdateEditorPanel(GList *panels);
 void FreeEditorPanel(Editor_Panel* panel);
 Editor_Panel* CreateEditorPanel(SDL_Rect rect);
+void SetCurrentPanel();
+void RemovePanel(Editor_Panel* panel);
 typedef struct
 {
 	GList *buttons;
@@ -79,15 +88,28 @@ typedef struct {
 	Map* map;
 	char filename[255];
 	TileSelector *tileSelector;
+	int focus;
+	SDL_Texture *buffer;
 	int activeLayer;
 }Workspace;
 Workspace* CreateEditorWorkspace();
+void DrawWorkspace();
+/*
+*@brief Functions for loading maps
+*/
 void LoadEditorMapPanel(Button* button);
 void LoadEditorMapNew(Button* button);
 void LoadEditorMap(Button* button);
 
+/*
+*@brief Functions for lFreeing
+*/
 void FreeWorkSpace();
 void FreeEveryThing();
+
+/*
+*@brief misc
+*/
 void UpdateMousePosition();
 void LoadSpriteSheet(Button* button);
 void ChangeSpriteSheet(Button* button);

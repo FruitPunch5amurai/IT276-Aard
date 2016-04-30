@@ -75,6 +75,17 @@ void FreeLight(LightSource* l)
 }
 void CloseLightList()
 {
+	GList *elem;
+	LightSource* ref;
+	int n;
+		if(g_list_length(LightList) != 0){
+			for(n = 0; n < g_list_length(LightList);++n)
+			{
+				elem = g_list_nth(LightList,n);
+				ref = (LightSource*)elem->data;
+				FreeLight(ref);
+			}
+		}
 	g_list_free(LightList);
 }
 void InitLightList()

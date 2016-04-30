@@ -220,13 +220,6 @@ void handleInput(int (*gameState)())
 		int x,y,n;
 		if(mainEvent->type == SDL_MOUSEBUTTONUP){
 				SDL_GetMouseState(&x,&y);
-				if( x > currentPanel->rect.x && x < (currentPanel->rect.x +  currentPanel->rect.w) 
-					&& y >  currentPanel->rect.y &&   y <  (currentPanel->rect.y + currentPanel->rect.h))
-				{
-				
-				}
-				
-				else{
 					if(g_list_length(MainEditorPanels) != 0){
 						for(n = 0; n < g_list_length(MainEditorPanels);++n)
 						{
@@ -235,15 +228,18 @@ void handleInput(int (*gameState)())
 							if( x > ref->rect.x && x < (ref->rect.x +  ref->rect.w) 
 							&& y >  ref->rect.y &&   y <  (ref->rect.y + ref->rect.h))
 							{
-								currentPanel->focus = 0;
 								currentPanel = ref;
 								currentPanel->focus = 1;
 								break;
+							}else
+							{
+								currentPanel != NULL ? currentPanel->focus = 0 : NULL;
+								currentPanel = NULL;
 							}
-						}
 					}
 				}
-			}
+					
+		}
 
 		}
 		if(mainEvent->type == SDL_KEYDOWN)

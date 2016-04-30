@@ -4,6 +4,7 @@
 #include <string>
 #include <glib.h>
 #include <jansson.h>
+#include "entity.h"
 #include "graphics.h"
 #include "editor_panel.h"
 #include "editor.h"
@@ -13,6 +14,12 @@ extern Editor_Panel *currentPanel;
 extern GList* MainEditorPanels;
 Workspace* workSpace;
 SDL_Color BG_Color;
+
+/*
+This is where you can find all the drawing 
+functions and parsing JSON for the Editor
+*/
+
 /*
 @brief Creates the initial panels
 */
@@ -22,6 +29,7 @@ void Init_Editor()
 	CreateMainPanels();
 	currentPanel = (Editor_Panel*)g_list_nth_data(MainEditorPanels,0);
 	workSpace->tileSelector->SpriteSheet = (Sprite*)g_list_nth_data(workSpace->tileSelector->SpriteList,0);
+	workSpace->map = NULL;
 	atexit(FreeEveryThing);
 
 }
@@ -59,6 +67,7 @@ void CreateMainPanels()
 		MainPanel = CreateEditorPanel(rect);
 		MainPanel->visible = json_number_value(json_object_get(parentPanel,"Visible"));
 		Panels = json_object_get(parentPanel,"Panels");
+		//Assigning Child Panels
 		for(j = 0;j< json_array_size(Panels);++j)
 		{
 			childPanel = json_array_get(Panels,j);
@@ -73,6 +82,7 @@ void CreateMainPanels()
 			rect.w = json_number_value(json_object_get(childPanel,"SizeX"));
 			rect.h = json_number_value(json_object_get(childPanel,"SizeY"));
 			TilePanel = CreateEditorPanel(rect);
+			TilePanel->siblingPanels = MainPanel->panels;
 			if(strcmp(json_string_value(json_object_get(childPanel,"Name")),"TilePanel") == 0)
 			{
 				workSpace->tileSelector = 
@@ -253,6 +263,9 @@ void DrawEditorTextBoxes(GList* texts)
 		}
 	}
 }
+/*
+@brief Draws the currentSprite Tile from the tileSelector
+*/
 void DrawCurrentSpriteTile()
 {
 
@@ -312,4 +325,20 @@ void DrawEditorPanels(GList* panels)
 	}
 	}
 }
-
+/*
+@brief Draws the map onto the workspaces buffer than draws the buffer to the screen
+*/
+void DrawWorkspace()
+{
+	SDL_Rect worldSize;
+	if(workSpace->map != NULL)
+	{
+		worldSize.x = worldSize.y = 0;
+		worldSize.w = workSpace->map->w * workSpace->map->tileW;
+			worldSize.h = workSpace->map->h * workSpace->map->tileH;
+		DrawMap(1,0,0,workSpace->buffer);
+		DrawMap(2,0,0,workSpace->buffer);
+		DrawMap(3,0,0,workSpace->buffer);
+		SDL_RenderCopy(GetRenderer(),workSpace->buffer,&worldSize,&worldSize);
+	}
+}

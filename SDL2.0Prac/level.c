@@ -76,6 +76,11 @@ void FreeMap()
 		printf("Map not initialized");
 		return;
 	}
+	FreeSprite(map->tiles);
+	free(map->data);
+	free(map->data2);
+	free(map->data3);
+
 	free(map);
 	map= NULL;
 }
@@ -84,12 +89,13 @@ void FreeMap()
 *@brief assigns a sprite sheet to the map and generates solidLayer of map
 *@param A list of chars which is the .map name, the map to load data in, the spriteImage name
 */
-bool Load(char *mapName, char *imageName)
+bool Load(char *mapName)
 {
 	int i = 0, j = 0 , k = 0;
 	int NumSolidTiles = 0;
 	int mapWidth,mapHeight,tileH,tileW;
 	char buf[500];
+	char imageName[255];
 	FILE * file;
 	file = fopen(mapName,"r");
 
@@ -148,6 +154,11 @@ bool Load(char *mapName, char *imageName)
 			fscanf(file,"%d",&j);
 			NumSolidTiles = j;
 			map->numSolidTiles = j;
+		}
+		if(strcmp(buf,"#SpriteSheet") == 0)
+		{
+			fscanf(file,"%s" ,imageName);
+			map->tiles = LoadSprite(imageName,tileW,tileH);
 		}
 		if(strcmp(buf,"#Layer1") == 0)
 		{
@@ -321,7 +332,7 @@ void DrawSpecialLayer(Map* map)
 *@brief Draws the portion of the map seen by screen
 *@param The map to draw,The layer to draw,int xOffset for Draw , int yOffset for Draw 
 */
-void DrawMap(int layer, int xOffset ,int yOffset)
+void DrawMap(int layer, int xOffset ,int yOffset,SDL_Texture* texture)
 {
 	int draw = 1;
 	int* drawLayer = NULL;
@@ -344,7 +355,7 @@ void DrawMap(int layer, int xOffset ,int yOffset)
 
 	int y,x,i;
 	SDL_Rect r;
-	SDL_SetRenderTarget(GetRenderer(),game->mainSceneTexture);
+	SDL_SetRenderTarget(GetRenderer(),texture);
 	for( y = startY; y < 600; y++){
 		for(x = startX;x < 800; x++)
 		{
@@ -737,7 +748,7 @@ void LoadDungeon(char *filename,Vec2D playerSpawn)
 
 		InitLightList();
 		InitEntityList();
-		Load(dungeonName,"images/Resources1.png");
+		Load(dungeonName);
 		CreatePlayer(playerSpawn.x,playerSpawn.y);
 		playerEnt->savedPlayerPos = playerSpawn;
 }

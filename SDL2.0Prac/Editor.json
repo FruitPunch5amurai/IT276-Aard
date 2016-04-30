@@ -1,0 +1,110 @@
+{"Panels" :[
+	{
+		"Visible" : 1,
+		"LocationX" : 0,
+		"LocationY" : 0,
+		"SizeX" : 800,
+		"SizeY" : 130,
+		"Panels" : 
+		[
+			{
+				"Name" : "TilePanel",
+				"SizeX" : 300,
+				"SizeY" : 130,
+				"LocationX": 0,
+				"LocationY": 0,
+				"TextBoxes":
+				[
+					
+	
+				],
+				"Labels" :
+				[	
+					{
+						"Name" : "SpriteSheetName",
+						"SizeX" : 100,
+						"SizeY" : 30,
+						"LocationX": 40,
+						"LocationY": 10,
+						"Text" : "Default"
+					}
+				],
+				"Buttons" : [
+					{
+						"Name" :   "ButtonLeft",
+						"Sprite" : "images/ButtonLeft.png",
+						"Function" : "ChangeSpriteSheet",
+						"Label" : "SpriteSheetName",
+						"LocationX": 10,
+						"LocationY": 10,	
+						"SizeX" : 16,
+						"SizeY" : 16		
+						
+					},
+					{
+						"Name":	   "ButtonRight",
+						"Sprite" : "images/ButtonRight.png",
+						"Function" : "ChangeSpriteSheet",
+						"Label" : "SpriteSheetName",
+						"LocationX": 260,
+						"LocationY": 10,	
+						"SizeX" : 16,
+						"SizeY" : 16		
+					},
+					{
+						"Name":	   "LoadSpriteSheet",
+						"Sprite" : "images/ButtonLeft.png",
+						"Function" : "LoadSpriteSheet",
+						"Label" :	"SpriteSheetName",
+						"LocationX": 280,
+						"LocationY": 10,	
+						"SizeX" : 16,
+						"SizeY" : 16,
+						"ListOfSpriteSheets":
+						[
+							{
+								"Filepath": "images/Resources1.png",
+								"SizeX": 32,
+								"SizeY": 32
+							},
+							{
+								"Filepath": "images/key.png",
+								"SizeX": 16,
+								"SizeY": 16
+							}
+						]					
+					}
+				]
+			},
+			{
+				"Name" : "RoomPanel",
+				"SizeX" : 300,
+				"SizeY" : 130,
+				"LocationX": 300,
+				"LocationY": 0
+			},
+			{
+				"Name" : "UtilityPanel",
+				"SizeX" : 300,
+				"SizeY" : 130,
+				"LocationX": 600,
+				"LocationY": 0 ,
+				"Buttons" :
+				[
+					{
+						"Name" :   "ButtonMap",
+						"Sprite" : "images/ButtonMap.png",
+						"Function" : "LoadEditorMapPanel",
+						"Label" : "None",
+						"LocationX": 150,
+						"LocationY": 10,	
+						"SizeX" : 30,
+						"SizeY" : 16	
+					}						
+				]
+			}
+			
+		]
+	}
+]
+}

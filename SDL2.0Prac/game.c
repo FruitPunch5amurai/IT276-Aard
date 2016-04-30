@@ -42,6 +42,11 @@ SDL_Texture* LightBuffer;
 Sprite* temp = NULL;
 Vec2D SetCameraPosition;
 
+/*
+This is where you can find all the Update,Create, and manipule data
+functions for the editor
+*/
+
 /**
 *@brief The Entry Point
 */
@@ -165,10 +170,10 @@ int StateGame()
 		SDL_SetRenderTarget(GetRenderer(),game->mainSceneTexture);
 		SDL_RenderClear(GetRenderer());
 		SDL_SetRenderTarget(GetRenderer(),NULL);
-		DrawMap(1,game->camera->x,game->camera->y);
-		DrawMap(2,game->camera->x,game->camera->y);
-		DrawMap(3,game->camera->x,game->camera->y);
-		DrawMap(0,0,0);
+		DrawMap(1,game->camera->x,game->camera->y,game->mainSceneTexture);
+		DrawMap(2,game->camera->x,game->camera->y,game->mainSceneTexture);
+		DrawMap(3,game->camera->x,game->camera->y,game->mainSceneTexture);
+		DrawMap(0,0,0,game->mainSceneTexture);
 		ThinkEntities();
 		UpdateEntities();
 		DrawEntities();
@@ -190,10 +195,10 @@ int StateInventory()
 		SDL_SetRenderTarget(GetRenderer(),game->mainSceneTexture);
 		SDL_RenderClear(GetRenderer());
 		SDL_SetRenderTarget(GetRenderer(),NULL);
-		DrawMap(1,0,0);
-		DrawMap(2,0,0);
-		DrawMap(3,0,0);
-		DrawMap(0,0,0);
+		DrawMap(1,0,0,game->mainSceneTexture);
+		DrawMap(2,0,0,game->mainSceneTexture);
+		DrawMap(3,0,0,game->mainSceneTexture);
+		DrawMap(0,0,0,game->mainSceneTexture);
 		SetCamera(*game->camera,hotBox);
 		DrawEntities();
 		DrawMainScene();
@@ -208,6 +213,7 @@ int StateEditor()
 	SDL_RenderClear(GetRenderer());
 	UpdateMousePosition();
 	UpdateEditorPanel(MainEditorPanels); 
+	DrawWorkspace();
 	DrawEditorPanels(MainEditorPanels);
 	NextFrame();
 	return 0;
@@ -216,8 +222,6 @@ int StateEditor()
 void DrawMainScene()
 {
 	SDL_RenderCopy(GetRenderer(),game->mainSceneTexture,&worldSize,&worldSize);
-
-
 }
 SDL_Rect* GetCamera()
 {
@@ -232,7 +236,7 @@ void SetGameState(int (*state)())
 		memset(game->camera,0,sizeof(SDL_Rect));
 		game->camera->x = 0;
 		game->camera->y = 0;
-		Load("level.map","images/Resources1.png");
+		Load("level.map");
 		game->mainSceneTexture = SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,map->w * map->tileW,map->h * map->tileH);
 		LightBuffer = 
 			SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,
@@ -246,6 +250,13 @@ void SetGameState(int (*state)())
 		SetPlayerData();
 		playerData->camera = GetCamera();
 		hotBox = InitHotBox();
+	}
+	else if (state == &StateEditor && game->gameState == &StateTitle)
+	{
+		game->camera = (SDL_Rect*)malloc(sizeof(SDL_Rect));
+		memset(game->camera,0,sizeof(SDL_Rect));
+		game->camera->x = 0;
+		game->camera->y = 0;
 	}
 	game->gameState = state;
 }
