@@ -218,6 +218,7 @@ void handleInput(int (*gameState)())
 		GList *elem,*elem2;
 		Editor_Panel* ref,*ref2;
 		int x,y,n;
+		//Check to see if mouse clicked a panel, will change panel focus or set currentPanel to NULL
 		if(mainEvent->type == SDL_MOUSEBUTTONUP){
 				SDL_GetMouseState(&x,&y);
 					if(g_list_length(MainEditorPanels) != 0){
@@ -237,11 +238,10 @@ void handleInput(int (*gameState)())
 								currentPanel = NULL;
 							}
 					}
-				}
-					
+				}		
+			}
 		}
-
-		}
+		//This is for Backspace for textboxes!
 		if(mainEvent->type == SDL_KEYDOWN)
 		{
 			switch(mainEvent->key.keysym.sym)
@@ -261,7 +261,10 @@ void handleInput(int (*gameState)())
 		}
 
 }
-
+/*
+@brief Function to get which key has been pressed
+@returns Keydata containing the Key data LOL
+*/
 KeyData* GetKeyData()
 {
 	return keyData;

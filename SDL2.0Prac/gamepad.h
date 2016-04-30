@@ -24,7 +24,6 @@ int StateGame();
 int StateInventory();
 int StateEditor();
 void handleInput(int (*gameState)());
-Uint32 GetMouseState();
 KeyData* GetKeyData();
 
 #endif

@@ -317,6 +317,34 @@ void UpdateEditorPanel(GList* panels)
 							
 	}
 }
+
+void UpdateWorkspace()
+{
+	int x,y;
+	if(workSpace->map != NULL){
+		if(currentPanel == NULL)
+		{
+			SDL_GetMouseState(&x,&y);
+			if(x > 750 && (workSpace->areaToDraw.x + workSpace->areaToDraw.w) < workSpace->map->w * workSpace->map->tileW )
+			{
+				workSpace->areaToDraw.x += 10;
+			}
+			else if(x < 50 && (workSpace->areaToDraw.x) > 0 )
+			{
+				workSpace->areaToDraw.x -= 10;
+			}
+			else if(y < 50 && (workSpace->areaToDraw.y) > 0)
+			{
+				workSpace->areaToDraw.y -= 10;
+			}
+			else if(y > 550 && (workSpace->areaToDraw.y + workSpace->areaToDraw.h) < workSpace->map->h * workSpace->map->tileH)
+			{
+				workSpace->areaToDraw.y += 10;
+			}
+		}
+	}
+
+}
 /*
 *@brief Creates an SDL_Rect
 *@param Dimensions and location
@@ -551,6 +579,10 @@ void LoadEditorMap(Button* button)
 		LoadSolidTiles(workSpace->map->solidTiles,file,NumSolidTiles);
 		}	
 	}
+	workSpace->areaToDraw.x = 0;
+	workSpace->areaToDraw.y = 0;
+	workSpace->areaToDraw.w = 25 * tileW;
+	workSpace->areaToDraw.h = 19 * tileH;
 	workSpace->buffer = SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,map->w * map->tileW,map->h * map->tileH);
 	RemovePanel(button->parentPanel);
 }
@@ -563,7 +595,33 @@ void LoadEditorMapNew(Button* button)
 
 
 }
+/*
+*@brief Hides all the panels so you cant interact with them, also will reveal panels if clicked again
+*/
+void HidePanels()
+{
+	GList *elem,*elem2;
+	Editor_Panel* ref,*ref2;
+	int n,m;
+ 	if(g_list_length(MainEditorPanels) != 0){
+		for(n = g_list_length(MainEditorPanels)-1; n >=0;--n)
+		{
+			elem = g_list_nth(MainEditorPanels,n);
+			ref = (Editor_Panel*)elem->data;
+			if(g_list_length(ref->panels) != 0){
+				for(m = 0; m < g_list_length(ref->panels);++m)
+				{
+					elem2 = g_list_nth(ref->panels,m);
+					ref2 = (Editor_Panel*)elem2->data;
+					ref2->visible = 0;
+				}
+			
+			}
+		ref->visible = 0;
+		}
+	}
 
+}
 /*
 *@brief Updates the MousesPosition
 */

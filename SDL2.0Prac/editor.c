@@ -334,11 +334,11 @@ void DrawWorkspace()
 	if(workSpace->map != NULL)
 	{
 		worldSize.x = worldSize.y = 0;
-		worldSize.w = workSpace->map->w * workSpace->map->tileW;
-			worldSize.h = workSpace->map->h * workSpace->map->tileH;
+		worldSize.w = 25 * workSpace->map->tileW;
+			worldSize.h = 19 * workSpace->map->tileH;
 		DrawMap(1,0,0,workSpace->buffer);
 		DrawMap(2,0,0,workSpace->buffer);
 		DrawMap(3,0,0,workSpace->buffer);
-		SDL_RenderCopy(GetRenderer(),workSpace->buffer,&worldSize,&worldSize);
+		SDL_RenderCopy(GetRenderer(),workSpace->buffer,&workSpace->areaToDraw,&worldSize);
 	}
 }

@@ -212,6 +212,7 @@ int StateEditor()
 
 	SDL_RenderClear(GetRenderer());
 	UpdateMousePosition();
+	UpdateWorkspace();	
 	UpdateEditorPanel(MainEditorPanels); 
 	DrawWorkspace();
 	DrawEditorPanels(MainEditorPanels);

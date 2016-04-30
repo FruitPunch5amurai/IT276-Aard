@@ -73,7 +73,28 @@
 								"SizeY": 16
 							}
 						]					
+					},
+					{
+						"Name":	   "ButtonLeft",
+						"Sprite" : "images/ButtonLeft.png",
+						"Function" : "ChangeSpriteSheet",
+						"Label" : "SpriteSheetName",
+						"LocationX": 200,
+						"LocationY": 100,	
+						"SizeX" : 16,
+						"SizeY" : 16		
+					},
+					{
+						"Name":	   "ButtonRight",
+						"Sprite" : "images/ButtonRight.png",
+						"Function" : "ChangeSpriteSheet",
+						"Label" : "SpriteSheetName",
+						"LocationX": 280,
+						"LocationY": 100,	
+						"SizeX" : 16,
+						"SizeY" : 16		
 					}
+					
 				]
 			},
 			{

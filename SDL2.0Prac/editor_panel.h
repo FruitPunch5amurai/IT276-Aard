@@ -90,10 +90,12 @@ typedef struct {
 	TileSelector *tileSelector;
 	int focus;
 	SDL_Texture *buffer;
+	SDL_Rect areaToDraw;
 	int activeLayer;
 }Workspace;
 Workspace* CreateEditorWorkspace();
 void DrawWorkspace();
+void UpdateWorkspace();
 /*
 *@brief Functions for loading maps
 */
