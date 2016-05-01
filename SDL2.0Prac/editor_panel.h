@@ -32,6 +32,7 @@ void IncrementFrameNumber(Button* button);
 typedef struct Editor_PanelData Editor_Panel;
 typedef struct {
 	char name[255];
+	SDL_Color color;
 	SDL_Rect rect;
 	char text[255];
 	Editor_Panel *parentPanel;
@@ -73,9 +74,11 @@ void RemovePanel(Editor_Panel* panel);
 typedef struct
 {
 	GList *buttons;
+	Label *label;
 	SDL_Rect position;
 	GList* SpriteList;
 	Sprite *SpriteSheet;
+	int visible;
 	int SpriteSheetListIndex;
 	int frameNum;
 
@@ -84,8 +87,14 @@ void DrawCurrentSpriteTile();
 TileSelector* CreateTileSelector(SDL_Rect pos);
 void UpdateTileSelector();
 
+
+enum Mode{
+	Add,
+	Remove
+};
 typedef struct {
 	Map* map;
+	Mode mode;
 	char filename[255];
 	TileSelector *tileSelector;
 	int focus;
@@ -96,6 +105,9 @@ typedef struct {
 Workspace* CreateEditorWorkspace();
 void DrawWorkspace();
 void UpdateWorkspace();
+void IncrementActiveLayer(Button* button);
+void DecrementActiveLayer(Button* button);
+void SwitchMode();
 /*
 *@brief Functions for loading maps
 */
@@ -112,6 +124,7 @@ void FreeEveryThing();
 /*
 *@brief misc
 */
+void HidePanels();
 void UpdateMousePosition();
 void LoadSpriteSheet(Button* button);
 void ChangeSpriteSheet(Button* button);

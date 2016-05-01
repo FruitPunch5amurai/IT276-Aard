@@ -47,9 +47,6 @@
     <ClCompile Include="spawn.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LList.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="save.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -110,9 +107,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="spawn.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="save.h">

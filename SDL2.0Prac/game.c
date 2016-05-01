@@ -16,7 +16,6 @@
 #include "sprite.h"
 #include "obj.h"
 #include "collision.h"
-#include "LList.h"
 #include "gamepad.h"
 #include "editor.h"
 #include "editor_panel.h"
@@ -212,8 +211,8 @@ int StateEditor()
 
 	SDL_RenderClear(GetRenderer());
 	UpdateMousePosition();
-	UpdateWorkspace();	
 	UpdateEditorPanel(MainEditorPanels); 
+	UpdateWorkspace();	
 	DrawWorkspace();
 	DrawEditorPanels(MainEditorPanels);
 	NextFrame();

@@ -226,17 +226,19 @@ void handleInput(int (*gameState)())
 						{
 							elem = g_list_nth(MainEditorPanels,n);
 							ref = (Editor_Panel*)elem->data;
-							if( x > ref->rect.x && x < (ref->rect.x +  ref->rect.w) 
-							&& y >  ref->rect.y &&   y <  (ref->rect.y + ref->rect.h))
-							{
-								currentPanel = ref;
-								currentPanel->focus = 1;
-								break;
-							}else
-							{
-								currentPanel != NULL ? currentPanel->focus = 0 : NULL;
-								currentPanel = NULL;
-							}
+							if(ref->visible == 1){
+								if( x > ref->rect.x && x < (ref->rect.x +  ref->rect.w) 
+								&& y >  ref->rect.y &&   y <  (ref->rect.y + ref->rect.h))
+								{
+									currentPanel = ref;
+									currentPanel->focus = 1;
+									break;
+								}else
+								{
+									currentPanel != NULL ? currentPanel->focus = 0 : NULL;
+									currentPanel = NULL;
+								}
+						}
 					}
 				}		
 			}
@@ -244,20 +246,41 @@ void handleInput(int (*gameState)())
 		//This is for Backspace for textboxes!
 		if(mainEvent->type == SDL_KEYDOWN)
 		{
-			switch(mainEvent->key.keysym.sym)
+			if(mainEvent->key.keysym.sym == SDLK_BACKSPACE)
 			{
-			case SDLK_BACKSPACE:
 				if(keyData->BackSpace <= 0)
 					keyData->BackSpace = 1;
-				break;
 			}
-		}else if(mainEvent->type == SDL_KEYUP){
-			switch(mainEvent->key.keysym.sym)
+			//Hide panels
+			else if(mainEvent->key.keysym.sym == SDLK_h && (SDL_GetModState() & KMOD_CTRL) &&
+				keyData->CTRL == 0)
 			{
-			case SDLK_BACKSPACE:
+				HidePanels();
+				keyData->CTRL = 1;
+			}
+			//SwitchMode
+			else if(mainEvent->key.keysym.sym == SDLK_s && (SDL_GetModState() & KMOD_CTRL) &&
+				keyData->CTRL == 0)
+			{
+				SwitchMode();
+				keyData->CTRL = 1;
+			}
+		}
+		else if(mainEvent->type == SDL_KEYUP){
+			if(mainEvent->key.keysym.sym == SDLK_BACKSPACE)
+			{
 					keyData->BackSpace = 0;
-				break;
-				}
+			}
+			else if(mainEvent->key.keysym.sym == SDLK_h && (SDL_GetModState() & KMOD_CTRL) &&
+				keyData->CTRL == 1)
+			{
+				keyData->CTRL = 0;
+			}
+			else if(mainEvent->key.keysym.sym == SDLK_s && (SDL_GetModState() & KMOD_CTRL) &&
+				keyData->CTRL == 1)
+			{
+				keyData->CTRL = 0;
+			}
 		}
 
 }

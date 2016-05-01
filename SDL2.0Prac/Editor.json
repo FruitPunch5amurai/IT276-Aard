@@ -26,7 +26,21 @@
 						"SizeY" : 30,
 						"LocationX": 40,
 						"LocationY": 10,
-						"Text" : "Default"
+						"Text" : "Default",
+						"ColorR": 0,
+						"ColorG": 30,
+						"ColorB": 200
+					},
+					{
+						"Name" : "ActiveLayer",
+						"SizeX" : 100,
+						"SizeY" : 30,
+						"LocationX": 265,
+						"LocationY": 100,
+						"Text" : "1",
+						"ColorR": 0,
+						"ColorG": 30,
+						"ColorB": 200
 					}
 				],
 				"Buttons" : [
@@ -59,27 +73,14 @@
 						"LocationX": 280,
 						"LocationY": 10,	
 						"SizeX" : 16,
-						"SizeY" : 16,
-						"ListOfSpriteSheets":
-						[
-							{
-								"Filepath": "images/Resources1.png",
-								"SizeX": 32,
-								"SizeY": 32
-							},
-							{
-								"Filepath": "images/key.png",
-								"SizeX": 16,
-								"SizeY": 16
-							}
-						]					
+						"SizeY" : 16		
 					},
 					{
 						"Name":	   "ButtonLeft",
 						"Sprite" : "images/ButtonLeft.png",
-						"Function" : "ChangeSpriteSheet",
-						"Label" : "SpriteSheetName",
-						"LocationX": 200,
+						"Function" : "DecrementActiveLayer",
+						"Label" : "ActiveLayer",
+						"LocationX": 245,
 						"LocationY": 100,	
 						"SizeX" : 16,
 						"SizeY" : 16		
@@ -87,8 +88,8 @@
 					{
 						"Name":	   "ButtonRight",
 						"Sprite" : "images/ButtonRight.png",
-						"Function" : "ChangeSpriteSheet",
-						"Label" : "SpriteSheetName",
+						"Function" : "IncrementActiveLayer",
+						"Label" : "ActiveLayer",
 						"LocationX": 280,
 						"LocationY": 100,	
 						"SizeX" : 16,

@@ -13,6 +13,7 @@ typedef struct{
 	Uint8 R;
 	Uint8 Spacebar;
 	Uint8 Enter;
+	Uint8 CTRL;
 	Uint8 BackSpace;
 	Uint8 MouseButtonUp;
 

@@ -421,6 +421,19 @@ bool CheckTile(int* data,int x,int y)
 	else
 		return true;
 }
+
+
+int GetTile(int* data,int x,int y)
+{
+	if(x < 0 || x > map->w || y < 0 || y > map->h)
+        return 0;
+	return data[y*map->w + x];
+		
+}
+void ChangeTile(int data[],int x,int y,int frameNumber)
+{
+	data[y*map->w + x] = frameNumber;
+}
 /**
 *@brief Spawns Entities on the map from map file
 *@param Map* map pointer to map

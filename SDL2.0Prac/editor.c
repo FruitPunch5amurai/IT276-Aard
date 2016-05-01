@@ -45,6 +45,7 @@ void CreateMainPanels()
 	Editor_Panel*  TilePanel,*MainPanel;
 	Button* button;
 	TextBox* textBox;
+	SDL_Color color;
 	Label* label; 
 	GList *elem;
 	char SpriteArray[10][255];
@@ -127,6 +128,12 @@ void CreateMainPanels()
 	
 				label = CreateEditorLabel((char*)json_string_value(json_object_get(childLabels,"Text")),rect);
 				strcpy(label->name,(char*)json_string_value(json_object_get(childLabels,"Name")));
+				color.r = json_integer_value(json_object_get(childLabels,"ColorR"));
+				color.g = json_integer_value(json_object_get(childLabels,"ColorG"));
+				color.b = json_integer_value(json_object_get(childLabels,"ColorB"));
+
+				label->color = color;
+
 				label->parentPanel = TilePanel;
 				TilePanel->labels = g_list_append(TilePanel->labels,label);
 			}
@@ -150,21 +157,7 @@ void CreateMainPanels()
 					rect);
 				strcpy(button->name,json_string_value(json_object_get(childButtons,"Name")));
 				//Assign Function to Button
-				if(strcmp((char*)json_string_value(json_object_get(childButtons,"Function")),"LoadSpriteSheet") == 0)
-						{
-							//Load in Each SpriteSheet!
-							//button->data = textBox;
-							SpriteSheets =json_object_get(childButtons,"ListOfSpriteSheets");
-							for(l=0;l <json_array_size(SpriteSheets);++l)
-							{
-								childSpriteSheets = json_array_get(SpriteSheets,l);
-								workSpace->tileSelector->SpriteList = g_list_append(workSpace->tileSelector->SpriteList,LoadSprite((char*)json_string_value(json_object_get(childSpriteSheets ,"Filepath")),
-									json_integer_value(json_object_get(childSpriteSheets,"SizeX")),
-									json_integer_value(json_object_get(childSpriteSheets,"SizeY"))));
-
-							}
-						}
-				else if(strcmp((char*)json_string_value(json_object_get(childButtons,"Function")),"ChangeSpriteSheet") == 0)
+				if(strcmp((char*)json_string_value(json_object_get(childButtons,"Function")),"ChangeSpriteSheet") == 0)
 					{
 						button->function = &ChangeSpriteSheet;
 						if(g_list_length(TilePanel->labels) !=0){
@@ -184,6 +177,39 @@ void CreateMainPanels()
 				{
 					button->function = &LoadEditorMapPanel;
 					button->data = workSpace->map;
+				}
+				else if (strcmp((char*)json_string_value(json_object_get(childButtons,"Function")),"IncrementActiveLayer") == 0)
+				{
+					button->function = &IncrementActiveLayer;
+					if(g_list_length(TilePanel->labels) !=0){
+						for(n = 0; n < g_list_length(TilePanel->labels);++n)
+						{
+							elem = g_list_nth(TilePanel->labels,n);
+							label = (Label*)elem->data;
+							if(strcmp((char*)json_string_value(json_object_get(childButtons,"Label")),label->name)==0)
+							{
+								button->data = label->text;
+								break;
+							}
+						}
+					}	
+
+				}else if (strcmp((char*)json_string_value(json_object_get(childButtons,"Function")),"DecrementActiveLayer") == 0)
+				{
+					button->function = &DecrementActiveLayer;
+					if(g_list_length(TilePanel->labels) !=0){
+						for(n = 0; n < g_list_length(TilePanel->labels);++n)
+						{
+							elem = g_list_nth(TilePanel->labels,n);
+							label = (Label*)elem->data;
+							if(strcmp((char*)json_string_value(json_object_get(childButtons,"Label")),label->name)==0)
+							{
+								button->data = label->text;
+								break;
+							}
+						}
+					}		
+
 				}
 				TilePanel->buttons = g_list_append(TilePanel->buttons,button);
 
@@ -237,7 +263,7 @@ void DrawEditorLabels(GList *labels)
 			if(ref->rect.y < ref->parentPanel->rect.y + ref->parentPanel->rect.h  &&
 				ref->rect.y > ref->parentPanel->rect.y)
 			{
-			RenderFont(ref->text,ref->rect,game->font,&BG_Color);
+				RenderFont(ref->text,ref->rect,game->font,&ref->color);
 			}
 		}
 	}
@@ -270,17 +296,21 @@ void DrawCurrentSpriteTile()
 {
 
 	SDL_Rect dest,src;
-	
-	DrawEditorButtons(workSpace->tileSelector->buttons);
-	src.x = workSpace->tileSelector->frameNum%workSpace->tileSelector->SpriteSheet->fpl * workSpace->tileSelector->SpriteSheet->w;
-    src.y = workSpace->tileSelector->frameNum/workSpace->tileSelector->SpriteSheet->fpl * workSpace->tileSelector->SpriteSheet->h;
-    src.w =workSpace->tileSelector->SpriteSheet->w;
-    src.h =workSpace->tileSelector->SpriteSheet->h;
-	dest.x = workSpace->tileSelector->position.x;
-    dest.y = workSpace->tileSelector->position.y;
-    dest.w = workSpace->tileSelector->SpriteSheet->w;
-    dest.h = workSpace->tileSelector->SpriteSheet->h;
-	SDL_RenderCopyEx(GetRenderer(),workSpace->tileSelector->SpriteSheet->image,&src,&dest,0,0,SDL_FLIP_NONE);
+	if(workSpace->tileSelector->visible){
+		DrawEditorButtons(workSpace->tileSelector->buttons);
+		RenderFont(workSpace->tileSelector->label->text,workSpace->tileSelector->label->rect,game->font,&workSpace->tileSelector->label->color);
+		if(workSpace->tileSelector->SpriteSheet != NULL){
+			src.x = (workSpace->tileSelector->frameNum-1)%workSpace->tileSelector->SpriteSheet->fpl * workSpace->tileSelector->SpriteSheet->w;
+			src.y = (workSpace->tileSelector->frameNum-1)/workSpace->tileSelector->SpriteSheet->fpl * workSpace->tileSelector->SpriteSheet->h;
+			src.w =workSpace->tileSelector->SpriteSheet->w;
+			src.h =workSpace->tileSelector->SpriteSheet->h;
+			dest.x = workSpace->tileSelector->position.x;
+			dest.y = workSpace->tileSelector->position.y;
+			dest.w = workSpace->tileSelector->SpriteSheet->w;
+			dest.h = workSpace->tileSelector->SpriteSheet->h;
+			SDL_RenderCopyEx(GetRenderer(),workSpace->tileSelector->SpriteSheet->image,&src,&dest,0,0,SDL_FLIP_NONE);
+		}
+	}
 }
 
 /*
@@ -300,9 +330,8 @@ void DrawEditorPanels(GList* panels)
 			if(!ref->visible)
 				continue;
 			DrawCurrentSpriteTile();
-			SDL_SetRenderDrawColor(GetRenderer(), BG_Color.r, BG_Color.g, BG_Color.b, BG_Color.a); 
+			SDL_SetRenderDrawColor(GetRenderer(), 255, 0, 0, 0); 
 			SDL_RenderDrawRect(GetRenderer(), &ref->rect);
-			SDL_SetRenderDrawColor(GetRenderer(), BG_Color.g, BG_Color.g, BG_Color.b, BG_Color.a); 
 			DrawEditorLabels(ref->labels);
 			DrawEditorButtons(ref->buttons);
 			DrawEditorTextBoxes(ref->texts);
@@ -330,15 +359,55 @@ void DrawEditorPanels(GList* panels)
 */
 void DrawWorkspace()
 {
+	int x,y;
+	GList *elem;
+	Sprite* ref;
+	int frame = 0;
+	SDL_Rect tileSelect;
 	SDL_Rect worldSize;
 	if(workSpace->map != NULL)
 	{
 		worldSize.x = worldSize.y = 0;
 		worldSize.w = 25 * workSpace->map->tileW;
-			worldSize.h = 19 * workSpace->map->tileH;
+		worldSize.h = 19 * workSpace->map->tileH;
+
+		SDL_SetRenderTarget(GetRenderer(),workSpace->buffer);
+		SDL_RenderClear(GetRenderer());
 		DrawMap(1,0,0,workSpace->buffer);
 		DrawMap(2,0,0,workSpace->buffer);
 		DrawMap(3,0,0,workSpace->buffer);
+		//Draws Rectangle
+		SDL_GetMouseState(&x,&y);
+		x += workSpace->areaToDraw.x;
+		y += workSpace->areaToDraw.y;
+		if(workSpace->activeLayer == 1)
+			frame = GetTile(workSpace->map->data,x/32,y/32);
+		else if(workSpace->activeLayer == 2)
+			frame = GetTile(workSpace->map->data2,x/32,y/32);
+		else if(workSpace->activeLayer == 3)
+			frame = GetTile(workSpace->map->data3,x/32,y/32);
+		elem = g_list_nth(workSpace->tileSelector->SpriteList,0);
+		ref = (Sprite*) elem->data;
+		tileSelect.x = (x/32)*32 + (game->camera->x);
+		tileSelect.y = (y/32)*32 + (game->camera->y);
+		tileSelect.w = workSpace->map->tileW;
+		tileSelect.h = workSpace->map->tileH;
+		SDL_SetRenderTarget(GetRenderer(),workSpace->buffer);
+		if(workSpace->mode == Add){
+			if(frame == 0)
+				SDL_SetRenderDrawColor(GetRenderer(), 255, 0, 0, 0); 
+			else
+				SDL_SetRenderDrawColor(GetRenderer(), 0, 255, 0, 0); 
+			SDL_RenderDrawRect(GetRenderer(), &tileSelect);
+		}
+		else if(workSpace->mode == Remove)
+		{
+			SDL_SetRenderDrawColor(GetRenderer(), 0, 0, 0, 0); 
+			SDL_RenderFillRect(GetRenderer(), &tileSelect);
+		}
+		SDL_SetRenderTarget(GetRenderer(),NULL);
+		printf("%d\n",frame);
+		//Renders buffer to screen
 		SDL_RenderCopy(GetRenderer(),workSpace->buffer,&workSpace->areaToDraw,&worldSize);
 	}
 }

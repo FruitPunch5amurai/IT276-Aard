@@ -27,7 +27,8 @@ Workspace* CreateEditorWorkspace()
 	ws = (Workspace*)malloc(sizeof(Workspace));
 	memset(ws,0,sizeof(Workspace));
 	ws->map = NULL;
-	ws->activeLayer = 0;
+	ws->activeLayer = 1;
+	ws->mode = Add;
 	return ws;
 }
 /*
@@ -39,21 +40,27 @@ TileSelector* CreateTileSelector(SDL_Rect pos)
 {
 	TileSelector *t;
 	Button* button;
+	Label* label;
 	t= (TileSelector*)malloc(sizeof(TileSelector));
 	memset(t,0,sizeof(TileSelector));
 	t->position = pos;
-	t->frameNum = 0;
+	t->frameNum = 1;
 	t->SpriteSheetListIndex = 0;
+	t->SpriteSheet = NULL;
 	t->buttons = NULL;
+	t->visible =1;
 
+	label = CreateEditorLabel("1",CreateSDL_Rect(pos.x + 10,pos.y + 35,16,16));
+	label->color.r = 255;
 	button = CreateEditorButton("images/ButtonLeft.png",CreateSDL_Rect(pos.x - 25,pos.y,16,16));
 	button->function= &DecrementFrameNumber;
-	button->data = &workSpace->tileSelector->frameNum;
+	button->data = label->text;
 	t->buttons= g_list_append(t->buttons,button);
 
 	button = CreateEditorButton("images/ButtonRight.png",CreateSDL_Rect(pos.x + 40,pos.y,16,16));
 	button->function= &IncrementFrameNumber;
-	button->data = &workSpace->tileSelector->frameNum;
+	button->data = label->text;
+	t->label = label;
 	t->buttons= g_list_append(t->buttons,button);
 
 	return t;
@@ -151,7 +158,7 @@ void UpdateEditorButtons(GList* buttons)
 					inside = false;
 			
 			}if(inside == true){
-				printf("Mouse inside a button..");
+				//printf("Mouse inside a button..");
 				if(mainEvent->type == SDL_MOUSEBUTTONDOWN && ButtonDown == 0)
 				{
 					printf("Button Executed\n");
@@ -192,9 +199,9 @@ TextBox* UpdateEditorTextBoxes(GList* texts)
 			if( GetMousePosition()->x > ref->rect.x && GetMousePosition()->x < (ref->rect.x +  ref->rect.w) 
 					&& GetMousePosition()->y >  ref->rect.y &&   GetMousePosition()->y <  (ref->rect.y +  ref->rect.h))
 			{
-				printf("Mouse over a TextBox");
+				//printf("Mouse over a TextBox");
 				if(mainEvent->type == SDL_MOUSEBUTTONDOWN)
-								printf("Clicked a textbox");
+								//printf("Clicked a textbox");
 				memset(ref->value,0,sizeof(char));
 				ref->focus = 1;
 				currentTextBox = ref;
@@ -211,7 +218,8 @@ TextBox* UpdateEditorTextBoxes(GList* texts)
 */
 void UpdateTileSelector()
 {
-	UpdateEditorButtons(workSpace->tileSelector->buttons);
+	if(workSpace->tileSelector->visible == 1)
+		UpdateEditorButtons(workSpace->tileSelector->buttons);
 }
 /*
 *@brief Updates the G_List of panels. This only supports a two tier panel System.
@@ -224,7 +232,7 @@ void UpdateEditorPanel(GList* panels)
 	TextBox* textBox;
 	int n,m;
 	UpdateTileSelector();
-	if(currentPanel != NULL)
+	if(currentPanel != NULL && currentPanel->visible == 1)
 	{
 		if(mainEvent->type == SDL_MOUSEBUTTONDOWN)
 		{
@@ -317,10 +325,15 @@ void UpdateEditorPanel(GList* panels)
 							
 	}
 }
-
+/*
+*@brief Updates the Workspace only if currentPanel is NULL.
+*/
 void UpdateWorkspace()
 {
 	int x,y;
+	GList *elem;
+	Sprite* ref;
+	int frame = 0;
 	if(workSpace->map != NULL){
 		if(currentPanel == NULL)
 		{
@@ -341,9 +354,45 @@ void UpdateWorkspace()
 			{
 				workSpace->areaToDraw.y += 10;
 			}
+			//Add and Remove Tiles
+			if(mainEvent->type == SDL_MOUSEBUTTONUP && workSpace->mode == Add){
+				if(workSpace->activeLayer == 1)
+					ChangeTile(workSpace->map->data,
+					(GetMousePosition()->x + workSpace->areaToDraw.x)/workSpace->map->tileW,
+					(GetMousePosition()->y + workSpace->areaToDraw.y)/workSpace->map->tileH
+					,workSpace->tileSelector->frameNum);
+				if(workSpace->activeLayer == 2)
+					ChangeTile(workSpace->map->data2,
+					(GetMousePosition()->x + workSpace->areaToDraw.x)/workSpace->map->tileW,
+					(GetMousePosition()->y + workSpace->areaToDraw.y)/workSpace->map->tileH
+					,workSpace->tileSelector->frameNum);
+				if(workSpace->activeLayer == 3)
+					ChangeTile(workSpace->map->data3,
+					(GetMousePosition()->x + workSpace->areaToDraw.x)/workSpace->map->tileW,
+					(GetMousePosition()->y + workSpace->areaToDraw.y)/workSpace->map->tileH
+					,workSpace->tileSelector->frameNum);
+
+			}else if(mainEvent->type == SDL_MOUSEBUTTONUP && workSpace->mode == Remove)
+			{
+				if(workSpace->activeLayer == 1)
+					ChangeTile(workSpace->map->data,
+					(GetMousePosition()->x + workSpace->areaToDraw.x)/workSpace->map->tileW,
+					(GetMousePosition()->y + workSpace->areaToDraw.y)/workSpace->map->tileH
+					,0);
+				if(workSpace->activeLayer == 2)
+					ChangeTile(workSpace->map->data2,
+					(GetMousePosition()->x + workSpace->areaToDraw.x)/workSpace->map->tileW,
+					(GetMousePosition()->y + workSpace->areaToDraw.y)/workSpace->map->tileH
+					,0);
+				if(workSpace->activeLayer == 3)
+					ChangeTile(workSpace->map->data3,
+					(GetMousePosition()->x + workSpace->areaToDraw.x)/workSpace->map->tileW,
+					(GetMousePosition()->y + workSpace->areaToDraw.y)/workSpace->map->tileH
+					,0);
+			}
+
 		}
 	}
-
 }
 /*
 *@brief Creates an SDL_Rect
@@ -365,21 +414,55 @@ SDL_Rect CreateSDL_Rect(int x,int y,int w,int h)
 */
 void DecrementFrameNumber(Button* button)
 {
-	if(workSpace->tileSelector->frameNum >0)
+	int x;
+	if(workSpace->tileSelector->frameNum >1)
 		workSpace->tileSelector->frameNum-=1;
+	sprintf((char*)button->data,"%d",workSpace->tileSelector->frameNum);
 	/*
 	x = atoi((char*)button->data);
 	x-=1;
 	sprintf((char*)button->data,"%d",x);
 	*/
 }
+void DecrementActiveLayer(Button* button)
+{
+	int x;
+	x = atoi((char*)button->data);
+	if(x == 1){
+		x = 3;
+		workSpace->activeLayer = 3;
+	}
+	else
+		x-=1;
+		workSpace->activeLayer -= 1;
+	sprintf((char*)button->data,"%d",x);
+
+}
+void IncrementActiveLayer(Button* button)
+{
+	int x;
+	x = atoi((char*)button->data);
+	if (x == 3){
+		x = 1;
+		workSpace->activeLayer =1;
+	}
+	else{
+		x+=1;
+		workSpace->activeLayer += 1;
+	}
+	sprintf((char*)button->data,"%d",x);
+}
+	
 /*
 *@brief Increases the frame number for the TileSelector
 *@param The Button which has been called
 */
 void IncrementFrameNumber(Button* button)
 {
+	int x;
+	x = atoi((char*)button->data);
 	workSpace->tileSelector->frameNum+=1;
+	sprintf((char*)button->data,"%d",workSpace->tileSelector->frameNum);
 }
 /*
 *@brief Removes a Panel and Frees it
@@ -491,6 +574,7 @@ void LoadEditorMap(Button* button)
 	int j;
 	int NumSolidTiles = 0;
 	int mapWidth,mapHeight,tileH,tileW;
+	Sprite* sprite;
 	
 	FILE * file;
 	file = fopen(textBox->value,"r");
@@ -549,7 +633,12 @@ void LoadEditorMap(Button* button)
 		if(strcmp(buf,"#SpriteSheet") == 0)
 		{
 			fscanf(file,"%s" ,imageName);
-			map->tiles = LoadSprite(imageName,tileW,tileH);
+			sprite = LoadSprite(imageName,
+				workSpace->map->tileW,
+				workSpace->map->tileH);
+			map->tiles = sprite;
+			workSpace->tileSelector->SpriteSheet = sprite;
+			workSpace->tileSelector->SpriteList = g_list_append(workSpace->tileSelector->SpriteList,sprite);
 		}
 		if(strcmp(buf,"#NumSolidTiles") == 0)
 		{
@@ -584,6 +673,7 @@ void LoadEditorMap(Button* button)
 	workSpace->areaToDraw.w = 25 * tileW;
 	workSpace->areaToDraw.h = 19 * tileH;
 	workSpace->buffer = SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,map->w * map->tileW,map->h * map->tileH);
+	sprite = NULL;
 	RemovePanel(button->parentPanel);
 }
 /*
@@ -613,14 +703,20 @@ void HidePanels()
 				{
 					elem2 = g_list_nth(ref->panels,m);
 					ref2 = (Editor_Panel*)elem2->data;
-					ref2->visible = 0;
+					ref2->visible = ref2->visible == 1?0:1;
 				}
 			
 			}
-		ref->visible = 0;
+		ref->visible = ref->visible == 1?0:1;
 		}
 	}
+	workSpace->tileSelector->visible = workSpace->tileSelector->visible == 1?0:1;
+	currentPanel = NULL;
+}
 
+void SwitchMode()
+{
+	workSpace->mode = workSpace->mode == Add?Remove:Add;
 }
 /*
 *@brief Updates the MousesPosition

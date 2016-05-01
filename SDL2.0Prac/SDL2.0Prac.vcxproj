@@ -83,7 +83,6 @@
     <ClCompile Include="items.c" />
     <ClCompile Include="level.c" />
     <ClCompile Include="light.c" />
-    <ClCompile Include="LList.c" />
     <ClCompile Include="obj.c" />
     <ClCompile Include="particle.c" />
     <ClCompile Include="player.c" />
@@ -106,7 +105,6 @@
     <ClInclude Include="items.h" />
     <ClInclude Include="level.h" />
     <ClInclude Include="light.h" />
-    <ClInclude Include="LList.h" />
     <ClInclude Include="obj.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="player.h" />

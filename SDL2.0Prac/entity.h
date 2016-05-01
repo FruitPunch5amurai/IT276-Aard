@@ -192,6 +192,27 @@ typedef struct
 	char name[128];
 	int numOfEntities;
 }Map;
+//Tile Functions
+int GetTile(int *data,int x,int y);
+void ChangeTile(int data[],int x,int y,int frameNumber);
+bool IsTileSolid(Map* map,int tile);
+bool CheckSolid(Map* map,int x, int y);
+bool CheckTile(int* data,int x,int y);
+void LoadSolidTiles(int data[],FILE *file,int NumSolidTiles);
+
+//map Functions
+void InitMapList();
+void CloseMapList();
+Room *CreateRoom(int id,SDL_Rect *boundary,int *linksTo);
+void ConnectRooms();
+void ClearRoom();
+Room *FindRoomWithID(int id);
+Map* CreateMap(int tileW, int tileH,int mapWidth,int mapHeight,int numOfRooms);
+void FreeMap();
+bool Load(char *mapName);
+void LoadLayer(int data[],FILE *file);
+void GenerateSolidLayer(Map* map);
+
 
 enum ItemType{
 	Lantern,
@@ -243,22 +264,7 @@ typedef struct InventoryData{
 	InventoryCursor* cursor;
 }Inventory;
 //Map and Room Functions
-void InitMapList();
-void CloseMapList();
-Room *CreateRoom(int id,SDL_Rect *boundary,int *linksTo);
-void ConnectRooms();
-void ClearRoom();
-Room *FindRoomWithID(int id);
-Map* CreateMap(int tileW, int tileH,int mapWidth,int mapHeight,int numOfRooms);
-void FreeMap();
-bool Load(char *mapName);
-void LoadLayer(int data[],FILE *file);
-void LoadSolidTiles(int data[],FILE *file,int NumSolidTiles);
-void GenerateSolidLayer(Map* map);
-void LoadObjects(FILE *file ,char *buf,int roomdId);
-bool IsTileSolid(Map* map,int tile);
-bool CheckSolid(Map* map,int x, int y);
-bool CheckTile(int* data,int x,int y);
+
 void DrawSpecialLayer(Map* map);
 void DrawMap(int layer, int xOffset ,int yOffset,SDL_Texture* texture);
 void SetUpMap(Map* map,FILE *file);
@@ -277,6 +283,7 @@ void InitEntityList();
 void ClearEntityList();
 void CloseEntityList();
 Vec2D OverlapsMap(Map *map,Entity *ent);
+void LoadObjects(FILE *file ,char *buf,int roomdId);
 
 int EntityIntersect(Entity *a, Entity *b);
 Entity* EntityIntersectAll(Entity *a);
