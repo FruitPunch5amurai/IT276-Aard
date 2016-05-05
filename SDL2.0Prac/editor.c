@@ -6,7 +6,9 @@
 #include <jansson.h>
 #include "entity.h"
 #include "graphics.h"
+#include "editor_save.h"
 #include "editor_panel.h"
+#include "editor_createroom.h"
 #include "editor.h"
 
 extern Game* game;
@@ -136,6 +138,10 @@ void CreateMainPanels()
 
 				label->parentPanel = TilePanel;
 				TilePanel->labels = g_list_append(TilePanel->labels,label);
+				if(strcmp(label->name,"CurrentRoom") == 0)
+				{
+					workSpace->RoomNumber = label;
+				}
 			}
 			//Create Buttons
 			Buttons = json_object_get(childPanel,"Buttons");
@@ -178,6 +184,10 @@ void CreateMainPanels()
 					button->function = &LoadEditorMapPanel;
 					button->data = workSpace->map;
 				}
+				else if(strcmp((char*)json_string_value(json_object_get(childButtons,"Function")),"SaveMap") == 0)
+				{
+					button->function = &SaveMap;
+				}
 				else if (strcmp((char*)json_string_value(json_object_get(childButtons,"Function")),"IncrementActiveLayer") == 0)
 				{
 					button->function = &IncrementActiveLayer;
@@ -210,6 +220,9 @@ void CreateMainPanels()
 						}
 					}		
 
+				}else if (strcmp((char*)json_string_value(json_object_get(childButtons,"Function")),"CreateRoom") == 0)
+				{
+					button->function = &LoadRoomCreatePanel;
 				}
 				TilePanel->buttons = g_list_append(TilePanel->buttons,button);
 
@@ -365,6 +378,7 @@ void DrawWorkspace()
 	int frame = 0;
 	SDL_Rect tileSelect;
 	SDL_Rect worldSize;
+	SDL_Rect roomSelect;
 	if(workSpace->map != NULL)
 	{
 		worldSize.x = worldSize.y = 0;
@@ -392,7 +406,17 @@ void DrawWorkspace()
 		tileSelect.y = (y/32)*32 + (game->camera->y);
 		tileSelect.w = workSpace->map->tileW;
 		tileSelect.h = workSpace->map->tileH;
+
 		SDL_SetRenderTarget(GetRenderer(),workSpace->buffer);
+		//Draw Room Rectangle
+		if(workSpace->currentRoom != NULL){
+			roomSelect.x= workSpace->currentRoom->boundary.x+ (game->camera->x);
+			roomSelect.y= workSpace->currentRoom->boundary.y+ (game->camera->y);
+			roomSelect.h= workSpace->currentRoom->boundary.h;
+			roomSelect.w= workSpace->currentRoom->boundary.w;
+			SDL_SetRenderDrawColor(GetRenderer(), 255, 0, 0, 0); 
+			SDL_RenderDrawRect(GetRenderer(), &roomSelect);
+		}
 		if(workSpace->mode == Add){
 			if(frame == 0)
 				SDL_SetRenderDrawColor(GetRenderer(), 255, 0, 0, 0); 

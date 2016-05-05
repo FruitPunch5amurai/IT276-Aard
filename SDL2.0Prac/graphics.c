@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 #include "vectors.h"
 #include <math.h>
 #include <string>
@@ -141,6 +142,7 @@ void graphics_close()
 	{
 		TTF_Quit();
 	}
+	Mix_Quit();
     surface = NULL;
     window = NULL;
     renderer = NULL;

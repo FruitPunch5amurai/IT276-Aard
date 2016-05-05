@@ -20,6 +20,7 @@ void SetCamera(SDL_Rect &camera,SDL_Rect *box);
 void UpdateHotBox();
 SDL_Rect *InitHotBox();
 void SetGameState(int (*state)());
+void InitAll();
 
 
 extern Game *game;

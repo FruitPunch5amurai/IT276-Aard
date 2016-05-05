@@ -1,11 +1,17 @@
-﻿Build started 4/3/2016 12:51:20 AM.
+﻿Build started 5/3/2016 5:14:33 PM.
      1>Project "C:\Users\Jason\Desktop\Aard-GTS\SDL2.0Prac\SDL2.0Prac.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Touching "Release\Aard.unsuccessfulbuild".
        ClCompile:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt collision.c enemy.c entity.c game.c gamepad.c graphics.c level.c LList.c obj.c particle.c player.c save.c spirit.c sprite.c vectors.c
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt collision.c editor.c editor_panel.c editor_save.c enemy.c entity.c game.c gamepad.c graphics.c items.c level.c light.c obj.c particle.c player.c save.c script.c spirit.c sprite.c vectors.c
          collision.c
      1>collision.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+         editor.c
+     1>editor.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+         editor_panel.c
+     1>editor_panel.c(2): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+         editor_save.c
+     1>editor_save.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
          enemy.c
      1>enemy.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
          entity.c
@@ -16,10 +22,12 @@
      1>gamepad.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
          graphics.c
      1>graphics.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+         items.c
+     1>items.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
          level.c
      1>level.c(2): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
-         LList.c
-     1>LList.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+         light.c
+     1>light.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
          obj.c
      1>obj.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
          particle.c
@@ -28,115 +36,117 @@
      1>player.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
          save.c
      1>save.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+         script.c
+     1>script.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
          spirit.c
      1>spirit.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
          sprite.c
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(19): error C2061: syntax error : identifier 'acosf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(19): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(19): error C2061: syntax error : identifier 'asinf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(19): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(20): error C2061: syntax error : identifier 'atanf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(20): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(20): error C2061: syntax error : identifier 'atan2f'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(20): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(20): error C2061: syntax error : identifier 'ceilf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(20): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(21): error C2061: syntax error : identifier 'cosf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(21): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(21): error C2061: syntax error : identifier 'coshf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(21): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(21): error C2061: syntax error : identifier 'expf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(21): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(22): error C2061: syntax error : identifier 'fabsf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(22): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(22): error C2061: syntax error : identifier 'floorf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(22): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(22): error C2061: syntax error : identifier 'fmodf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(22): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(23): error C2061: syntax error : identifier 'frexpf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(23): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(23): error C2061: syntax error : identifier 'ldexpf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(23): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(23): error C2061: syntax error : identifier 'logf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(23): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(24): error C2061: syntax error : identifier 'log10f'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(24): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(24): error C2061: syntax error : identifier 'modff'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(24): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(24): error C2061: syntax error : identifier 'powf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(24): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(25): error C2061: syntax error : identifier 'sinf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(25): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(25): error C2061: syntax error : identifier 'sinhf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(25): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(25): error C2061: syntax error : identifier 'sqrtf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(25): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(26): error C2061: syntax error : identifier 'tanf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(26): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(26): error C2061: syntax error : identifier 'tanhf'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(26): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(28): error C2061: syntax error : identifier 'acosl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(28): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(28): error C2061: syntax error : identifier 'asinl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(28): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(29): error C2061: syntax error : identifier 'atanl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(29): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(29): error C2061: syntax error : identifier 'atan2l'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(29): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(29): error C2061: syntax error : identifier 'ceill'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(29): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(30): error C2061: syntax error : identifier 'cosl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(30): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(30): error C2061: syntax error : identifier 'coshl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(30): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(30): error C2061: syntax error : identifier 'expl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(30): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(31): error C2061: syntax error : identifier 'fabsl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(31): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(31): error C2061: syntax error : identifier 'floorl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(31): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(31): error C2061: syntax error : identifier 'fmodl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(31): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(32): error C2061: syntax error : identifier 'frexpl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(32): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(32): error C2061: syntax error : identifier 'ldexpl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(32): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(32): error C2061: syntax error : identifier 'logl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(32): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(33): error C2061: syntax error : identifier 'log10l'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(33): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(33): error C2061: syntax error : identifier 'modfl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(33): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(33): error C2061: syntax error : identifier 'powl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(33): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(34): error C2061: syntax error : identifier 'sinl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(34): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(34): error C2061: syntax error : identifier 'sinhl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(34): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(34): error C2061: syntax error : identifier 'sqrtl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(34): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(35): error C2061: syntax error : identifier 'tanl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(35): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(35): error C2061: syntax error : identifier 'tanhl'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(35): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(37): error C2061: syntax error : identifier 'abs'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(37): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(39): error C2061: syntax error : identifier 'acos'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(39): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(39): error C2061: syntax error : identifier 'asin'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(39): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(40): error C2061: syntax error : identifier 'atan'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(40): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(40): error C2061: syntax error : identifier 'atan2'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(40): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(40): error C2061: syntax error : identifier 'ceil'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(40): error C2059: syntax error : ';'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(41): error C2061: syntax error : identifier 'cos'
-     1>c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(41): fatal error C1003: error count exceeds 100; stopping compilation
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(19): error C2061: syntax error : identifier 'acosf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(19): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(19): error C2061: syntax error : identifier 'asinf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(19): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(20): error C2061: syntax error : identifier 'atanf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(20): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(20): error C2061: syntax error : identifier 'atan2f'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(20): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(20): error C2061: syntax error : identifier 'ceilf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(20): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(21): error C2061: syntax error : identifier 'cosf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(21): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(21): error C2061: syntax error : identifier 'coshf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(21): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(21): error C2061: syntax error : identifier 'expf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(21): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(22): error C2061: syntax error : identifier 'fabsf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(22): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(22): error C2061: syntax error : identifier 'floorf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(22): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(22): error C2061: syntax error : identifier 'fmodf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(22): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(23): error C2061: syntax error : identifier 'frexpf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(23): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(23): error C2061: syntax error : identifier 'ldexpf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(23): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(23): error C2061: syntax error : identifier 'logf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(23): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(24): error C2061: syntax error : identifier 'log10f'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(24): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(24): error C2061: syntax error : identifier 'modff'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(24): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(24): error C2061: syntax error : identifier 'powf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(24): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(25): error C2061: syntax error : identifier 'sinf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(25): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(25): error C2061: syntax error : identifier 'sinhf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(25): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(25): error C2061: syntax error : identifier 'sqrtf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(25): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(26): error C2061: syntax error : identifier 'tanf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(26): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(26): error C2061: syntax error : identifier 'tanhf'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(26): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(28): error C2061: syntax error : identifier 'acosl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(28): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(28): error C2061: syntax error : identifier 'asinl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(28): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(29): error C2061: syntax error : identifier 'atanl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(29): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(29): error C2061: syntax error : identifier 'atan2l'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(29): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(29): error C2061: syntax error : identifier 'ceill'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(29): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(30): error C2061: syntax error : identifier 'cosl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(30): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(30): error C2061: syntax error : identifier 'coshl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(30): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(30): error C2061: syntax error : identifier 'expl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(30): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(31): error C2061: syntax error : identifier 'fabsl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(31): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(31): error C2061: syntax error : identifier 'floorl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(31): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(31): error C2061: syntax error : identifier 'fmodl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(31): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(32): error C2061: syntax error : identifier 'frexpl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(32): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(32): error C2061: syntax error : identifier 'ldexpl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(32): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(32): error C2061: syntax error : identifier 'logl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(32): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(33): error C2061: syntax error : identifier 'log10l'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(33): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(33): error C2061: syntax error : identifier 'modfl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(33): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(33): error C2061: syntax error : identifier 'powl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(33): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(34): error C2061: syntax error : identifier 'sinl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(34): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(34): error C2061: syntax error : identifier 'sinhl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(34): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(34): error C2061: syntax error : identifier 'sqrtl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(34): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(35): error C2061: syntax error : identifier 'tanl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(35): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(35): error C2061: syntax error : identifier 'tanhl'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(35): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(37): error C2061: syntax error : identifier 'abs'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(37): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(39): error C2061: syntax error : identifier 'acos'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(39): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(39): error C2061: syntax error : identifier 'asin'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(39): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(40): error C2061: syntax error : identifier 'atan'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(40): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(40): error C2061: syntax error : identifier 'atan2'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(40): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(40): error C2061: syntax error : identifier 'ceil'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(40): error C2059: syntax error : ';'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(41): error C2061: syntax error : identifier 'cos'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\cmath(41): fatal error C1003: error count exceeds 100; stopping compilation
          vectors.c
      1>vectors.c(1): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
      1>Done Building Project "C:\Users\Jason\Desktop\Aard-GTS\SDL2.0Prac\SDL2.0Prac.vcxproj" (build target(s)) -- FAILED.
 
 Build FAILED.
 
-Time Elapsed 00:00:01.04
+Time Elapsed 00:00:00.60

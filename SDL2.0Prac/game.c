@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 #include <string>
 #include <chipmunk.h>
 
@@ -62,19 +63,8 @@ void Init()
 {
 	game = (Game*)malloc(sizeof(Game));
 	memset(game,0,sizeof(Game));
-	float bgcolor[] = {1,1,1,1};
 	mainEvent = new SDL_Event();
-
-	//InitMapList();
-	InitSpriteList();
-	Init_Graphics("Aard:GTS",
-    800,
-    600,
-    800,
-    600,
-    bgcolor);
-	InitEntityList();
-	InitKeyData();
+	InitAll();
 	game->gameState = StateTitle;
 	game->font = TTF_OpenFont("Tahoma.ttf",20);
 }
@@ -174,6 +164,7 @@ int StateGame()
 		DrawMap(3,game->camera->x,game->camera->y,game->mainSceneTexture);
 		DrawMap(0,0,0,game->mainSceneTexture);
 		ThinkEntities();
+		UpdateMap();
 		UpdateEntities();
 		DrawEntities();
 		DrawMainScene();
@@ -259,4 +250,25 @@ void SetGameState(int (*state)())
 		game->camera->y = 0;
 	}
 	game->gameState = state;
+}
+void InitAll()
+{
+	float bgcolor[] = {1,1,1,1};
+	InitSpriteList();
+	Init_Graphics("Aard:GTS",
+    800,
+    600,
+    800,
+    600,
+    bgcolor);
+	InitEntityList();
+	InitKeyData();
+	if(!Mix_Init(MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG))
+	{
+		printf("Failed to Mix_init");
+		exit(1);
+	}
+	Mix_OpenAudio(22050,MIX_DEFAULT_FORMAT,2,4096 );
+
+
 }

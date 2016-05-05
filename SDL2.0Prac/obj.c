@@ -222,7 +222,11 @@ void ThinkObject(Entity* ent)
 void TouchObject(Entity* ent,Entity* other)
 {
 	if(ent->whatAmI == 4){
-		if(ent->velocity.x == 0 && ent->velocity.y == 0 && other->whatAmI != 8)
+		if(other->whatAmI == Aard)
+		{
+			//Do nothing!
+		}
+		else if(ent->velocity.x == 0 && ent->velocity.y == 0 && other->whatAmI != 8)
 			Vec2DAdd(other->position,other->position,CollisionObject(ent,other));
 		else if(other->whatAmI == 2)
 		{
@@ -231,13 +235,20 @@ void TouchObject(Entity* ent,Entity* other)
 			ent->velocity.x = 0;ent->velocity.y = 0;
 			other->EnemyHP -=5;
 		              
+		}else if(other->whatAmI != Aard)
+		{
+			ent->currentAnimation = 1;
+			ent->velocity.x = 0;ent->velocity.y = 0;
 		}
 	}else if(ent->whatAmI == Torch)
 	{
-		if(other->whatAmI == Aard && playerData->currentItem->itemType == Lantern)
+		if(playerData->currentItem != NULL)
 		{
-			ent->whatAmI = LitTorch;
-			ent->bp->entType = LitTorch;
+			if(other->whatAmI == Aard && playerData->currentItem->itemType == Lantern)
+			{
+				ent->whatAmI = LitTorch;
+				ent->bp->entType = LitTorch;
+			}
 		}
 	}else if(ent->whatAmI == LockedDoor)
 	{
@@ -245,11 +256,14 @@ void TouchObject(Entity* ent,Entity* other)
 			if(playerData->inventory->keys > 0)
 			{
 				ent->whatAmI = UnlockedDoor;
+				ent->room->Entities = g_list_remove(ent->room->Entities,ent->bp);
 				FreeBluePrint(ent);
 				(*ent->free)(ent);
 				playerData->inventory->keys--;
 			}
 		}
+		Vec2DAdd(other->position,other->position,CollisionObject(ent,other));
+
 	}
 	else
 	{

@@ -49,5 +49,6 @@ void TransitionRoom(Entity* ent,Room* room);
 void AddSpiritToPlayer();
 void RespawnPlayer();
 void CheckPitFalls(Map *map,Entity *ent);
+void Movement();
 
 #endif _PLAYER_H_

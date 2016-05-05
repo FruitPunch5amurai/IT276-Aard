@@ -17,4 +17,5 @@ void DrawLights();
 void InitLightList();
 void FreeLight(LightSource* l);
 void CloseLightList();
+
 #endif

@@ -74,6 +74,12 @@
     <ClCompile Include="script.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="editor_save.c">
+      <Filter>Source Files\LevelEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="editor_createroom.c">
+      <Filter>Source Files\LevelEditor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graphics.h">
@@ -134,6 +140,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="script.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="editor_save.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="editor_createroom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

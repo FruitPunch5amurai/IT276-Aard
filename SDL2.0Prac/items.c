@@ -13,6 +13,7 @@ extern Entity* playerEnt;
 extern Map* map;
 extern SDL_Texture* LightBuffer;
 extern SDL_Color whiteFont;
+extern GList *LightList;
 ItemRef* LoadItem(ItemType item)
 {
 	//json_t *root;
@@ -84,6 +85,9 @@ void UseItem(Items *item)
 }
 void ItemLantern(Items *item)
 {
+	int i;
+	GList *elem;
+	LightSource *ref;
 	if(item->itemType != Lantern)
 	{
 		printf("Item is not a lantern\n");
@@ -102,6 +106,18 @@ void ItemLantern(Items *item)
 		printf("Used Lantern!\n");
 	}else
 	{
+		if(LightList != NULL){
+			for(i = 0;i < g_list_length(LightList);i++)
+			{
+				elem = g_list_nth(LightList,i);
+				ref = (LightSource*)elem->data;
+				if(ref->source == item->self)
+				{
+					LightList = g_list_delete_link(LightList,elem);
+					FreeLight(ref);
+				}
+			}
+		}
 		item->isEquiped = 0;
  		FreeEntity(item->self);
 		item->self = NULL;

@@ -57,7 +57,7 @@ void UpdateEntities()
 	int i;
 	for(i =0;i < MAX_ENTITIES;i++)
 	{
-		if(!EntityList[i].inuse)
+		if(EntityList[i].inuse <= 0)
 		{
 			continue;
 		}
@@ -239,7 +239,7 @@ Entity* EntityIntersectAll(Entity *a)
 {
 	int i,j;
 	for(i = 0;i < MAX_ENTITIES;i++)
-		if(EntityList[i].inuse && &EntityList[i] != a)
+		if(EntityList[i].inuse > 0 && &EntityList[i] != a)
 		{
 			if(a->room->id == playerEnt->room->id)
 			{
@@ -362,8 +362,7 @@ void ClearRoom()
 	int i;
 	for(i = 0;i<MAX_ENTITIES;i++)
 	{
-		if(EntityList[i].room == playerEnt->room && EntityList[i].whatAmI != Aard
-			&& EntityList[i].whatAmI != Dungeon){
+		if(EntityList[i].room == playerEnt->room && EntityList[i].whatAmI != Aard){
 			if(EntityList[i].sprite != NULL)
 			{
 			if(EntityList[i].free != NULL)

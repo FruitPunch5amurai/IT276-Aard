@@ -5,6 +5,7 @@
 #NumOfRooms 7
 #NumSolidTiles 33
 #SpriteSheet images/Resources1.png
+#LevelMusic music/cave.wav
 
 #Layer1
  58  58  58  58  58  58  58  58  58  58  58  58  58  58  58  58  58  58  58  58  58  58  58  58  58    91  91  91  91  91  91  91  91  91  91  91  91  91  91  91  91  91  91  91  91  58  58  58  58  58    00  00  00  00  00  00  00  00  00  00  00  00  00  00  00  00  00  00  00  00  00  00  00  00  00
@@ -203,6 +204,8 @@ Location: 0 , 0
 Entities:
 Type: Chaser Count: 1 Location: 3 , 3
 Type: Torch Frame: 0 Filename: images/Torch.png Count: 1 Size 16 x 22 Location: 2 , 13
+Type: Dungeon To: level.map Size: 16 x 16 Location: 9, 18 PlayerSpawn: 7 , 11
+
 #end
 
 RoomId: 1
@@ -222,7 +225,7 @@ LinksTo: 0 , 6 , 0 , 4
 Boundary: 800 , 600
 Location: 0 , 600
 Entities:
-Type: Chaser Count: 1 Location: 5 , 25
+Type: Chaser Count: 1 Location: 5 , 6
 Script: 
 Type: DefeatFoes Filename: images/Resources1.png Size 32 x 64 Location: 24 , 27
 #end

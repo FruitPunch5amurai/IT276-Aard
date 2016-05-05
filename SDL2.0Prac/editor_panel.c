@@ -7,6 +7,7 @@
 #include "level.h"
 #include "vectors.h"
 #include "graphics.h"
+#include "editor_createroom.h"
 #include "editor_panel.h"
 extern Game* game;
 extern SDL_Event *mainEvent;
@@ -112,7 +113,7 @@ Button* CreateEditorButton(char* text,SDL_Rect rect)
 	b->function = NULL;
 	b->rect = rect;
 	b->listen = NULL;
-	b->sprite = LoadSprite(text,32,16);							/*< for now */
+	b->sprite = LoadSprite(text,rect.w,rect.h);							/*< for now */
 	return b;
 }
 /*
@@ -330,7 +331,8 @@ void UpdateEditorPanel(GList* panels)
 */
 void UpdateWorkspace()
 {
-	int x,y;
+	int x,y,i;
+	SDL_Rect roomOutline;
 	GList *elem;
 	Sprite* ref;
 	int frame = 0;
@@ -385,10 +387,35 @@ void UpdateWorkspace()
 					(GetMousePosition()->y + workSpace->areaToDraw.y)/workSpace->map->tileH
 					,0);
 				if(workSpace->activeLayer == 3)
+				{
 					ChangeTile(workSpace->map->data3,
 					(GetMousePosition()->x + workSpace->areaToDraw.x)/workSpace->map->tileW,
 					(GetMousePosition()->y + workSpace->areaToDraw.y)/workSpace->map->tileH
 					,0);
+					if(!IsTileSolid(map,workSpace->tileSelector->frameNum))
+					{
+						workSpace->map->solidTiles[workSpace->map->numSolidTiles+1] = 
+							workSpace->tileSelector->frameNum;
+						workSpace->map->numSolidTiles+=1;
+
+					}
+				}
+			}
+
+		}
+		//Get currentRoom
+		for(i = 0;i < workSpace->map->numberOfRooms;++i)
+		{
+			x = GetMousePosition()->x + workSpace->areaToDraw.x;
+			y = GetMousePosition()->y + workSpace->areaToDraw.y;
+			if(x > workSpace->map->rooms[i].boundary.x &&
+				x< workSpace->map->rooms[i].boundary.x + workSpace->map->rooms[i].boundary.w &&
+				y > workSpace->map->rooms[i].boundary.y &&
+				y < workSpace->map->rooms[i].boundary.y + workSpace->map->rooms[i].boundary.h
+				)
+			{
+				workSpace->currentRoom = &workSpace->map->rooms[i];
+				sprintf(workSpace->RoomNumber->text,"%d",workSpace->currentRoom->id);
 			}
 
 		}
@@ -463,6 +490,31 @@ void IncrementFrameNumber(Button* button)
 	x = atoi((char*)button->data);
 	workSpace->tileSelector->frameNum+=1;
 	sprintf((char*)button->data,"%d",workSpace->tileSelector->frameNum);
+}
+
+void SwitchRoomDirectionLeft(Button* button)
+{
+	char dir[500];
+	strcpy(dir,(char*)button->data);
+	if(strcmp(dir,"West") == 0)
+		strcpy((char*)button->data,"East");
+	if(strcmp(dir,"East") == 0)
+		strcpy((char*)button->data,"South");
+	if(strcmp(dir,"South") == 0)
+		strcpy((char*)button->data,"North");
+
+}
+void SwitchRoomDirectionRight(Button* button)
+{
+	char dir[500];
+	strcpy(dir,(char*)button->data);
+	if(strcmp(dir,"North") == 0)
+		strcpy((char*)button->data,"South");
+	if(strcmp(dir,"South") == 0)
+		strcpy((char*)button->data,"East");
+	if(strcmp(dir,"East") == 0)
+		strcpy((char*)button->data,"West");
+
 }
 /*
 *@brief Removes a Panel and Frees it
@@ -560,6 +612,76 @@ void LoadEditorMapPanel(Button* button)
 	panel->texts = g_list_append(panel->texts,mapName);
 	MainEditorPanels = g_list_append(MainEditorPanels,panel);
 }
+void LoadRoomCreatePanel(Button* button)
+{
+	Editor_Panel* panel;
+	GList *elem;
+	Button* newRoom;
+	Label* labelSizeX,*labelSizeY,*direction;
+	TextBox* roomSizeX,*roomSizeY;
+	Button* changeDirectionLeft,*changeDirectionRight;
+	int i;
+	for(i = 0;i < g_list_length(MainEditorPanels);++i)
+	{
+		elem = g_list_nth(MainEditorPanels,i);
+		panel = (Editor_Panel*)elem->data;
+		if(strcmp(panel->name,"RoomCreatePanel") == 0)
+		{
+			FreeEditorPanel(panel);
+			MainEditorPanels = g_list_remove(MainEditorPanels,panel);
+			return;
+		}
+	}
+
+	panel = CreateEditorPanel(CreateSDL_Rect(100,150,400,130));
+	panel->siblingPanels = MainEditorPanels;
+	labelSizeX =CreateEditorLabel("SizeX",CreateSDL_Rect(panel->rect.x+50,panel->rect.y+10,10,10));
+	labelSizeY =CreateEditorLabel("SizeY",CreateSDL_Rect(panel->rect.x+50,panel->rect.y+50,10,10));
+	direction = CreateEditorLabel("North",CreateSDL_Rect(panel->rect.x+80,panel->rect.y+100,10,10));
+	
+	roomSizeX =CreateEditorTextBox(CreateSDL_Rect(panel->rect.x+140,panel->rect.y+10,10,10));
+	roomSizeY = CreateEditorTextBox(CreateSDL_Rect(panel->rect.x+140,panel->rect.y+50,10,10));
+	
+	changeDirectionLeft = CreateEditorButton("images/ButtonLeft.png",CreateSDL_Rect(panel->rect.x+60,panel->rect.y+105,16,16));
+	changeDirectionRight = CreateEditorButton("images/ButtonRight.png",CreateSDL_Rect(panel->rect.x+140,panel->rect.y+105,16,16));
+	newRoom = CreateEditorButton("images/ButtonCreate.png",CreateSDL_Rect(panel->rect.x+300,panel->rect.y+100,45,16));
+	
+		
+	//ADD labels
+	panel->labels = g_list_append(panel->labels,labelSizeX);
+	panel->labels = g_list_append(panel->labels,labelSizeY);
+	panel->labels = g_list_append(panel->labels,direction);
+	labelSizeX->parentPanel = panel;
+	labelSizeY->parentPanel = panel;
+	direction ->parentPanel = panel;
+	labelSizeX->color.r = 200;
+	labelSizeY->color.r = 200;
+	direction ->color.r = 200;
+	
+	//Add textboxes
+	panel->texts = g_list_append(panel->texts,roomSizeX );
+	panel->texts = g_list_append(panel->texts,roomSizeY );
+	strcpy(roomSizeX->name,"RoomSizeX");
+	strcpy(roomSizeY->name,"RoomSizeY");
+	strcpy(roomSizeX->value,"0");
+	strcpy(roomSizeY->value,"0");
+
+	
+	//Add Buttons
+	panel->buttons = g_list_append(panel->buttons,newRoom);
+	panel->buttons = g_list_append(panel->buttons,changeDirectionLeft );
+	panel->buttons = g_list_append(panel->buttons,changeDirectionRight);
+	newRoom->data = panel;
+	newRoom->function = &AddRoomToMap;
+	changeDirectionLeft->function = &SwitchRoomDirectionLeft;
+	changeDirectionRight->function = &SwitchRoomDirectionRight;
+	changeDirectionLeft-> data = direction->text;
+	changeDirectionRight->data = direction->text;
+
+
+	strcpy(panel->name ,"RoomCreatePanel");
+	MainEditorPanels = g_list_append(MainEditorPanels,panel);
+}
 /*
 *@brief Loads the map from the data pointed to by the button
 *@param The Button which has been called
@@ -586,30 +708,30 @@ void LoadEditorMap(Button* button)
 	 {	
 		printf("Map Successfully Loaded\n");
 	 }
-	while(strcmp(buf,"#SolidTiles") != 0)
+	while(strcmp(buf,"#Portal") != 0)
 	{
 		fscanf(file,"%s",buf);
 		if(strcmp(buf,"#MapWidth") == 0){
 			fscanf(file,"%d",&j);
 			mapWidth = j;	
 			}
-		if(strcmp(buf,"#MapHeight") == 0)
+		else if(strcmp(buf,"#MapHeight") == 0)
 		{
 			fscanf(file,"%d",&j);
 			mapHeight = j;
 		}
-		if(strcmp(buf,"#TileWidth") == 0)
+		else if(strcmp(buf,"#TileWidth") == 0)
 		{
 			fscanf(file,"%d",&j);
 			tileW = j;
 		}
-		if(strcmp(buf,"#TileHeight") == 0)
+		else if(strcmp(buf,"#TileHeight") == 0)
 		{
 			fscanf(file,"%d",&j);
 			tileH = j;
 			fscanf(file,"%s",buf);
 			fscanf(file,"%d",&j);
-			if(map != NULL)
+			 if(map != NULL)
 			{
 				FreeMap();
 			}
@@ -630,7 +752,7 @@ void LoadEditorMap(Button* button)
 			memset(workSpace->map->data3,0,sizeof(workSpace->map->data3));
 		
 		}
-		if(strcmp(buf,"#SpriteSheet") == 0)
+		else if(strcmp(buf,"#SpriteSheet") == 0)
 		{
 			fscanf(file,"%s" ,imageName);
 			sprite = LoadSprite(imageName,
@@ -640,34 +762,40 @@ void LoadEditorMap(Button* button)
 			workSpace->tileSelector->SpriteSheet = sprite;
 			workSpace->tileSelector->SpriteList = g_list_append(workSpace->tileSelector->SpriteList,sprite);
 		}
-		if(strcmp(buf,"#NumSolidTiles") == 0)
+		else if(strcmp(buf,"#NumSolidTiles") == 0)
 		{
 			fscanf(file,"%d",&j);
 			NumSolidTiles = j;
 			workSpace->map->numSolidTiles = j;
 		}
-		if(strcmp(buf,"#Layer1") == 0)
+		else if(strcmp(buf,"#Layer1") == 0)
 		{
 		LoadLayer(workSpace->map->data,file);
 		}
-		if(strcmp(buf,"#Layer2") == 0)
+		else if(strcmp(buf,"#Layer2") == 0)
 		{
 		LoadLayer(workSpace->map->data2,file);
 		}
-		if(strcmp(buf,"#Layer3") == 0)
+		else if(strcmp(buf,"#Layer3") == 0)
 		{
 		LoadLayer(workSpace->map->data3,file);
 		}
-		if(strcmp(buf,"#SpecialLayer") == 0)
+		else if(strcmp(buf,"#SpecialLayer") == 0)
 		{
 			workSpace->map->specialLayer = LoadSprite("images/Shroud.png",800,600);
 			workSpace->map->hasSpecialLayer = 1;
 		}
-		if(strcmp(buf,"#SolidTiles") == 0)
+		else if(strcmp(buf,"#SolidTiles") == 0)
 		{
 		LoadSolidTiles(workSpace->map->solidTiles,file,NumSolidTiles);
 		}	
+		else if(strcmp(buf,"#MapEntities") == 0)
+		{
+			SetUpMap(workSpace->map,file);
+			break;
+		}
 	}
+	ConnectRooms(workSpace->map);
 	workSpace->areaToDraw.x = 0;
 	workSpace->areaToDraw.y = 0;
 	workSpace->areaToDraw.w = 25 * tileW;

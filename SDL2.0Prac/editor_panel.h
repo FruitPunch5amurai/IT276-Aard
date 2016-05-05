@@ -101,16 +101,22 @@ typedef struct {
 	SDL_Texture *buffer;
 	SDL_Rect areaToDraw;
 	int activeLayer;
+	
+	Room* currentRoom;
+	Label *RoomNumber;
 }Workspace;
 Workspace* CreateEditorWorkspace();
 void DrawWorkspace();
 void UpdateWorkspace();
 void IncrementActiveLayer(Button* button);
 void DecrementActiveLayer(Button* button);
+void SwitchRoomDirectionLeft(Button* button);
+void SwitchRoomDirectionRight(Button* button);
 void SwitchMode();
 /*
 *@brief Functions for loading maps
 */
+void LoadRoomCreatePanel(Button* button);
 void LoadEditorMapPanel(Button* button);
 void LoadEditorMapNew(Button* button);
 void LoadEditorMap(Button* button);

@@ -61,6 +61,7 @@ void CloseSpriteSystem()
 */
 void FreeSprite(Sprite *sprite)
 {
+	int i;
 	if(sprite == NULL)
 	{
 		return;
@@ -78,7 +79,16 @@ if(sprite->refCount <= 0)
 	  SDL_DestroyTexture(sprite->image);
   sprite->image = NULL;
   }
-
+	for(i = 0; i < MAX_ANIMATIONS;++i)
+	{
+		sprite->animation[i].currentFrame = 0;
+		sprite->animation[i].maxFrames = 0;
+		sprite->animation[i].frameInc = 1;
+		sprite->animation[i].holdFrame = 0;
+		sprite->animation[i].frameRate = 100;
+		sprite->animation[i].oldTime = 0;
+		sprite->animation[i].oscillate = false;
+	}
   sprite = NULL;
 }
 
@@ -93,7 +103,7 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey)
 	SDL_Texture* temp2;
 	for(i = 0; i<Num_Sprites;i++)
 	{
-		if(strncmp(filename,SpriteList[i].filename,30) == 0 && SpriteList[i].w == sizex && SpriteList[i].h == sizey)
+		if(strncmp(filename,SpriteList[i].filename,40) == 0 && SpriteList[i].w == sizex && SpriteList[i].h == sizey)
 		{
 			SpriteList[i].refCount++;
 			return &SpriteList[i];
@@ -125,7 +135,7 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey)
   SpriteList[i].image = temp2;
 // SDL_SetColorKey(SpriteList[i].image, SDL_TRUE , SDL_MapRGB(SpriteList[i].image->format, 255,255,255));
    /*then copy the given information to the sprite*/
-  strncpy(SpriteList[i].filename,filename,20);
+  strncpy(SpriteList[i].filename,filename,30);
       /*now sprites don't have to be 16 frames per line, but most will be.*/
   SpriteList[i].fpl= 16;
   SpriteList[i].w = sizex;

@@ -2,11 +2,13 @@
 #ifndef __ENTITY_H_
 #define __ENTITY_H_
 #include <glib.h>
+#include <SDL_mixer.h>
 #include "level.h"
 #include "sprite.h"
 #include "vectors.h"
 #include "particle.h"
 #include "items.h"
+
 
 
 typedef struct EntityData Entity;
@@ -50,6 +52,8 @@ enum EnemyType{
 	Snatcher,
 	None
 };
+static const char *Enemy_String[] =
+{"Chaser","Lurker","Snatcher"};
 /**
 *@brief Struct for Scripts
 */
@@ -95,6 +99,7 @@ typedef struct EntityBluePrintData{
 	EnemyType enemyType;
 	Vec2D location;
 	int frame;
+	Vec2D playerSpawn;
 	char filename[128];
 	int count;
 	int sizex;
@@ -191,6 +196,8 @@ typedef struct
 	int numberOfRooms;
 	char name[128];
 	int numOfEntities;
+	int musicPlaying;
+	Mix_Music *levelMusic;
 }Map;
 //Tile Functions
 int GetTile(int *data,int x,int y);
@@ -204,7 +211,7 @@ void LoadSolidTiles(int data[],FILE *file,int NumSolidTiles);
 void InitMapList();
 void CloseMapList();
 Room *CreateRoom(int id,SDL_Rect *boundary,int *linksTo);
-void ConnectRooms();
+void ConnectRooms(Map* map);
 void ClearRoom();
 Room *FindRoomWithID(int id);
 Map* CreateMap(int tileW, int tileH,int mapWidth,int mapHeight,int numOfRooms);
@@ -212,6 +219,7 @@ void FreeMap();
 bool Load(char *mapName);
 void LoadLayer(int data[],FILE *file);
 void GenerateSolidLayer(Map* map);
+void UpdateMap();
 
 
 enum ItemType{
@@ -228,6 +236,7 @@ typedef struct ItemData{
 	Entity* self;
 	int itemID;
 	int isEquiped;
+	Mix_Chunk *itemSound;
 	void (*useItem)(struct ItemData *item);
 	void (*freeItem)(struct ItemData *item);
 
@@ -238,6 +247,7 @@ typedef struct ItemData{
 */
 typedef struct ItemRefData{
 	ItemType itemType;
+	Mix_Chunk *itemSound;
 	Sprite* sprite;
 	Items *item;
 	Vec2D pos;

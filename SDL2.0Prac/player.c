@@ -197,10 +197,13 @@ void DrawPlayer(Entity* ent)
 void UpdatePlayer(Entity *ent)
 {
 	if(playerData->confidence <= 0)
+	{
 		printf("Player is Dead");
+		RespawnPlayer();
+	}
 	ent->hitBox.x =ent->position.x;
 	ent->hitBox.y =ent->position.y;
-	
+	Movement();
 	Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
 	Vec2DAdd(ent->position,ent->position,ent->velocity);
 	CheckPitFalls(map,ent);
@@ -315,7 +318,7 @@ void TouchPlayer(Entity *ent,Entity *other)
 		//whipATK
 			other->knockback = 1;
 			other->velocity = CreateVec2D(other->speed*2*playerEnt->facing.x,-other->speed*2*playerEnt->facing.y);
-			other->EnemyHP-= playerData->abilities[0].dmg;
+			other->EnemyHP-= playerData->abilities[0].dmg + playerData->guidingSpirits + 1;
 		}
 	}
 
@@ -328,6 +331,11 @@ void FreePlayer(Entity* ent)
  	if(g_list_length(SpiritTrain) != 0)
 		ClearSpiritLink();
 	SpiritTrain = g_list_remove(SpiritTrain,g_list_nth_data(SpiritTrain,0));
+	if(playerData->currentItem != NULL)
+	{
+		playerData->currentItem->isEquiped = 0;
+		playerData->currentItem->self = NULL;
+	}
 	FreeEntity(ent);
 	ent= NULL;
 
@@ -363,7 +371,7 @@ void RenderHPBar(int x, int y, int w, int h, float Percent, SDL_Color FGColor, S
 void UpdateGUI()
 {
 	whiteFont.r = 255,whiteFont.g = 255,whiteFont.b = 255,whiteFont.a = 0;
-	itoa(playerData->guidingSpirits,numOfSpirits,10);
+	sprintf(numOfSpirits,"%d",playerData->guidingSpirits);
 	RenderHPBar( 10, 10, playerData->maxConfidence,25,(float)playerData->confidence/playerData->maxConfidence, hp ,hp2);
 	RenderFont(numOfSpirits,playerData->textRect,game->font,&whiteFont);
 }
@@ -586,6 +594,8 @@ void TransitionRoom(Entity *ent,Room* room)
 		}else if (b->entType == BreakableObject){
 			CreateObject(b->location,b->sizex,b->sizey,b->entType,b->frame,b->filename,b->ref,b);
 		}
+		else if(b->entType = Dungeon)
+			CreateDungeonEntrance(b->location.x,b->location.y,b->sizex,b->sizey,b->filename,b->playerSpawn.x,b->playerSpawn.y);
 
 
 
@@ -653,4 +663,42 @@ void CheckPitFalls(Map *map,Entity *ent)
 			playerData->confidence-=2;
 			RespawnPlayer();
 		}
+}
+void Movement()
+{
+	if(keyData->ArrowKeyLeft)
+	{
+		playerEnt->velocity.x = -playerEnt->speed;
+		playerEnt->facing.x = -1;
+		playerEnt->facing.y = 0;
+		playerEnt->flipped = SDL_FLIP_HORIZONTAL;
+	}else
+	{
+		playerEnt->velocity.x = 0;
+	}
+	if(keyData->ArrowKeyRight)
+	{
+		playerEnt->facing.x = 1;
+		playerEnt->facing.y = 0;
+		playerEnt->velocity.x = playerEnt->speed;
+		playerEnt->flipped = SDL_FLIP_NONE;
+	}
+	if(keyData->ArrowKeyUp)
+	{
+		playerEnt->velocity.y = -playerEnt->speed;
+		playerEnt->facing.x = 0;
+		playerEnt->facing.y = 1;
+		keyData->ArrowKeyUp = 1;
+	}
+	else
+	{
+		playerEnt->velocity.y = 0;
+	}
+	if(keyData->ArrowKeyDown)
+	{
+		playerEnt->velocity.y = playerEnt->speed;
+		playerEnt->facing.x = 0;
+		playerEnt->facing.y = -1;
+		keyData->ArrowKeyDown = 1;
+	}
 }
