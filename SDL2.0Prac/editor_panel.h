@@ -14,8 +14,11 @@ typedef struct Editor_PanelData Editor_Panel;
 typedef struct ButtonData{
 	Sprite* sprite;
 	SDL_Rect rect;
+	Mix_Chunk *soundEffect;
+	int frame;
 	Editor_Panel* parentPanel;
 	char name[255];
+	int inside;
 	int clicked;
 
 	void *data;
@@ -32,6 +35,7 @@ void IncrementFrameNumber(Button* button);
 typedef struct Editor_PanelData Editor_Panel;
 typedef struct {
 	char name[255];
+	Sprite* sprite;
 	SDL_Color color;
 	SDL_Rect rect;
 	char text[255];
@@ -59,6 +63,7 @@ typedef struct Editor_PanelData {
 	int visible;
 	char name[255];
 	SDL_Rect rect;
+	Sprite* sprite;
 	GList* siblingPanels;
 	GList* panels;
 	GList* labels;

@@ -56,7 +56,7 @@ Map* CreateMap(int tileW, int tileH,int mapWidth,int mapHeight,int numOfRooms)
 {
 	Map* map;
 	map = (Map*)malloc(sizeof(Map));
-		map->rooms = (Room*)malloc(sizeof(Room)* numOfRooms);
+		map->rooms = (Room*)malloc(sizeof(Room)* 500);
 		map->numberOfRooms = numOfRooms;
 		map->tileW = tileW;
 		map->tileH = tileH;
@@ -172,6 +172,7 @@ bool Load(char *mapName)
 		if(strcmp(buf,"#LevelMusic") == 0)
 		{
 			fscanf(file,"%s" ,musicFile);
+			strcpy(map->musicFileName,musicFile);
 			map->levelMusic = Mix_LoadMUS(musicFile);
 		}
 		if(strcmp(buf,"#Layer1") == 0)
@@ -233,11 +234,12 @@ void UpdateMap()
 	{
 		if(map->levelMusic != NULL){
 			Mix_FadeInMusic(map->levelMusic,-1,2000);
+			Mix_VolumeMusic(7);
 			map->musicPlaying = 1;
 		}
 	}
 }
-void LoadObjects(FILE *file ,char *buf,int roomId)
+void LoadObjects(FILE *file ,char *buf,int roomId, Room* room)
 {
 	int j = 0,i = 0;
 	int frame = 0;
@@ -263,6 +265,17 @@ void LoadObjects(FILE *file ,char *buf,int roomId)
 		{
 			ref = LoadItem(Key);
 		}
+		else if(strcmp(buf,"Lantern") == 0)
+		{
+			ref = LoadItem(Lantern);
+		}
+		else if(strcmp(buf,"MasterKey") == 0)
+		{
+			ref = LoadItem(MasterKey);
+		}
+		else{
+			ref = NULL;
+		}
 	}
 	else if(strcmp(buf,"LitTorch")== 0)
 	{
@@ -287,7 +300,7 @@ void LoadObjects(FILE *file ,char *buf,int roomId)
 		fscanf(file,"%d",&x);
 		fscanf(file,"%s",buf);
 		fscanf(file,"%d",&y);
- 		CreateBluePrint(type,None,x*32,y*32,roomId,frame,filename,w,h,ref);
+ 		CreateBluePrint(type,None,(room->boundary.x ) + x*w,(room->boundary.y ) +y*h+8,roomId,frame,filename,w,h,ref)->count = count;
 		map->numOfEntities++;
 	}
 }
@@ -550,8 +563,6 @@ void SetUpMap(Map* map,FILE *file)
 							CreateBluePrint(Enemy,Snatcher,(room->boundary.x ) + k*32,(room->boundary.y ) + l*32,RoomId,0,NULL,0,0,NULL);
 							map->numOfEntities++;
 							}
-
-						fscanf(file,"%s",buf);
 						}
 						else if(strcmp(buf,"Lurker")== 0)
 						{
@@ -566,10 +577,9 @@ void SetUpMap(Map* map,FILE *file)
 								fscanf(file,"%d",&l);
 
 							//CreateEnemy(k*32,l*32,Lurker);
-							CreateBluePrint(Enemy,Lurker,(room->boundary.x ) + k*32,(room->boundary.h ) +l*32,RoomId,0,NULL,0,0,NULL);
+							CreateBluePrint(Enemy,Lurker,(room->boundary.x ) + k*32,(room->boundary.y ) +l*32,RoomId,0,NULL,0,0,NULL);
 							map->numOfEntities++;
 							}
-							fscanf(file,"%s",buf);
 						}
 						else if(strcmp(buf,"Chaser")== 0)
 						{
@@ -596,32 +606,39 @@ void SetUpMap(Map* map,FILE *file)
 								fscanf(file,"%s",buf);
 								fscanf(file,"%d", &k);
 
-								CreateBluePrint(Spirit,None,(room->boundary.x) + k*32,(room->boundary.y ) + l*32,RoomId,0,NULL,0,0,NULL);
+								CreateBluePrint(Spirit,None,(room->boundary.x) + k*32,(room->boundary.y ) + l*32,RoomId,0,NULL,0,0,NULL)->count = i+1;
 								map->numOfEntities++;
 							}
+						} else if(strcmp(buf,"Portal") == 0){
+							fscanf(file,"%s",buf);
+							fscanf(file,"%d",&j);
+							fscanf(file,"%s",buf);
+							fscanf(file,"%d", &k);
+							CreateBluePrint(Portal,None,(room->boundary.x ) + j*32,(room->boundary.y) + k*32,RoomId,0,NULL,0,0,NULL)->count = 1;
+							map->numOfEntities++;
 						}else if(strcmp(buf,"Breakable") == 0)
 							{
-  								LoadObjects(file,buf,RoomId);
+  								LoadObjects(file,buf,RoomId,room);
 							}
 						else if(strcmp(buf,"Chest") == 0)
 							{
- 								LoadObjects(file,buf,RoomId);
+ 								LoadObjects(file,buf,RoomId,room);
 							}
 						else if(strcmp(buf,"Torch") == 0)
 							{
- 								LoadObjects(file,buf,RoomId);
+ 								LoadObjects(file,buf,RoomId,room);
 							}
 						else if(strcmp(buf,"LitTorch") == 0)
 							{
- 								LoadObjects(file,buf,RoomId);
+ 								LoadObjects(file,buf,RoomId,room);
 							}
 						else if(strcmp(buf,"LockedDoor") == 0)
 							{
- 								LoadObjects(file,buf,RoomId);
+ 								LoadObjects(file,buf,RoomId,room);
 							}
 						else if(strcmp(buf,"Door") == 0)
 							{
- 								LoadObjects(file,buf,RoomId);
+ 								LoadObjects(file,buf,RoomId,room);
 							}
 						fscanf(file,"%s",buf);
 
@@ -649,20 +666,7 @@ void SetUpMap(Map* map,FILE *file)
 
 				}
 			}
-		}
-		
-		if(strcmp(buf,"#Portal") == 0){
-			fscanf(file,"%s",buf);
-			fscanf(file,"%d",&j);
-			fscanf(file,"%s",buf);
-			fscanf(file,"%d", &k);
-			CreatePortal(j,k);
-			map->numOfEntities++;
-		}
-		
-
-
-
+		}		
 
 	}
 }
@@ -675,6 +679,7 @@ void ConnectRooms(Map* map)
 	int i;
 	for( i = 0; i <= map->numberOfRooms;++i)
 	{
+		
 		map->rooms[i].north = map->rooms[i].roomIDs[0] == -1 ?&map->rooms[0]
 		:	map->rooms[i].roomIDs[0] == 0 ? NULL
 		:	&map->rooms[map->rooms[i].roomIDs[0]];
@@ -687,6 +692,7 @@ void ConnectRooms(Map* map)
 		map->rooms[i].west = map->rooms[i].roomIDs[3] == -1 ?&map->rooms[0] 
 		:	map->rooms[i].roomIDs[3] == 0 ? NULL
 		:	&map->rooms[map->rooms[i].roomIDs[3]];
+		
 	}
 }
 /**
@@ -698,24 +704,18 @@ void ConnectRooms(Map* map)
 Room *CreateRoom(int id,SDL_Rect *boundary,int linksTo[])
 {
 	Room *room;
-	room = (Room*)malloc(sizeof(Room));
+	if(id == -1)
+		room = &map->rooms[0];
+	else
+		room = &map->rooms[id];
 	for(int i = 0;i < 4;i++)
 	{
 		room->roomIDs[i] = linksTo[i];
 	}
 	room->boundary = *boundary;
 	room->id = id;
-	if(id == -1)
-	{
-		map->rooms[0] = *room;
-		map->rooms[0].script = NULL;
-		map->rooms[0].Entities = NULL;
-	}else
-	{
-		map->rooms[id] = *room;
-		map->rooms[id].script = NULL;
-		map->rooms[id].Entities = NULL;
-	}
+	room->script = NULL;
+	room->Entities = NULL;
 	room->script = NULL;
 	return room;
 }
@@ -731,7 +731,8 @@ Room *FindRoomWithID(int id)
 		if(map->rooms[i].id == id)
 			return &map->rooms[i];
 		else
-			return NULL;
+			continue;
+		return NULL;
 	}
 
 }
@@ -749,8 +750,8 @@ Entity* CreateDungeonEntrance(int x,int y,int w, int h,char filename[128],int pl
 	dungeon->sprite = LoadSprite("images/Resources1.png",w,h);
 	dungeon->currentAnimation = 0;
 
-	dungeon->sprite->animation[0].startFrame = 4;
-	dungeon->sprite->animation[0].currentFrame = 4;
+	dungeon->sprite->animation[0].startFrame = 1000;
+	dungeon->sprite->animation[0].currentFrame = 1000;
 	dungeon->sprite->animation[0].maxFrames = 1;
 	dungeon->sprite->animation[0].oscillate = 0;
 	dungeon->position.x = x;
@@ -796,6 +797,89 @@ void LoadDungeon(char *filename,Vec2D playerSpawn)
 		playerEnt->savedPlayerPos = playerSpawn;
 }
 
+
+char* GetMapName()
+{
+	return map->name;
+}
+
+void SaveMapBinary()
+{
+	FILE *fp;
+	int x,y;
+	fp = fopen(map->name,"wb");
+	if(!fp)return;
+	EntityBluePrint* bp;
+	//tileData
+	fwrite(&(map->w),sizeof(int),1,fp);
+	fwrite(&(map->h),sizeof(int),1,fp);
+	fwrite(&(map->tileW),sizeof(int),1,fp);
+	fwrite(&(map->tileH),sizeof(int),1,fp);
+	fwrite(&(map->numberOfRooms),sizeof(int),1,fp);
+	fwrite(&(map->numSolidTiles),sizeof(int),1,fp);
+	fwrite(&map->tiles->filename,sizeof(char)*30,1,fp);
+	fwrite(&map->musicFileName,sizeof(char)*40,1,fp);
+	fwrite(map->data,sizeof(int),map->w * map->h,fp);
+	fwrite(map->data2,sizeof(int),map->w * map->h,fp);
+	fwrite(map->data3,sizeof(int),map->w * map->h,fp);
+	fwrite(map->solidTiles,sizeof(int),map->numSolidTiles,fp);
+	//Rooms
+	for(x = 0; x < map->numberOfRooms;++x)
+	{
+		fwrite(&map->rooms[x].id,sizeof(int),1,fp);
+		for(y = 0; y < 4;++y)
+		{
+			fwrite(&map->rooms[x].roomIDs[y],sizeof(int),1,fp);
+		}
+		fwrite(&map->rooms[x].boundary,sizeof(SDL_Rect),1,fp);
+		for(y = 0;y < g_list_length(map->rooms[x].Entities);++y)
+		{
+			bp = (EntityBluePrint*)g_list_nth_data(map->rooms[x].Entities,y);
+			fwrite(&bp,sizeof(EntityBluePrint),1,fp);
+		}
+	}
+
+
+	fclose(fp);
+}
+void LoadMapBinary()
+{
+	FILE *fp;
+	int x,y;
+	fp = fopen(map->name,"rb");
+	if(!fp)return;
+	unsigned char buffer[100];
+	int s;
+	EntityBluePrint* bp;
+	fread(&map->w,sizeof(int),1,fp);
+	fread(&(map->h),sizeof(int),1,fp);
+	fread(&(map->tileW),sizeof(int),1,fp);
+	fread(&(map->tileH),sizeof(int),1,fp);
+	fread(&(map->numberOfRooms),sizeof(int),1,fp);
+	fread(&(map->numSolidTiles),sizeof(int),1,fp);
+	fread(&map->tiles->filename,sizeof(char)*30,1,fp);
+	fread(&map->musicFileName,sizeof(char)*40,1,fp);
+	fread(map->data,sizeof(int),map->w * map->h,fp);
+	fread(map->data2,sizeof(int),map->w * map->h,fp);
+	fread(map->data3,sizeof(int),map->w * map->h,fp);
+	fread(map->solidTiles,sizeof(int),map->numSolidTiles,fp);
+	for(x = 0; x < map->numberOfRooms;++x)
+	{
+		fread(&map->rooms[x].id,sizeof(int),1,fp);
+		for(y = 0; y < 4;++y)
+		{
+			fread(&map->rooms[x].roomIDs[y],sizeof(int),1,fp);
+		}
+		fread(&map->rooms[x].boundary,sizeof(SDL_Rect),1,fp);
+		for(y = 0;y < g_list_length(map->rooms[x].Entities);++y)
+		{
+			bp = CreateBluePrint(NoType,None,0, 0,0,0,NULL,0,0,NULL);
+			fread(&bp,sizeof(EntityBluePrint),1,fp);
+		}
+	}
+
+	fclose(fp);
+}
 EntityBluePrint* CreateBluePrint(EntityType entType,EnemyType enemyType,int x, int y,int roomId,
 	int frame,char *filename, int sizex,int sizey,ItemRef* ref)
 {

@@ -79,6 +79,11 @@ void LoadPlayerAnimations(Entity* ent)
 			playerEnt->sprite->animation[i].frameInc = 1;
 			playerEnt->sprite->animation[i].frameRate = 100;
 			playerEnt->sprite->animation[i].frameInc = 1;
+			g_hash_table_insert(playerEnt->sounds,"WhipAttack",Mix_LoadWAV("sound/whip_Attack.wav"));
+			g_hash_table_insert(playerEnt->sounds,"PlayerDeath",Mix_LoadWAV("sound/player_Death.wav"));
+			g_hash_table_insert(playerEnt->sounds,"PlayerHurt",Mix_LoadWAV("sound/Hurt.wav"));
+			g_hash_table_insert(playerEnt->sounds,"PlayerPickUp",Mix_LoadWAV("sound/PickUp.wav"));
+			g_hash_table_insert(playerEnt->sounds,"PlayerThrow",Mix_LoadWAV("sound/Throw.wav"));
 			if(json_object_get(Animations,"held-frame"))
 				playerEnt->sprite->animation[i].heldFrame = json_number_value(json_object_get(Animations,"held-frame"));
 			else
@@ -102,13 +107,6 @@ void SetPlayerData()
 		/*Set the PlayerData*/
 	playerData->inventory = InitInventory();
 	playerData->currentItem = NULL;
-	playerData->confidence = 20;
-	playerData->maxConfidence = 30;
-	playerData->rescuedSpirits = 0;
-	playerData->guidingSpirits = 0;
-	playerData->abandonSpirits = 0;
-	playerData->inventory->keys = 0;
-	playerData->EXP = 0;
 	for(int i = 0;i < 4;i++)
 	{
 		playerData->abilities[i].cooldown = 0;
@@ -122,19 +120,7 @@ void SetPlayerData()
 	playerData->textRect.w = 10;
 	playerData->textRect.h = 10;
 	//playerData->inventory[0].inventory->item = LoadItem(Lantern);
- 	for(n = 0; n < g_list_length(playerData->inventory->inventory);++n)
-	{
-		elem = g_list_nth(playerData->inventory->inventory,n);
-		ref = (ItemRef*)elem->data;
-		if(!ref->item)
-		{
-			pos = ref->pos;
-			ref = LoadItem(Lantern);
-			ref->pos = CreateVec2D(pos.x,pos.y);
-			elem->data = ref;
-			break;
-		}
-	}
+	//AddItemToInventory(playerData->inventory,Lantern);
 }
 /**
 *@brief Creates and Allocates memory for the player. Then initializes all the
@@ -200,6 +186,7 @@ void UpdatePlayer(Entity *ent)
 	{
 		printf("Player is Dead");
 		RespawnPlayer();
+		Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(playerEnt->sounds,"PlayerDeath"),0);
 	}
 	ent->hitBox.x =ent->position.x;
 	ent->hitBox.y =ent->position.y;
@@ -217,6 +204,12 @@ void ThinkPlayer(Entity *ent)
 		Stun();
 		playerEnt->stun -=.1;
 	}
+	if(ent->EnemyHP >0)
+	{
+		playerData->confidence -= ent->EnemyHP;
+		ent->EnemyHP = 0;
+		SDL_SetTextureBlendMode(ent->sprite->image,SDL_BLENDMODE_BLEND);
+	}
 	ExecuteSkill();
 	if(ent->nextThink < SDL_GetTicks())
 	{
@@ -231,25 +224,20 @@ void ThinkPlayer(Entity *ent)
 	}
 	playerData->guidingSpirits = g_list_length(SpiritTrain)-1;
 	Vec2DAdd(ent->position,ent->position,OverlapsMap(map,ent));
-	if(ent->atkBox.x > 0)
-	{
-		AttackBoxIntersectAll(ent);
-	}
 	ent->atkBox.x = 0;
 	ent->atkBox.y = 0;
 	ent->atkBox.w = 0;
 	ent->atkBox.h = 0;
-	if(playerData->confidence <= 0)
-	{
-		FreePlayer(ent);
-	}
 		   ent->position.x > ent->room->boundary.x + ent->room->boundary.w ? TransitionRoom(ent,ent->room->west)
 		:  ent->position.x < ent->room->boundary.x ?TransitionRoom(ent,ent->room->east)
 		:  ent->position.y > ent->room->boundary.y + ent->room->boundary.h ? TransitionRoom(ent,ent->room->south)
 		:  ent->position.y < ent->room->boundary.y ?TransitionRoom(ent, ent->room->north)
 		:  ent->room;
 
-
+		   if(ent->objectHolding != NULL)
+		   {
+			   ent->objectHolding->room = ent->room;
+		   }
 //Handle Animation Change
 	ent->currentAnimation = keyData->ArrowKeyLeft != 0 || keyData->ArrowKeyRight != 0 ? 2:
 		keyData->ArrowKeyUp == 1 ? 1:
@@ -312,14 +300,6 @@ void TouchPlayer(Entity *ent,Entity *other)
 
 	}
 		
-	}else{
-		if(other->whatAmI == 2)
-		{
-		//whipATK
-			other->knockback = 1;
-			other->velocity = CreateVec2D(other->speed*2*playerEnt->facing.x,-other->speed*2*playerEnt->facing.y);
-			other->EnemyHP-= playerData->abilities[0].dmg + playerData->guidingSpirits + 1;
-		}
 	}
 
 }
@@ -377,6 +357,8 @@ void UpdateGUI()
 }
 void SkillWhip()
 {
+	Entity* ent = NULL;
+	Mix_Chunk* sound;
 	SDL_Rect rect; 
 	whiteFont.r = 255,whiteFont.g = 255,whiteFont.b = 255,whiteFont.a = 0;
 	rect.w = playerEnt->facing.x < 0 || playerEnt->facing.x > 0 ? 132 : 50;
@@ -395,6 +377,18 @@ void SkillWhip()
 	SDL_SetRenderTarget(GetRenderer(),game->mainSceneTexture);
 	SDL_RenderDrawRect(GetRenderer(), &rect);
 	SDL_SetRenderTarget(GetRenderer(),NULL);
+	ent = AttackBoxIntersectAll(playerEnt);
+	if(ent != NULL)
+	{
+		if(ent->whatAmI == Enemy)
+		{
+			ent->knockback = 1;
+			ent->velocity = CreateVec2D(ent->speed*2*playerEnt->facing.x,-ent->speed*2*playerEnt->facing.y);
+			TakeDamage(ent,playerData->abilities[0].dmg + playerData->guidingSpirits + 1);
+		}
+	}
+	Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(playerEnt->sounds,"WhipAttack"),0);
+
 }
 void SkillRetrieve()
 {
@@ -424,6 +418,7 @@ void SkillPickUpObject(Entity* ent)
 			playerEnt->objectHolding->hitBox.w = playerEnt->objectHolding->hitBox.h = 0;
 			playerEnt->objectHolding->hitBox.y = playerEnt->objectHolding->hitBox.x = 0;
 			printf("Picked up object\n");
+			Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(playerEnt->sounds,"PlayerPickUp"),0);
 		}
 	}else if(ent->whatAmI == 8 && ent->currentAnimation != 1)
 		{
@@ -432,9 +427,13 @@ void SkillPickUpObject(Entity* ent)
 				if(ent->itemHolding->itemType == Key)
 				{
 					playerData->inventory->keys +=1;
+				}else
+				{
+					AddItemToInventory(playerData->inventory,ent->itemHolding->itemType);
 				}
 			}
 		}
+
 }
 
 void SkillThrowObject()
@@ -453,12 +452,13 @@ void SkillThrowObject()
 		playerEnt->objectHolding = NULL;
 		playerData->abilities[3].inuse = 0;
 		playerData->abilities[3].cooldown = 1;
+		Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(playerEnt->sounds,"PlayerThrow"),0);
 
 }
 void ExecuteSkill()
 {
 	if(keyData->Q == 1 && playerData->abilities[0].inuse == 0 
-		&& playerData->abilities[0].cooldown == 0 && playerData->EXP >=2)
+		&& playerData->abilities[0].cooldown == 0 && playerData->EXP >=0)
 	{
 		playerData->abilities[0].inuse = 1;
 		playerData->abilities[0].cooldown = 1;
@@ -466,7 +466,7 @@ void ExecuteSkill()
 		SkillWhip();
 	}
 	else if(keyData->W == 1 && playerData->abilities[1].inuse == 0 
-		&& playerData->abilities[1].cooldown == 0 && playerData->EXP >=4 && g_list_length(SpiritTrain) >1)
+		&& playerData->abilities[1].cooldown == 0 && playerData->EXP >=0 && g_list_length(SpiritTrain) >1)
 	{
 		playerData->abilities[1].inuse = 1;
 		playerData->abilities[1].cooldown = 3;
@@ -474,7 +474,7 @@ void ExecuteSkill()
 		SkillRetrieve();
 	}
 		else if(keyData->E == 1 && playerData->abilities[2].inuse == 0 
-			&& playerData->abilities[2].cooldown == 0 && playerData->EXP >=6 && g_list_length(SpiritTrain) >1)
+			&& playerData->abilities[2].cooldown == 0 && playerData->EXP >=0 && g_list_length(SpiritTrain) >1)
 	{
 		playerData->abilities[2].inuse = 1;
 		playerData->abilities[2].cooldown = 10;
@@ -594,8 +594,10 @@ void TransitionRoom(Entity *ent,Room* room)
 		}else if (b->entType == BreakableObject){
 			CreateObject(b->location,b->sizex,b->sizey,b->entType,b->frame,b->filename,b->ref,b);
 		}
-		else if(b->entType = Dungeon)
+		else if(b->entType == Dungeon)
 			CreateDungeonEntrance(b->location.x,b->location.y,b->sizex,b->sizey,b->filename,b->playerSpawn.x,b->playerSpawn.y);
+		else if(b->entType == Portal)
+			CreatePortal(b->location.x,b->location.y);
 
 
 
@@ -618,6 +620,11 @@ void RespawnPlayer()
 	{
 		ent = (Entity*)g_list_nth_data(SpiritTrain,i);
 		ent->position = playerEnt->position;
+	}if(playerData->confidence <= 0)
+	{
+		playerData->EXP = 0;
+		playerData->confidence = 20;
+	
 	}
 }
 

@@ -80,6 +80,9 @@
     <ClCompile Include="editor_createroom.c">
       <Filter>Source Files\LevelEditor</Filter>
     </ClCompile>
+    <ClCompile Include="game_title.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graphics.h">
@@ -146,6 +149,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="editor_createroom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game_title.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

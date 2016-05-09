@@ -44,7 +44,8 @@ enum EntityType{
 	Item,
 	UnlockedDoor,
 	NoType,
-	Door
+	Door,
+	MasterDoor
 };
 enum EnemyType{
 	Chaser,
@@ -54,6 +55,8 @@ enum EnemyType{
 };
 static const char *Enemy_String[] =
 {"Chaser","Lurker","Snatcher"};
+static const char *Item_String[] =
+{"Key"};
 /**
 *@brief Struct for Scripts
 */
@@ -123,6 +126,7 @@ typedef struct EntityData
 	int		speed;
 	float	stun;
 	int		knockback;
+	int tookDamage;
 	Entity* objectHolding;
 	ItemRef* itemHolding;
 	SDL_Rect hitBox;
@@ -166,13 +170,17 @@ typedef struct EntityData
 	//Door
 	int doorId;
 
+
+	//Sounds
+	GHashTable * sounds;
+
 	void (*update)(struct EntityData *ent);
 	void (*think)(struct EntityData *ent);
 	void (*touch)(struct EntityData *ent, struct EntityData *other);
 	void (*free)(struct EntityData *ent);
 	void(*draw)(struct EntityData *ent);
 }Entity;
-
+void TakeDamage(Entity *ent ,int amount);
 /**
 *@brief Struct for Map
 */
@@ -198,6 +206,7 @@ typedef struct
 	int numOfEntities;
 	int musicPlaying;
 	Mix_Music *levelMusic;
+	char musicFileName[40];
 }Map;
 //Tile Functions
 int GetTile(int *data,int x,int y);
@@ -220,11 +229,12 @@ bool Load(char *mapName);
 void LoadLayer(int data[],FILE *file);
 void GenerateSolidLayer(Map* map);
 void UpdateMap();
-
-
+void LoadMapBinary();
+void SaveMapBinary();
 enum ItemType{
 	Lantern,
 	Key,
+	MasterKey,
 	NONE
 };
 
@@ -252,7 +262,6 @@ typedef struct ItemRefData{
 	Items *item;
 	Vec2D pos;
 }ItemRef;
-
 /**
 *@brief Struct for Inventory Cursor
 */
@@ -267,14 +276,19 @@ typedef struct{
 typedef struct InventoryData{
 	Sprite* sprite;
 	Sprite* keySprite;
+	Sprite* bossKeySprite;
 	GList *inventory;
+	GHashTable *sounds;
 	int keys;
+	int MasterKey;
 	//ItemRef inventory[MAX_INVENTORY];
 	int display;
 	InventoryCursor* cursor;
 }Inventory;
+ItemRef* GetItem(Inventory* inventory,ItemType item);
+void AddItemToInventory(Inventory* inventory,ItemType type);
 //Map and Room Functions
-
+char* GetMapName();
 void DrawSpecialLayer(Map* map);
 void DrawMap(int layer, int xOffset ,int yOffset,SDL_Texture* texture);
 void SetUpMap(Map* map,FILE *file);
@@ -293,7 +307,7 @@ void InitEntityList();
 void ClearEntityList();
 void CloseEntityList();
 Vec2D OverlapsMap(Map *map,Entity *ent);
-void LoadObjects(FILE *file ,char *buf,int roomdId);
+void LoadObjects(FILE *file ,char *buf,int roomdId, Room* room);
 
 int EntityIntersect(Entity *a, Entity *b);
 Entity* EntityIntersectAll(Entity *a);

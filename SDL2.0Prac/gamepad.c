@@ -6,7 +6,9 @@
 #include "entity.h"
 #include "player.h"
 #include"editor_panel.h"
+#include"editor_save.h"
 #include "editor.h"
+#include "save.h"
 #include "gamepad.h"
 
 KeyData * keyData = NULL;
@@ -92,6 +94,7 @@ void handleInput(int (*gameState)())
 				printf("Enter pressed\n");
 				keyData->Enter = 1;
 				SetGameState(StateInventory);
+				Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(playerData->inventory->sounds,"Open"),0);
 				playerData->inventory->cursor->ref = 
 					g_list_nth(playerData->inventory->inventory,0);
 				break;
@@ -126,6 +129,7 @@ void handleInput(int (*gameState)())
 				break;
 			case SDLK_SPACE:
 				keyData->Spacebar = 0;
+				//LoadMapBinary();
 				break;
 			default:
 				break;
@@ -133,21 +137,6 @@ void handleInput(int (*gameState)())
 		}
 	}
 }
-	//TODO fix gamestate change!
-	if(gameState == &StateTitle)
-	{
-		if(mainEvent->type == SDL_KEYDOWN){
-			if(mainEvent->key.keysym.sym == SDLK_SPACE)
-				SetGameState(StateGame); 
-			else if(mainEvent->key.keysym.sym == SDLK_LEFT){
-				SetGameState(StateEditor); 
-				//Put Init Editor stuff HERE
-				
-				Init_Editor();
-
-			}
-		}
-	}
 	if(gameState == &StateInventory)
 	{
 		//printf("This is the Game\n");
@@ -166,18 +155,21 @@ void handleInput(int (*gameState)())
 				keyData->ArrowKeyLeft = 0;
 				keyData->ArrowKeyRight = 0;
 				keyData->ArrowKeyUp = 0;
+				Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(playerData->inventory->sounds,"Close"),0);
 				break;
 			case SDLK_RIGHT:
 				keyData->ArrowKeyRight = 1;
 				playerData->inventory->cursor->ref = g_list_next(playerData->inventory->cursor->ref);
 				if(playerData->inventory->cursor->ref == NULL)
 					playerData->inventory->cursor->ref = g_list_last(playerData->inventory->inventory);
+				Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(playerData->inventory->sounds,"Cursor"),0);
 				break;
 			case SDLK_LEFT:
 				keyData->ArrowKeyLeft = 1;
 				playerData->inventory->cursor->ref = g_list_previous(playerData->inventory->cursor->ref);
 				if(playerData->inventory->cursor->ref == NULL)
 					playerData->inventory->cursor->ref = g_list_first(playerData->inventory->inventory);
+				Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(playerData->inventory->sounds,"Cursor"),0);
 				break;
 			case SDLK_SPACE:
 				//Unequip Item
@@ -188,7 +180,8 @@ void handleInput(int (*gameState)())
 				}
 				//Equip Item cursor is pointing to
 				playerData->currentItem = ((ItemRef*)playerData->inventory->cursor->ref->data)->item;
-
+				if(playerData->currentItem != NULL)
+ 					playerData->currentItem->isEquiped = 0;
 			default:
 				break;
 			}
@@ -218,9 +211,10 @@ void handleInput(int (*gameState)())
 		GList *elem,*elem2;
 		Editor_Panel* ref,*ref2;
 		int x,y,n;
+		if(mainEvent->type == SDL_MOUSEBUTTONDOWN){
+				keyData->MouseButtonDown = 1;
 		//Check to see if mouse clicked a panel, will change panel focus or set currentPanel to NULL
-		if(mainEvent->type == SDL_MOUSEBUTTONUP){
-				SDL_GetMouseState(&x,&y);
+			SDL_GetMouseState(&x,&y);
 					if(g_list_length(MainEditorPanels) != 0){
 						for(n = 0; n < g_list_length(MainEditorPanels);++n)
 						{
@@ -242,6 +236,29 @@ void handleInput(int (*gameState)())
 					}
 				}		
 			}
+			else if(mainEvent->type == SDL_MOUSEBUTTONUP){
+				keyData->MouseButtonDown = 0;
+			}
+			if(mainEvent->type == SDL_MOUSEWHEEL)
+			{
+				if(mainEvent->wheel.y < 0)
+				{
+					keyData->MouseScrollWheelDown = 1;
+					keyData->MouseScrollWheelUp = 0;
+					mainEvent->wheel.y =0;
+				}
+				else if (mainEvent->wheel.y > 0)
+				{
+					keyData->MouseScrollWheelUp = 1;
+					keyData->MouseScrollWheelDown = 0;
+					mainEvent->wheel.y = 0;
+				}
+				else{
+					keyData->MouseScrollWheelDown = 0;
+					keyData->MouseScrollWheelUp = 0;
+				}
+			}
+
 		}
 		//This is for Backspace for textboxes!
 		if(mainEvent->type == SDL_KEYDOWN)

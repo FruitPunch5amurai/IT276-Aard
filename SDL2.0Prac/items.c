@@ -64,6 +64,7 @@ ItemRef* LoadItem(ItemType item)
 
 	ref->item = i;
 	ref->sprite = LoadSprite("images/LanternRef.png",45,45);
+	ref->itemSound = Mix_LoadWAV("sound/ItemFanfare_Stereo.wav");
 	}
 	else if(item == 1)
 	{
@@ -71,6 +72,14 @@ ItemRef* LoadItem(ItemType item)
 		ref->itemType = Key;
 		ref->item = i;
 		ref->sprite = LoadSprite("images/Key.png",16,32);
+		ref->itemSound = Mix_LoadWAV("sound/Get_Key.wav");
+	}	else if(item == 2)
+	{
+		i->itemType = MasterKey;
+		ref->itemType = MasterKey;
+		ref->item = i;
+		ref->sprite = LoadSprite("images/BossKey.png",16,32);
+		ref->itemSound = Mix_LoadWAV("sound/ItemFanfare_Stereo.wav");
 	}
 	//json_decref(root);
 	ItemType = NULL;
@@ -150,8 +159,13 @@ Inventory* InitInventory()
 	i->display = 0;
 	i->sprite = LoadSprite("images/InventoryBackground.png",319,250);
 	i->keySprite = LoadSprite("images/Key.png",16,32);
+	i->bossKeySprite = LoadSprite("images/BossKey.png",16,32);
 	i->cursor = c;
 	i->cursor->ref = g_list_first(i->inventory);
+	i->sounds = g_hash_table_new(g_direct_hash,g_str_equal);
+	g_hash_table_insert(i->sounds,"Open",Mix_LoadWAV("sound/Pause_Open.wav"));
+	g_hash_table_insert(i->sounds,"Close",Mix_LoadWAV("sound/Pause_Close.wav"));
+	g_hash_table_insert(i->sounds,"Cursor",Mix_LoadWAV("sound/Menu_Cursor.wav"));
 	for(k = 0;k < 12;++k)
 	{
 		ref = (ItemRef*)malloc(sizeof(ItemRef));
@@ -185,6 +199,10 @@ void DrawInventory(Inventory* i)
 	dst.y = 100;
 	SDL_RenderCopy(GetRenderer(),i->sprite->image,&src,&dst);
 	DrawSprite(i->keySprite,130,240,0,GetRenderer(),SDL_FLIP_NONE);
+	if (i->MasterKey == 1)
+	{
+		DrawSprite(i->bossKeySprite,180,240,0,GetRenderer(),SDL_FLIP_NONE);
+	}
 	itoa(i->keys,keys,10);	
 	dst.x = 150;
 	dst.y = 240;
@@ -235,17 +253,50 @@ void DrawItemRef(Inventory* i)
 	ref = NULL;
 	elem = NULL;
 }
-void AddItemToInventory(ItemRef* item)
+void AddItemToInventory(Inventory* inventory,ItemType type)
 {
-
+	int n;
+	GList * elem;
+	ItemRef* ref;
+	Vec2D pos;
+	for(n = 0; n < g_list_length(inventory->inventory);++n)
+	{
+		elem = g_list_nth(inventory->inventory,n);
+		ref = (ItemRef*)elem->data;
+		if(!ref->item)
+		{
+			pos = ref->pos;
+			if(ref->item ==NULL)
+				ref = LoadItem(type);
+			ref->pos = CreateVec2D(pos.x,pos.y);
+			elem->data = ref;
+			break;
+		}
+	}
 
 }
+ItemRef* GetItem(Inventory* inventory,ItemType item)
+{
+	int n;
+	GList * elem;
+	ItemRef* ref;
+	for(n = 0; n < g_list_length(inventory->inventory);++n)
+	{
+		elem = g_list_nth(inventory->inventory,n);
+		ref = (ItemRef*)elem->data;
+		if(ref->itemType == item)
+		{
+			return ref;
+		}
+	}
 
+}
 void FreeItem(ItemRef *item)
 {
 	if(item->item != NULL){
 		FreeEntity(item->item->self);
 		FreeSprite(item->sprite);
+		Mix_FreeChunk(item->itemSound);
 		item->item->self = NULL;
 		item->item = NULL;
 	}

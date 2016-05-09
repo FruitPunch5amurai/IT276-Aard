@@ -5,7 +5,7 @@
 #include <SDL_mixer.h>
 #include <string>
 #include <chipmunk.h>
-
+#include "game_title.h"
 #include "player.h"
 #include "spirit.h"
 #include "vectors.h"
@@ -65,6 +65,11 @@ void Init()
 	memset(game,0,sizeof(Game));
 	mainEvent = new SDL_Event();
 	InitAll();
+	SetUpTitle();
+	game->camera = (SDL_Rect*)malloc(sizeof(SDL_Rect));
+		memset(game->camera,0,sizeof(SDL_Rect));
+		game->camera->x = 0;
+		game->camera->y = 0;
 	game->gameState = StateTitle;
 	game->font = TTF_OpenFont("Tahoma.ttf",20);
 }
@@ -147,7 +152,10 @@ void SetCamera(SDL_Rect &camera,SDL_Rect* box)
 int StateTitle()
 {
 	printf("In title screen\n");
-	//DrawTitle();
+	SDL_RenderClear(GetRenderer());
+    UpdateTitleButtons();
+	DrawTitle();
+	NextFrame();
 	return 0;
 }
 /**
@@ -223,11 +231,6 @@ void SetGameState(int (*state)())
 
 	if (state == &StateGame && game->gameState == &StateTitle)
 	{
-		game->camera = (SDL_Rect*)malloc(sizeof(SDL_Rect));
-		memset(game->camera,0,sizeof(SDL_Rect));
-		game->camera->x = 0;
-		game->camera->y = 0;
-		Load("level.map");
 		game->mainSceneTexture = SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,map->w * map->tileW,map->h * map->tileH);
 		LightBuffer = 
 			SDL_CreateTexture(GetRenderer(),SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,
@@ -236,18 +239,12 @@ void SetGameState(int (*state)())
 		worldSize.x = worldSize.y = 0;
 		worldSize.w =map->w * map->tileW;
 		worldSize.h = map->h * map->tileH;
-		CreatePlayerData();
-		CreatePlayer(400,400);
-		SetPlayerData();
 		playerData->camera = GetCamera();
 		hotBox = InitHotBox();
 	}
 	else if (state == &StateEditor && game->gameState == &StateTitle)
 	{
-		game->camera = (SDL_Rect*)malloc(sizeof(SDL_Rect));
-		memset(game->camera,0,sizeof(SDL_Rect));
-		game->camera->x = 0;
-		game->camera->y = 0;
+		Init_Editor();
 	}
 	game->gameState = state;
 }
@@ -268,7 +265,7 @@ void InitAll()
 		printf("Failed to Mix_init");
 		exit(1);
 	}
-	Mix_OpenAudio(22050,MIX_DEFAULT_FORMAT,2,4096 );
+	Mix_OpenAudio(22050,MIX_DEFAULT_FORMAT,2,1024 );
 
 
 }

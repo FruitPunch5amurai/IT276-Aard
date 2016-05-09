@@ -45,6 +45,7 @@ int DefeatFoes(Script* script)
 		if(DistanceBetweenGreaterThan2D(playerEnt->savedPlayerPos,playerEnt->position,100)){
 			script->ent = CreateObject(CreateVec2D(script->location.x,script->location.y), script->location.w,  script->location.h, Door,70,
 							script->filename,NULL,NULL);
+			Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(script->ent->sounds,"Close"),0);
 			script->activated = 1;
 		}
 	}
@@ -61,9 +62,13 @@ int DefeatFoes(Script* script)
 		for(i = 0; i < MAX_ENTITIES;++i)
 		{
 			if(EntityList[i].whatAmI == LockedDoor || EntityList[i].whatAmI == Door)
+			{
+				EntityList[i].whatAmI = UnlockedDoor;
 				(*EntityList[i].free)(&EntityList[i]);
+			}
 		}
-		
+		Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(script->ent->sounds,"Open"),0);
+		Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(script->ent->sounds,"Secret"),0);
 		printf("Script fullfilled\n");
 		return 1;
 	}

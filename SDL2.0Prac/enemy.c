@@ -81,6 +81,8 @@ Entity *CreateEnemy(int x, int y, EnemyType type)
 		enemy->think = &ThinkEnemyChaser;
 		enemy->currentAnimation = 0;
 		enemy->EnemyHP = 10;
+		g_hash_table_insert(playerEnt->sounds,"MonsterHurt", Mix_LoadWAV("sound/Monster_sound.wav"));
+		g_hash_table_insert(playerEnt->sounds,"MonsterAlert", Mix_LoadWAV("sound/Monster_alert.wav"));
 	}
 	else if(type == Lurker){
 		enemy->sprite->fpl = 1;
@@ -186,7 +188,11 @@ void UpdateEnemyChaser(Entity *ent)
 void ThinkEnemyChaser(Entity *ent)
 {
 	if(ent->EnemyHP <= 0)
+	{
 		FreeEnemy(ent);
+		if(rand() % 4 > 1)
+			CreateSpirit(ent->position.x,ent->position.y);
+	}
 	if(ent->nextThink < SDL_GetTicks()){
 		ent->savedPlayerPos = playerEnt->position;
 		ent->nextMove += 1;
@@ -196,13 +202,17 @@ void ThinkEnemyChaser(Entity *ent)
 		}
 		if(ent->knockback == 1)
 		{
-			ent->nextThink =  SDL_GetTicks() + 500;
+			ent->nextThink =  SDL_GetTicks() + 300;
 			ent->knockback = 2;
 		}
 		else if(DistanceBetweenLessThan2D(ent->position,ent->savedPlayerPos,150))
 		{
 			ent->nextMove = 0;
-			ent->state = CHASING;
+			if(ent->state != CHASING)
+			{
+				Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(playerEnt->sounds,"MonsterAlert"),0);
+				ent->state = CHASING;
+			}
 		}		
 		else if(ent->nextMove >= 5 && ent->state != MOVING)
 		{
@@ -268,8 +278,11 @@ void UpdateEnemyLurker(Entity *ent)
 }
 void ThinkEnemyLurker(Entity *ent)
 {
-	if(ent->EnemyHP <= 0)
+	if(ent->EnemyHP <= 0 && ent->whatAmI == Enemy){
 		FreeEnemy(ent);
+	if(rand() % 4 > 1)
+			CreateSpirit(ent->position.x,ent->position.y);
+	}
 	if(ent->nextThink < SDL_GetTicks()){
 		if(ent->knockback == 2)
 		{
@@ -332,7 +345,11 @@ void UpdateEnemySnatcher(Entity *ent)
 void ThinkEnemySnatcher(Entity *ent)
 {
 	if(ent->EnemyHP <= 0)
+	{
 		FreeEnemy(ent);
+	if(rand() % 4 > 1)
+			CreateSpirit(ent->position.x,ent->position.y);
+	}
 	if(ent->nextThink < SDL_GetTicks()){
 		if(ent->state == IDLE || ent->state == GOINGUP)
 			ent->savedPlayerPos = playerEnt->position ;
@@ -359,9 +376,11 @@ void TouchEnemy(Entity *ent, Entity* other)
 		playerData->guidingSpirits	-=	1;
 		playerData->confidence -= 10;
 		FreeEnemy(ent);
-	}else if(other->whatAmI == 0)
+	}else if(other->whatAmI == Aard)
 	{
+		TakeDamage(other,2);
 		ent->state = IDLE;
+
 	}
 }
 void FreeEnemy(Entity *ent)
@@ -369,5 +388,4 @@ void FreeEnemy(Entity *ent)
 	FreeEntity(ent);
 	ent= NULL;
 }
-
 

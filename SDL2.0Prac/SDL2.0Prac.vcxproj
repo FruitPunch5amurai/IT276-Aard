@@ -81,6 +81,7 @@
     <ClCompile Include="entity.c" />
     <ClCompile Include="game.c" />
     <ClCompile Include="gamepad.c" />
+    <ClCompile Include="game_title.c" />
     <ClCompile Include="graphics.c" />
     <ClCompile Include="items.c" />
     <ClCompile Include="level.c" />
@@ -105,6 +106,7 @@
     <ClInclude Include="entity.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gamepad.h" />
+    <ClInclude Include="game_title.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="items.h" />
     <ClInclude Include="level.h" />

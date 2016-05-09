@@ -2,7 +2,7 @@
 #define __PLAYER_H_
 #include "entity.h"
 #include "items.h"
-
+#include "save.h"
 typedef struct{
 	int cooldown;
 	int maxCooldown;
@@ -24,6 +24,7 @@ typedef struct PlayerData{
 	SDL_Rect* camera;
 	Inventory* inventory;
 	Items *currentItem;
+	PlayerSaveData* saveData;
 
 }Player;
 void CreatePlayerData();

@@ -58,7 +58,7 @@ Entity* CreateSpirit(int x, int y)
 			spirit->particles[i] = *CreateParticle( spirit->position.x,spirit->position.y,
 				"images/Particles.png",9,12,20);
 		}
-
+		g_hash_table_insert(spirit->sounds,"PickUp",Mix_LoadWAV("sound/spirit_PickUp.wav"));
 		spirit->follow = NULL;
 		spirit->inuse = 1;
 		spirit->speed = 4;
@@ -187,6 +187,7 @@ void TouchSpirit(Entity *ent,Entity *other)
 			playerData->guidingSpirits+=1;
 			ent->speed = 4;
 			SpiritTrain = g_list_append(SpiritTrain,ent);
+			Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(ent->sounds,"PickUp"),0);
 		}
 		if(ent->spiritState == Lost){
 			playerEnt->penalty += playerEnt->penalty < 0 ? 1 : 0;
@@ -195,6 +196,7 @@ void TouchSpirit(Entity *ent,Entity *other)
 			ent->spiritIndex = g_list_length(SpiritTrain);
 			ent->think = &ThinkSpirit;
 			ent->update = &UpdateSpirit;
+			ent->position = playerEnt->position;
 			ent->speed = 4;
 			SpiritTrain = g_list_append(SpiritTrain,ent);
 		}

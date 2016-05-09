@@ -57,6 +57,7 @@ Entity* CreateObject(Vec2D position,
 		object->update = &UpdateObject;
 		object->free = &BreakObject;
 		object->nextThink = 0;
+		g_hash_table_insert(object->sounds,"Break",Mix_LoadWAV("sound/Object_Shatter.wav"));
 		object->sprite->animation[0].startFrame = frame;
 		object->sprite->animation[0].currentFrame = frame;
 		object->sprite->animation[0].maxFrames = 1;
@@ -72,6 +73,9 @@ Entity* CreateObject(Vec2D position,
 			object->whatAmI = LockedDoor;
 		else
 			object->whatAmI = Door;
+		g_hash_table_insert(object->sounds,"Close",Mix_LoadWAV("sound/Door_Close.wav"));
+		g_hash_table_insert(object->sounds,"Unlock",Mix_LoadWAV("sound/Door_Unlock.wav"));
+		g_hash_table_insert(object->sounds,"Secret",Mix_LoadWAV("sound/Secret.wav"));
 		object->think = &ThinkObject;
 		object->touch = &TouchObject;	
 		object->draw = &DrawObject;
@@ -190,27 +194,29 @@ void ThinkObject(Entity* ent)
 	
 	else if(ent->whatAmI == 8)
 	{
-		if(ent->currentAnimation == 1 && ent->temp == 0)
+		if(ent->currentAnimation == 1 && ent->temp == 0 && ent->itemHolding != NULL)
 		{
 			ent->nextThink = 1000 + SDL_GetTicks();
 			ent->temp = 1;
+			Mix_PlayChannel(-1,ent->itemHolding->itemSound,0);
 		}
-		if(ent->currentAnimation == 1 && ent->nextThink > SDL_GetTicks()){
+		if(ent->currentAnimation == 1 && ent->nextThink > SDL_GetTicks()&& ent->itemHolding != NULL){
 			SDL_SetRenderTarget(GetRenderer(),game->mainSceneTexture);
 			DrawSprite(ent->itemHolding->sprite,ent->position.x+10,ent->position2.y-=ent->speed,0,GetRenderer(),SDL_FLIP_NONE);
 			ent->speed-=1;
 			SDL_SetRenderTarget(GetRenderer(),NULL);
-		}else if(ent->currentAnimation == 1 && ent->nextThink < SDL_GetTicks())
+		}else if(ent->currentAnimation == 1 && ent->nextThink < SDL_GetTicks()&& ent->itemHolding != NULL)
 		{
 			FreeItem(ent->itemHolding);
+			ent->bp->frame = 1;
+			ent->bp->ref = NULL;
 			ent->itemHolding = NULL;
 			ent->think = NULL;
 		}
 		
-	}else if(ent->whatAmI == LitTorch)
+	}else if(ent->whatAmI == Torch && ent->currentAnimation == 1)
 	{
 		CreateLight(ent);
-		ent->currentAnimation = 1;
 		ent->think = NULL;
 	}
 	ent->currentFrame = ent->sprite->animation[ent->currentAnimation].currentFrame;
@@ -222,32 +228,34 @@ void ThinkObject(Entity* ent)
 void TouchObject(Entity* ent,Entity* other)
 {
 	if(ent->whatAmI == 4){
-		if(other->whatAmI == Aard)
-		{
-			//Do nothing!
-		}
-		else if(ent->velocity.x == 0 && ent->velocity.y == 0 && other->whatAmI != 8)
+		if(ent->velocity.x == 0 && ent->velocity.y == 0 && other->whatAmI != 8)
 			Vec2DAdd(other->position,other->position,CollisionObject(ent,other));
+		else if((ent->velocity.x != 0 || ent->velocity.y != 0) && other->whatAmI == Aard)
+		{
+			//Do Nothing
+		}
 		else if(other->whatAmI == 2)
 		{
 			//Do some damage;
 			ent->currentAnimation = 1;
+			Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(ent->sounds,"Break"),0);
 			ent->velocity.x = 0;ent->velocity.y = 0;
-			other->EnemyHP -=5;
+			TakeDamage(other,5);
 		              
 		}else if(other->whatAmI != Aard)
 		{
 			ent->currentAnimation = 1;
+			Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(ent->sounds,"Break"),0);
 			ent->velocity.x = 0;ent->velocity.y = 0;
 		}
 	}else if(ent->whatAmI == Torch)
 	{
 		if(playerData->currentItem != NULL)
 		{
-			if(other->whatAmI == Aard && playerData->currentItem->itemType == Lantern)
+			if(other->whatAmI == Aard && playerData->currentItem->itemType == Lantern &&
+				playerData->currentItem->isEquiped == 1)
 			{
-				ent->whatAmI = LitTorch;
-				ent->bp->entType = LitTorch;
+				ent->currentAnimation = 1;
 			}
 		}
 	}else if(ent->whatAmI == LockedDoor)
@@ -260,6 +268,21 @@ void TouchObject(Entity* ent,Entity* other)
 				FreeBluePrint(ent);
 				(*ent->free)(ent);
 				playerData->inventory->keys--;
+			}
+		}
+		Vec2DAdd(other->position,other->position,CollisionObject(ent,other));
+
+	}
+	else if(ent->whatAmI == MasterDoor)
+	{
+		if(other->whatAmI == Aard){
+			if(playerData->inventory->MasterKey == 1)
+			{
+				ent->whatAmI = UnlockedDoor;
+				ent->room->Entities = g_list_remove(ent->room->Entities,ent->bp);
+				FreeBluePrint(ent);
+				(*ent->free)(ent);
+				playerData->inventory->MasterKey = 0;
 			}
 		}
 		Vec2DAdd(other->position,other->position,CollisionObject(ent,other));

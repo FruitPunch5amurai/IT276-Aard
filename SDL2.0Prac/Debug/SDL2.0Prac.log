@@ -1,18 +1,19 @@
-﻿Build started 5/4/2016 10:01:30 PM.
+﻿Build started 5/8/2016 10:40:50 PM.
      1>Project "C:\Users\Jason\Desktop\Aard-GTS\SDL2.0Prac\SDL2.0Prac.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Touching "Debug\Aard.unsuccessfulbuild".
+         Creating "Debug\Aard.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt editor_createroom.c
-         editor_createroom.c
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt script.c
+         script.c
      1>c:\users\jason\desktop\aard-gts\sdl2.0prac\vectors.h(70): warning C4005: 'MAX' : macro redefinition
                  c:\users\jason\desktop\aard-gts\libraries\glib-2.28\include\glib-2.0\glib\gmacros.h(198) : see previous definition of 'MAX'
      1>c:\users\jason\desktop\aard-gts\sdl2.0prac\vectors.h(71): warning C4005: 'MIN' : macro redefinition
                  c:\users\jason\desktop\aard-gts\libraries\glib-2.28\include\glib-2.0\glib\gmacros.h(201) : see previous definition of 'MIN'
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\editor_createroom.c(14): warning C4101: 'elem' : unreferenced local variable
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\editor_createroom.c(13): warning C4101: 'y' : unreferenced local variable
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\editor_createroom.c(13): warning C4101: 'temp' : unreferenced local variable
-     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\editor_createroom.c(17): warning C4101: 'newRoom' : unreferenced local variable
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\script.c(16): warning C4101: 'i' : unreferenced local variable
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\script.c(16): warning C4101: 'j' : unreferenced local variable
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\script.c(46): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\script.c(46): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\jason\desktop\aard-gts\sdl2.0prac\script.c(75): warning C4715: 'DefeatFoes' : not all control paths return a value
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.exe" /NOLOGO SDL2.lib chipmunk.lib jansson_d.lib "glib-2.0.lib" SDL2main.lib SDL2_image.lib SDL2_ttf.lib SDL2_mixer.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST:NO /DEBUG /PDB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jason\Desktop\Aard-GTS\Debug\Aard.lib" /MACHINE:X86 Debug\collision.obj
          Debug\editor.obj
@@ -23,6 +24,7 @@
          Debug\entity.obj
          Debug\game.obj
          Debug\gamepad.obj
+         Debug\game_title.obj
          Debug\graphics.obj
          Debug\items.obj
          Debug\level.obj
@@ -44,4 +46,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.13
+Time Elapsed 00:00:01.31

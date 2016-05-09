@@ -11,7 +11,6 @@ typedef struct GameData{
 }Game;
 
 SDL_Rect* GetCamera();	
-void DrawTitle();
 void DrawGame();
 void DrawMainScene();
 void Init();

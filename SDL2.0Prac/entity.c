@@ -6,6 +6,7 @@
 #include "graphics.h"
 #include "script.h"
 #include "game.h"
+#include "editor_panel.h"
 #include "entity.h"
 
 void ThinkObject(Entity* ent);
@@ -143,6 +144,7 @@ Entity* CreateEntity()
 		memset(&EntityList[i],0,sizeof(Entity));
 		EntityList[i].inuse = 1;
 		EntityList[i].id = i;
+		EntityList[i].sounds = g_hash_table_new(g_direct_hash,g_str_equal);
 		return &EntityList[i];
 		}
 	printf("Reached Max number of Entities.");
@@ -153,10 +155,23 @@ Entity* CreateEntity()
 */
 void FreeEntity(Entity* ent)
 {
+	GList* sounds,*elem;
+	Mix_Chunk* ref;
+	int i;
 	if(ent != NULL){
 		ent->inuse--;
 		ent->whatAmI = NoType;
 		FreeSprite(ent->sprite);
+		sounds = g_hash_table_get_values(ent->sounds);
+		if(sounds != NULL)
+		{
+		for(i = 0; i < g_list_length(sounds);++i)
+		{
+			elem = g_list_nth(sounds,i);
+			ref = (Mix_Chunk*)elem->data;
+			Mix_FreeChunk(ref);
+		}
+		}
 		ent->id =  NULL;
 		ent->update = NULL;
 		ent = NULL;
@@ -273,21 +288,21 @@ Vec2D CollisionObject(Entity* ent1,Entity* ent2)
 			if(wy > hx)
 				if(wy > -hx){
 					//Top Collision
-					dir.y = -ent2->speed;
+					dir.y = -ent2->speed*2;
 				}
 				else{
 					//Left Collision
-					dir.x = ent2->speed;
+					dir.x = ent2->speed*2;
 				}
 			else
 				if(wy > -hx)
 				{
 					//Right Collision
-					dir.x = -ent2->speed;
+					dir.x = -ent2->speed*2;
 				}
 				else{
 					//Bottom Collisions
-					dir.y = ent2->speed;
+					dir.y = ent2->speed*2;
 				}
 				return dir;
 			}
@@ -299,11 +314,14 @@ Entity* AttackBoxIntersectAll(Entity *a)
 	for(i = 0;i < MAX_ENTITIES;i++)
 		if(EntityList[i].inuse && &EntityList[i] != a)
 		{
+			if(EntityList[i].whatAmI == Enemy)
+			{
 			if(AABB(a->atkBox,EntityList[i].hitBox)){
-				(a->touch)(a,&EntityList[i]);
 				return &EntityList[i];
 			}
+			}
 		}
+		return NULL;
 }
 int GetID(Entity *ent)
 {
@@ -372,3 +390,27 @@ void ClearRoom()
 	}
 }
 
+void TakeDamage(Entity *ent ,int amount)
+{
+	SDL_Surface *surface;
+	SDL_Texture * texture;
+    Uint32 rmask, gmask, bmask, amask;
+	rmask = 0x000000ff;
+	surface = SDL_CreateRGBSurface(0,30,30,32,rmask,0,0,0);
+	texture = SDL_CreateTextureFromSurface(GetRenderer(),surface);
+	if(ent->whatAmI == Enemy)
+	{
+		ent->EnemyHP-= amount ;
+		Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(playerEnt->sounds,"MonsterHurt"),0);
+	}else if(ent->whatAmI == Aard)
+	{
+		ent->EnemyHP = 2;
+		SDL_SetRenderTarget(GetRenderer(),ent->sprite->image);
+		SDL_RenderClear(GetRenderer());
+		SDL_SetTextureBlendMode(ent->sprite->image,SDL_BLENDMODE_MOD);
+		SDL_RenderCopy(GetRenderer(),texture,&CreateSDL_Rect(0,0,100,100),&CreateSDL_Rect(ent->position.x,ent->position.y,32,32)); 
+		SDL_SetRenderTarget(GetRenderer(),NULL);
+		ent->tookDamage = 1;
+		Mix_PlayChannel(-1,(Mix_Chunk*)g_hash_table_lookup(playerEnt->sounds,"PlayerHurt"),0);
+	}
+}

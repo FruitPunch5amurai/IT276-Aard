@@ -76,6 +76,7 @@ Editor_Panel* CreateEditorPanel(SDL_Rect rect)
 	Editor_Panel* p;
 	p = (Editor_Panel*)malloc(sizeof(Editor_Panel));
 	memset(p,0,sizeof(Editor_Panel));
+	p->sprite = NULL;
 	p->visible = 1;
 	p->panels = NULL;
 	p->texts = NULL;
@@ -95,8 +96,10 @@ Label* CreateEditorLabel(char* text,SDL_Rect rect)
 	Label* l;
 	l = (Label*)malloc(sizeof(Label));
 	memset(l,0,sizeof(Label));
-	strncpy(l->text,text,255);
+	if(text != NULL)
+		strncpy(l->text,text,255);
 	l->rect = rect;
+	l->sprite = NULL;
 	return l;
 }
 /*
@@ -113,7 +116,17 @@ Button* CreateEditorButton(char* text,SDL_Rect rect)
 	b->function = NULL;
 	b->rect = rect;
 	b->listen = NULL;
-	b->sprite = LoadSprite(text,rect.w,rect.h);							/*< for now */
+	b->inside = 0;
+	if (text != NULL)
+		b->sprite = LoadSprite(text,rect.w,rect.h);
+	else 
+		b->sprite = NULL;
+	b->soundEffect = Mix_LoadWAV("sound/menu_Click.wav");
+	if(b->soundEffect == NULL)
+	{
+		printf("%s",Mix_GetError());
+		exit(1);
+	}
 	return b;
 }
 /*
@@ -154,6 +167,7 @@ void UpdateEditorButtons(GList* buttons)
 					&& y >  ref->rect.y &&   y <  (ref->rect.y +  ref->rect.h))
 				{
 				    inside = true;
+					Mix_PlayChannel (-1,ref->soundEffect, 1);
 				}
 				else
 					inside = false;
@@ -221,6 +235,17 @@ void UpdateTileSelector()
 {
 	if(workSpace->tileSelector->visible == 1)
 		UpdateEditorButtons(workSpace->tileSelector->buttons);
+	 if(GetKeyData()->MouseScrollWheelUp == 1)
+		{
+				workSpace->tileSelector->frameNum +=1;
+				sprintf((char*)workSpace->tileSelector->label->text,"%d",workSpace->tileSelector->frameNum);
+				GetKeyData()->MouseScrollWheelUp = 0;
+	 }else if(GetKeyData()->MouseScrollWheelDown == 1)
+			{
+				workSpace->tileSelector->frameNum -=1;
+				sprintf((char*)workSpace->tileSelector->label->text,"%d",workSpace->tileSelector->frameNum);
+				GetKeyData()->MouseScrollWheelDown = 0;
+			}
 }
 /*
 *@brief Updates the G_List of panels. This only supports a two tier panel System.
@@ -331,7 +356,7 @@ void UpdateEditorPanel(GList* panels)
 */
 void UpdateWorkspace()
 {
-	int x,y,i;
+	int x,y,i,n,count;
 	SDL_Rect roomOutline;
 	GList *elem;
 	Sprite* ref;
@@ -357,24 +382,34 @@ void UpdateWorkspace()
 				workSpace->areaToDraw.y += 10;
 			}
 			//Add and Remove Tiles
-			if(mainEvent->type == SDL_MOUSEBUTTONUP && workSpace->mode == Add){
-				if(workSpace->activeLayer == 1)
+			if(GetKeyData()->MouseButtonDown == 1 && workSpace->mode == Add){
+				if(workSpace->activeLayer == 1){
 					ChangeTile(workSpace->map->data,
 					(GetMousePosition()->x + workSpace->areaToDraw.x)/workSpace->map->tileW,
 					(GetMousePosition()->y + workSpace->areaToDraw.y)/workSpace->map->tileH
 					,workSpace->tileSelector->frameNum);
+				}
 				if(workSpace->activeLayer == 2)
+				{
 					ChangeTile(workSpace->map->data2,
 					(GetMousePosition()->x + workSpace->areaToDraw.x)/workSpace->map->tileW,
 					(GetMousePosition()->y + workSpace->areaToDraw.y)/workSpace->map->tileH
 					,workSpace->tileSelector->frameNum);
+				}
 				if(workSpace->activeLayer == 3)
+				{
 					ChangeTile(workSpace->map->data3,
 					(GetMousePosition()->x + workSpace->areaToDraw.x)/workSpace->map->tileW,
 					(GetMousePosition()->y + workSpace->areaToDraw.y)/workSpace->map->tileH
 					,workSpace->tileSelector->frameNum);
+					if(!IsTileSolid(map,workSpace->tileSelector->frameNum))
+					{
+						workSpace->map->solidTiles[workSpace->map->numSolidTiles] = workSpace->tileSelector->frameNum;
+						workSpace->map->numSolidTiles+=1;
+					}
+				}
 
-			}else if(mainEvent->type == SDL_MOUSEBUTTONUP && workSpace->mode == Remove)
+			}else if(GetKeyData()->MouseButtonDown == 1 && workSpace->mode == Remove)
 			{
 				if(workSpace->activeLayer == 1)
 					ChangeTile(workSpace->map->data,
@@ -388,23 +423,43 @@ void UpdateWorkspace()
 					,0);
 				if(workSpace->activeLayer == 3)
 				{
-					ChangeTile(workSpace->map->data3,
+					count = 0;
+					for(i = 0; i < workSpace->map->w* workSpace->map->h-1;++i)
+					{
+						if(workSpace->map->data3[i] == GetTile(workSpace->map->data3,(GetMousePosition()->x + workSpace->areaToDraw.x)/workSpace->map->tileW,
+						(GetMousePosition()->y + workSpace->areaToDraw.y)/workSpace->map->tileH))
+						{
+							count +=1;
+							continue;
+						}
+					}
+						if(count == 1)
+						{
+							workSpace->map->numSolidTiles-=1;
+							n = workSpace->map->numSolidTiles;
+							for(x = 0;x < 60;++x)
+							{
+								frame = workSpace->map->solidTiles[n];
+								if(frame == workSpace->tileSelector->frameNum)
+								{
+									for(x = n;x < 60;++x)
+									{
+										workSpace->map->solidTiles[x] = workSpace->map->solidTiles[x+1];
+									}
+									break;
+								}
+								n--;
+						}
+					}
+						ChangeTile(workSpace->map->data3,
 					(GetMousePosition()->x + workSpace->areaToDraw.x)/workSpace->map->tileW,
 					(GetMousePosition()->y + workSpace->areaToDraw.y)/workSpace->map->tileH
 					,0);
-					if(!IsTileSolid(map,workSpace->tileSelector->frameNum))
-					{
-						workSpace->map->solidTiles[workSpace->map->numSolidTiles+1] = 
-							workSpace->tileSelector->frameNum;
-						workSpace->map->numSolidTiles+=1;
-
-					}
 				}
 			}
-
 		}
 		//Get currentRoom
-		for(i = 0;i < workSpace->map->numberOfRooms;++i)
+		for(i = 0;i <= workSpace->map->numberOfRooms;++i)
 		{
 			x = GetMousePosition()->x + workSpace->areaToDraw.x;
 			y = GetMousePosition()->y + workSpace->areaToDraw.y;
@@ -460,8 +515,10 @@ void DecrementActiveLayer(Button* button)
 		workSpace->activeLayer = 3;
 	}
 	else
+	{
 		x-=1;
 		workSpace->activeLayer -= 1;
+	}
 	sprintf((char*)button->data,"%d",x);
 
 }
@@ -617,8 +674,8 @@ void LoadRoomCreatePanel(Button* button)
 	Editor_Panel* panel;
 	GList *elem;
 	Button* newRoom;
-	Label* labelSizeX,*labelSizeY,*direction;
-	TextBox* roomSizeX,*roomSizeY;
+	Label* labelSizeX,*labelSizeY,*direction,*linksTo,*N,*S,*E,*W;
+	TextBox* roomSizeX,*roomSizeY,*NText,*SText,*EText,*WText;
 	Button* changeDirectionLeft,*changeDirectionRight;
 	int i;
 	for(i = 0;i < g_list_length(MainEditorPanels);++i)
@@ -638,9 +695,20 @@ void LoadRoomCreatePanel(Button* button)
 	labelSizeX =CreateEditorLabel("SizeX",CreateSDL_Rect(panel->rect.x+50,panel->rect.y+10,10,10));
 	labelSizeY =CreateEditorLabel("SizeY",CreateSDL_Rect(panel->rect.x+50,panel->rect.y+50,10,10));
 	direction = CreateEditorLabel("North",CreateSDL_Rect(panel->rect.x+80,panel->rect.y+100,10,10));
+	N = CreateEditorLabel("N",CreateSDL_Rect(panel->rect.x+180,panel->rect.y+30,10,10));
+	S = CreateEditorLabel("S",CreateSDL_Rect(panel->rect.x+180,panel->rect.y+60,10,10));
+	E = CreateEditorLabel("E",CreateSDL_Rect(panel->rect.x+180,panel->rect.y+90,10,10));
+	W = CreateEditorLabel("W",CreateSDL_Rect(panel->rect.x+240,panel->rect.y+30,10,10));
+	linksTo = CreateEditorLabel("Links To: ",CreateSDL_Rect(panel->rect.x+180,panel->rect.y+10,10,10));
 	
 	roomSizeX =CreateEditorTextBox(CreateSDL_Rect(panel->rect.x+140,panel->rect.y+10,10,10));
 	roomSizeY = CreateEditorTextBox(CreateSDL_Rect(panel->rect.x+140,panel->rect.y+50,10,10));
+	NText = CreateEditorTextBox(CreateSDL_Rect(panel->rect.x+200,panel->rect.y+30,10,10));
+	SText = CreateEditorTextBox(CreateSDL_Rect(panel->rect.x+200,panel->rect.y+60,10,10));
+	EText = CreateEditorTextBox(CreateSDL_Rect(panel->rect.x+200,panel->rect.y+90,10,10));
+	WText = CreateEditorTextBox(CreateSDL_Rect(panel->rect.x+260,panel->rect.y+30,10,10));
+
+
 	
 	changeDirectionLeft = CreateEditorButton("images/ButtonLeft.png",CreateSDL_Rect(panel->rect.x+60,panel->rect.y+105,16,16));
 	changeDirectionRight = CreateEditorButton("images/ButtonRight.png",CreateSDL_Rect(panel->rect.x+140,panel->rect.y+105,16,16));
@@ -651,20 +719,47 @@ void LoadRoomCreatePanel(Button* button)
 	panel->labels = g_list_append(panel->labels,labelSizeX);
 	panel->labels = g_list_append(panel->labels,labelSizeY);
 	panel->labels = g_list_append(panel->labels,direction);
+	panel->labels = g_list_append(panel->labels,linksTo);
+	panel->labels = g_list_append(panel->labels,N);
+	panel->labels = g_list_append(panel->labels,S);
+	panel->labels = g_list_append(panel->labels,E);
+	panel->labels = g_list_append(panel->labels,W);
 	labelSizeX->parentPanel = panel;
 	labelSizeY->parentPanel = panel;
 	direction ->parentPanel = panel;
+	linksTo->parentPanel = panel;
+	N ->parentPanel = panel;
+	S ->parentPanel = panel;
+	E ->parentPanel = panel;
+	W ->parentPanel = panel;
 	labelSizeX->color.r = 200;
 	labelSizeY->color.r = 200;
+	linksTo->color.r = 200;
+	N ->color.r = 200;
+	S ->color.r = 200;
+	E ->color.r = 200;
+	W ->color.r = 200;
 	direction ->color.r = 200;
 	
 	//Add textboxes
 	panel->texts = g_list_append(panel->texts,roomSizeX );
 	panel->texts = g_list_append(panel->texts,roomSizeY );
+	panel->texts = g_list_append(panel->texts,NText);
+	panel->texts = g_list_append(panel->texts,SText);
+	panel->texts = g_list_append(panel->texts,EText);
+	panel->texts = g_list_append(panel->texts,WText);
+	strcpy(NText->name,"NorthRoom");
+	strcpy(SText->name,"SouthRoom");
+	strcpy(EText->name,"EastRoom");
+	strcpy(WText->name,"WestRoom");
+	strcpy(NText->value,"0");
+	strcpy(SText->value,"0");
+	strcpy(EText->value,"0");
+	strcpy(WText->value,"0");
 	strcpy(roomSizeX->name,"RoomSizeX");
 	strcpy(roomSizeY->name,"RoomSizeY");
-	strcpy(roomSizeX->value,"0");
-	strcpy(roomSizeY->value,"0");
+	strcpy(roomSizeX->value,"25");
+	strcpy(roomSizeY->value,"19");
 
 	
 	//Add Buttons
@@ -677,7 +772,6 @@ void LoadRoomCreatePanel(Button* button)
 	changeDirectionRight->function = &SwitchRoomDirectionRight;
 	changeDirectionLeft-> data = direction->text;
 	changeDirectionRight->data = direction->text;
-
 
 	strcpy(panel->name ,"RoomCreatePanel");
 	MainEditorPanels = g_list_append(MainEditorPanels,panel);
@@ -762,6 +856,11 @@ void LoadEditorMap(Button* button)
 			workSpace->tileSelector->SpriteSheet = sprite;
 			workSpace->tileSelector->SpriteList = g_list_append(workSpace->tileSelector->SpriteList,sprite);
 		}
+		else if(strcmp(buf,"#LevelMusic") == 0)
+		{
+			fscanf(file,"%s" ,imageName);
+			strcpy(map->musicFileName,imageName);
+		}
 		else if(strcmp(buf,"#NumSolidTiles") == 0)
 		{
 			fscanf(file,"%d",&j);
@@ -810,7 +909,7 @@ void LoadEditorMap(Button* button)
 */
 void LoadEditorMapNew(Button* button)
 {
-
+	workSpace->map = CreateMap(32,32,25,19,1);
 
 }
 /*
@@ -876,6 +975,9 @@ void FreeButton(Button* button)
 */
 void FreeLabel(Label* label)
 {
+	
+	if(label->sprite != NULL)
+		FreeSprite(label->sprite);
 	free(label);
 }
 /*
@@ -892,6 +994,9 @@ void FreeTextBox(TextBox* text)
 */
 void FreeEditorPanel(Editor_Panel *panel)
 {
+	
+	if(panel->sprite !=NULL)
+		FreeSprite(panel->sprite);
 	free(panel);
 	if(panel->buttons == NULL)
 		g_list_free(panel->buttons);
@@ -933,6 +1038,7 @@ void FreeEveryThing()
 						for(k= 0; k < g_list_length(ref2->buttons);++k)
 						{
 							elem3 = g_list_nth(ref2->buttons,k);
+							ref2->buttons = g_list_remove(ref2->buttons,elem3);
 							FreeButton((Button*)elem3->data);
 						}
 					}
@@ -940,6 +1046,7 @@ void FreeEveryThing()
 						for(k = 0; k < g_list_length(ref2->labels);++k)
 						{
 							elem3 = g_list_nth(ref2->labels,k);
+							ref2->labels = g_list_remove(ref2->labels,elem3);
 							FreeLabel((Label*)elem3->data);
 						}
 					}
@@ -947,14 +1054,17 @@ void FreeEveryThing()
 						for(k = 0; k < g_list_length(ref2->texts);++k)
 						{
 							elem3 = g_list_nth(ref2->texts,k);
+							ref2->texts = g_list_remove(ref2->texts,elem3);
 							FreeTextBox((TextBox*)elem3->data);
 						}
 					}
-				g_list_free(ref2->panels);
+				ref->panels = g_list_remove(ref->panels,ref2);
+				g_list_free(ref2->panels);		
 				FreeEditorPanel(ref2);
 			}
 
 		}
+		MainEditorPanels = g_list_remove(MainEditorPanels,ref);
 		g_list_free(ref->panels);
 		FreeEditorPanel(ref);
 	}

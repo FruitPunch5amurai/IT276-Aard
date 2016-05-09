@@ -70,6 +70,7 @@ void DrawLights()
 }
 void FreeLight(LightSource* l)
 {
+	FreeSprite(l->sprite);
 	free(l);
 	l= NULL;
 }
@@ -83,10 +84,10 @@ void CloseLightList()
 			{
 				elem = g_list_nth(LightList,n);
 				ref = (LightSource*)elem->data;
+				LightList = g_list_remove(LightList,ref);
 				FreeLight(ref);
 			}
 		}
-	g_list_free(LightList);
 }
 void InitLightList()
 {

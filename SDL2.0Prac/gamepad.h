@@ -16,6 +16,9 @@ typedef struct{
 	Uint8 CTRL;
 	Uint8 BackSpace;
 	Uint8 MouseButtonUp;
+	Uint8 MouseButtonDown;
+	Uint8 MouseScrollWheelUp;
+	Uint8 MouseScrollWheelDown;
 
 }KeyData;
 void InitKeyData();

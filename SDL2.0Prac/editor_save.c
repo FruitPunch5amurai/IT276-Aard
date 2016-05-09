@@ -9,7 +9,7 @@
 #include "graphics.h"
 #include "editor_save.h"
 extern Workspace* workSpace;
-
+extern Map* map;
 void SaveMap(Button* button)
 {
 	GList *elem,*elem2;
@@ -22,7 +22,7 @@ void SaveMap(Button* button)
 	int j;
 	int num;
 	int bytes = 0;
-	file = fopen(workSpace->map->name,"w+");
+	file = fopen(map->name,"w+");
 	if(!file)
 	 {
 		 printf("Map Does Not Exist\n");
@@ -33,91 +33,160 @@ void SaveMap(Button* button)
 	 }
 		//#MapWidth
 		fputs("#MapWidth		",file);
-		sprintf(buf,"%d",workSpace->map->w);
+		sprintf(buf,"%d",map->w);
 		fputs(buf,file);
 		fputs("\n",file);
 
 		//#MapHeight
 		fputs("#MapHeight		",file);
-		sprintf(buf,"%d",workSpace->map->h);
+		sprintf(buf,"%d",map->h);
 		fputs(buf,file);
 		fputs("\n",file);
 		//#TileWidth
 		fputs("#TileWidth		",file);
-		sprintf(buf,"%d",workSpace->map->tileW);
+		sprintf(buf,"%d",map->tileW);
 		fputs(buf,file);
 		fputs("\n",file);
 		//#TileHeight
 		fputs("#TileHeight		",file);
-		sprintf(buf,"%d",workSpace->map->tileH);
+		sprintf(buf,"%d",map->tileH);
 		fputs(buf,file);
 		fputs("\n",file);
 		//#NumOfRooms
 		fputs("#NumOfRooms		",file);
-		sprintf(buf,"%d",workSpace->map->numberOfRooms);
+		sprintf(buf,"%d",map->numberOfRooms);
 		fputs(buf,file);
 		fputs("\n",file);
 		//#NumSolidTiles
 		fputs("#NumSolidTiles		",file);
-		sprintf(buf,"%d",workSpace->map->numSolidTiles);
+		sprintf(buf,"%d",map->numSolidTiles);
 		fputs(buf,file);
 		fputs("\n",file);
 		//#SpriteSheet
 		fputs("#SpriteSheet		",file);
-		sprintf(buf,"%s",workSpace->map->tiles->filename);
+		sprintf(buf,"%s",map->tiles->filename);
+		fputs(buf,file);
+		fputs("\n",file);
+		//LevelMusic
+		fputs("#LevelMusic	",file);
+		sprintf(buf,"%s",map->musicFileName);
 		fputs(buf,file);
 		fputs("\n",file);
 		//#Layer1
 		fputs("\n",file);
 		fputs("#Layer1\n",file);
-		for(y = 0;y < workSpace->map->h;++y)
+		for(y = 0;y < map->h;++y)
 			{
-				for(x = 0;x < workSpace->map->w;++x)
+				for(x = 0;x < map->w;++x)
 				{
-					if(workSpace->map->data[y*workSpace->map->w + x] < 10)
+					if(map->data[y*map->w + x] < 0)
+					{
+						fputs("  ",file);
+						fputs("00",file);
+					}
+					else if(map->data[y*map->w + x] < 10)
+					{
+						fputs("  ",file);
 						fputs("0",file);
-					sprintf(buf,"%d", workSpace->map->data[y*workSpace->map->w + x]);
+						sprintf(buf,"%d", map->data[y*map->w + x]);
+						fputs(buf,file);
+						
+					}
+					else if(map->data[y*map->w + x] > 99)
+					{
+						fputs(" ",file);
+					sprintf(buf,"%d", map->data[y*map->w + x]);
 					fputs(buf,file);
-					fputs(" ",file);
+					}
+					else
+					{
+						fputs("  ",file);
+						sprintf(buf,"%d", map->data[y*map->w + x]);
+						fputs(buf,file);
+					}
+
 				}
 					fputs("\n",file);
 			}
 		//#Layer2
 		fputs("\n",file);
 		fputs("#Layer2\n",file);
-		for(y = 0;y < workSpace->map->h;++y)
+		for(y = 0;y < map->h;++y)
 			{
-				for(x = 0;x < workSpace->map->w;++x)
+				for(x = 0;x < map->w;++x)
 				{
-					if(workSpace->map->data2[y*workSpace->map->w + x] < 10)
+					if(map->data2[y*map->w + x] < 0)
+					{
+						fputs("  ",file);
+						fputs("00",file);
+						continue;
+					}
+					else if(map->data2[y*map->w + x] < 10)
+					{
+						fputs("  ",file);
 						fputs("0",file);
-					sprintf(buf,"%d", workSpace->map->data2[y*workSpace->map->w + x]);
+						sprintf(buf,"%d", map->data2[y*map->w + x]);
+						fputs(buf,file);
+						
+					}
+					else if(map->data2[y*map->w + x] > 99)
+					{
+						fputs(" ",file);
+					sprintf(buf,"%d", map->data2[y*map->w + x]);
 					fputs(buf,file);
-					fputs(" ",file);
+					}else
+					{
+						fputs("  ",file);
+						sprintf(buf,"%d", map->data2[y*map->w + x]);
+						fputs(buf,file);
+					}
 				}
 					fputs("\n",file);
 			}
 		//#Layer3
 		fputs("\n",file);
 		fputs("#Layer3\n",file);
-		for(y = 0;y < workSpace->map->h;++y)
+		for(y = 0;y < map->h;++y)
 			{
-				for(x = 0;x < workSpace->map->w;++x)
+				for(x = 0;x < map->w;++x)
 				{
-					if(workSpace->map->data3[y*workSpace->map->w + x] < 10)
+					if(map->data3[y*map->w + x] < 0)
+					{
+						fputs("  ",file);
+						fputs("00",file);
+						continue;
+					}
+					else if(map->data3[y*map->w + x] < 10)
+					{
+						fputs("  ",file);
 						fputs("0",file);
-					sprintf(buf,"%d", workSpace->map->data3[y*workSpace->map->w + x]);
+						sprintf(buf,"%d", map->data3[y*map->w + x]);
+						fputs(buf,file);
+						
+					}
+					else if(map->data3[y*map->w + x] > 99)
+					{
+						fputs(" ",file);
+					sprintf(buf,"%d", map->data3[y*map->w + x]);
 					fputs(buf,file);
-					fputs(" ",file);
+					}else
+					{
+						fputs("  ",file);
+						sprintf(buf,"%d", map->data3[y*map->w + x]);
+						fputs(buf,file);
+					}
 				}
 					fputs("\n",file);
 			}
+		//#special Layer
+		if(map->hasSpecialLayer == 1)
+			fputs("#SpecialLayer\n",file);
 		//#SolidTiles
 		fputs("\n",file);
 		fputs("#SolidTiles\n",file);
-		for(j = 0;j <workSpace->map->numSolidTiles;++j)
+		for(j = 0;j <map->numSolidTiles;++j)
 		{
-			sprintf(buf,"%d",workSpace->map->solidTiles[j]);
+			sprintf(buf,"%d",map->solidTiles[j]);
 			fputs(buf,file);
 			fputs(" ",file);
 		}
@@ -127,33 +196,33 @@ void SaveMap(Button* button)
 		fputs("#MapEntities\n",file);
 		fputs("#RoomIds\n\n",file);
 
-		for(j = 0;j < workSpace->map->numberOfRooms;++j)
+		for(j = 0;j < map->numberOfRooms;++j)
 		{
 			sprintf(buf,"RoomId: %d \nLinksTo: ",
-				workSpace->map->rooms[j].id);
-			if(workSpace->map->rooms[j].north != NULL){
-				sprintf(temp,"%d , ",workSpace->map->rooms[j].north->id);
+				map->rooms[j].id);
+			if(map->rooms[j].roomIDs[0] != 0){
+				sprintf(temp,"%d , ",map->rooms[j].north->id);
 				strcat(buf,temp);
 			}else
 			{
 				strcat(buf,"0 , ");
 			}
-			if(workSpace->map->rooms[j].south != NULL){
-				sprintf(temp,"%d , ",workSpace->map->rooms[j].south->id);
+			if(map->rooms[j].roomIDs[1] != 0){
+				sprintf(temp,"%d , ",map->rooms[j].south->id);
 				strcat(buf,temp);
 			}else
 			{
 				strcat(buf,"0 , ");
 			}
-			if(workSpace->map->rooms[j].east != NULL){
-				sprintf(temp,"%d , ",workSpace->map->rooms[j].east->id);
+			if(map->rooms[j].roomIDs[2] != 0){
+				sprintf(temp,"%d , ",map->rooms[j].east->id);
 				strcat(buf,temp);
 			}else
 			{
 				strcat(buf,"0 , ");
 			}
-			if(workSpace->map->rooms[j].west != NULL){
-				sprintf(temp,"%d",workSpace->map->rooms[j].west->id);
+			if(map->rooms[j].roomIDs[3] != 0){
+				sprintf(temp,"%d",map->rooms[j].west->id);
 				strcat(buf,temp);
 			}
 			else
@@ -165,16 +234,16 @@ void SaveMap(Button* button)
 			sprintf(buf,
 				"Boundary: %d , %d \n"
 				"Location: %d , %d \n",
-				workSpace->map->rooms[j].boundary.w,
-				workSpace->map->rooms[j].boundary.h,
-				workSpace->map->rooms[j].boundary.x,
-				workSpace->map->rooms[j].boundary.y);
+				map->rooms[j].boundary.w,
+				map->rooms[j].boundary.h,
+				map->rooms[j].boundary.x,
+				map->rooms[j].boundary.y);
 			fputs (buf,file);
-			if(g_list_length(workSpace->map->rooms[j].Entities) > 0)
+			if(g_list_length(map->rooms[j].Entities) > 0)
 				fputs("Entities: \n", file);
-			for(x = 0; x < g_list_length(workSpace->map->rooms[j].Entities);++x)
+			for(x = 0; x < g_list_length(map->rooms[j].Entities);++x)
 			{
-				elem = g_list_nth(workSpace->map->rooms[j].Entities,x);
+				elem = g_list_nth(map->rooms[j].Entities,x);
 				ref = (EntityBluePrint*)elem->data;
 				if(ref->entType == Enemy)
 				{
@@ -182,15 +251,15 @@ void SaveMap(Button* button)
 						Enemy_String[ref->enemyType],ref->count);
 					fputs(buf,file);
 					sprintf(buf,"Location: ");
-					for(y = 0; y < g_list_length(workSpace->map->rooms[j].Entities);++y)
+					for(y = 0; y < g_list_length(map->rooms[j].Entities);++y)
 					{
-						elem2 = g_list_nth(workSpace->map->rooms[j].Entities,y);
+						elem2 = g_list_nth(map->rooms[j].Entities,y);
 						ref2 = (EntityBluePrint*)elem2->data;
 						if(ref2->entType == Enemy)
 						{
 							if(ref2->enemyType == ref->enemyType)
 							{
-								sprintf(temp," %.1f , %.1f ",ref2->location.x/32,ref2->location.y/32);
+								sprintf(temp," %.0f , %.0f ",(ref2->location.x - map->rooms[j].boundary.x)/32,(ref2->location.y - map->rooms[j].boundary.y )/32);
 								strcat(buf,temp);			
 
 							}
@@ -201,14 +270,136 @@ void SaveMap(Button* button)
 				}
 				else if(ref->entType == Dungeon)
 				{
-					sprintf(buf,"Dungeon To: %s Size: %d x %d Location: %.1f , %.1f"
-						"PlayerSpawn: %.1f  , %.1f",ref->filename,ref->sizex,ref->sizey,
-						ref->location.x,ref->location.y,ref->playerSpawn.x,ref->playerSpawn.y);
+					sprintf(buf,"Type: Dungeon To: %s Size: %d x %d Location: %.0f , %.0f "
+						"PlayerSpawn: %.0f  , %.0f \n",ref->filename,ref->sizex,ref->sizey,
+						(ref->location.x - map->rooms[j].boundary.x )/32,(ref->location.y - map->rooms[j].boundary.y)/32,ref->playerSpawn.x/32,ref->playerSpawn.y/32);
+					fputs(buf,file);
+				}else if (ref->entType == Spirit)
+				{
+					sprintf(buf,"Type: %s  Count: %d  ",
+						"Spirit",ref->count);
+					fputs(buf,file);
+					sprintf(buf,"Location: ");
+					for(y = 0; y < g_list_length(map->rooms[j].Entities);++y)
+					{
+						elem2 = g_list_nth(map->rooms[j].Entities,y);
+						ref2 = (EntityBluePrint*)elem2->data;
+						if(ref2->entType == Spirit)
+						{
+							sprintf(temp," %.0f , %.0f ",(ref2->location.x-map->rooms[j].boundary.x)/ref2->sizex,
+								(ref2->location.y-map->rooms[j].boundary.y)/ref2->sizey);
+								strcat(buf,temp);			
+						}
+					}
+					fputs (buf,file);
+					fputs("\n",file);
+				}else if(ref->entType == BreakableObject)
+				{
+					sprintf(buf,"Type: Breakable Frame: %d Filename: %s Count: %d Size %d x %d ",
+						ref->frame,ref->filename,ref->count,ref->sizex,ref->sizey);
+					fputs (buf,file);
+					sprintf(buf,"Location: ");
+					for(y = 0; y < g_list_length(map->rooms[j].Entities);++y)
+					{
+						elem2 = g_list_nth(map->rooms[j].Entities,y);
+						ref2 = (EntityBluePrint*)elem2->data;
+						if(ref2->entType == BreakableObject)
+						{
+								sprintf(temp," %.0f , %.0f ",(ref2->location.x -map->rooms[j].boundary.x )/ref2->sizex,(ref2->location.y - map->rooms[j].boundary.y)/ref2->sizey);
+								strcat(buf,temp);			
+						}
+					}
+					fputs (buf,file);
+					fputs("\n",file);
+
+				}else if(ref->entType == Chest)
+				{
+					if(ref->ref == NULL)
+					{
+						sprintf(buf,"Type: Chest Item: NONE Frame: %d Filename: %s Count: %d Size %d x %d ",
+					ref->frame,ref->filename,ref->count,ref->sizex,ref->sizey);
+					}
+					else if(ref->ref->itemType == Key)
+					{
+					sprintf(buf,"Type: Chest Item: Key Frame: %d Filename: %s Count: %d Size %d x %d ",
+						ref->frame,ref->filename,ref->count,ref->sizex,ref->sizey);
+					}else if(ref->ref->itemType == Lantern)
+					{
+					sprintf(buf,"Type: Chest Item: Lantern Frame: %d Filename: %s Count: %d Size %d x %d ",
+						ref->frame,ref->filename,ref->count,ref->sizex,ref->sizey);
+					}
+					fputs (buf,file);
+					sprintf(buf,"Location: ");
+					for(y = 0; y < g_list_length(map->rooms[j].Entities);++y)
+					{
+						elem2 = g_list_nth(map->rooms[j].Entities,y);
+						ref2 = (EntityBluePrint*)elem2->data;
+						if(ref2->entType == Chest)
+						{
+								sprintf(temp," %.0f , %.0f ",(ref2->location.x - map->rooms[j].boundary.x )/32,(ref2->location.y - map->rooms[j].boundary.y)/32);
+								strcat(buf,temp);			
+						}
+					}
+					fputs (buf,file);
+					fputs("\n",file);
+
+				}else if(ref->entType == Portal)
+				{
+					sprintf(buf,"Type: Portal Location: %.0f , %.0f ",
+						(ref->location.x - map->rooms[j].boundary.x )/ref->sizex,(ref->location.y - map->rooms[j].boundary.y)/ref->sizey);
+					fputs (buf,file);
+					fputs("\n",file);
+
+				}else if(ref->entType == Torch)
+				{
+					sprintf(buf,"Type: Torch  Frame: %d Filename: %s Count: %d Size %d x %d ",
+						ref->frame,ref->filename,ref->count,ref->sizex,ref->sizey);
+					fputs (buf,file);
+					sprintf(buf,"Location: ");
+					for(y = 0; y < g_list_length(map->rooms[j].Entities);++y)
+					{
+						elem2 = g_list_nth(map->rooms[j].Entities,y);
+						ref2 = (EntityBluePrint*)elem2->data;
+						if(ref2->entType == Torch)
+						{
+								sprintf(temp," %.0f , %.0f ",( ref2->location.x - map->rooms[j].boundary.x)/ref2->sizex,(ref2->location.y - map->rooms[j].boundary.y )/ref2->sizey);
+								strcat(buf,temp);			
+						}
+					}
+					fputs (buf,file);
+					fputs("\n",file);
 				}
-
+				else if (ref->entType == LockedDoor)
+				{
+					sprintf(buf,"Type: LockedDoor Frame: %d Filename: %s Count: %d Size: %d x %d ",
+						ref->frame,ref->filename,ref->count,ref->sizex,ref->sizey);
+					fputs (buf,file);
+					sprintf(buf,"Location: ");
+					for(y = 0; y < g_list_length(map->rooms[j].Entities);++y)
+					{
+						elem2 = g_list_nth(map->rooms[j].Entities,y);
+						ref2 = (EntityBluePrint*)elem2->data;
+						if(ref2->entType == LockedDoor)
+						{
+								sprintf(temp," %.0f , %.0f ",(ref2->location.x - map->rooms[j].boundary.x)/ref2->sizex,(ref2->location.y - map->rooms[j].boundary.y )/ref2->sizey);
+								strcat(buf,temp);			
+						}
+					}
+					fputs (buf,file);
+					fputs("\n",file);
+				}
 			}
-			fputs ("#end\n\n",file);
-
+			if(map->rooms[j].script != NULL){
+				fputs("Script: \n", file);
+				if(map->rooms[j].script->type == DefeatMonsters)
+				{
+					sprintf(buf,"Type: DefeatFoes Filename: %s Size: %d x %d Location: %d , %d\n",
+						map->rooms[j].script->filename,map->rooms[j].script->location.w,map->rooms[j].script->location.h,
+						map->rooms[j].script->location.x/32,map->rooms[j].script->location.y/32);
+					fputs(buf,file);
+				}
+			}
+			fputs("\n#end\n",file);
 		}
 
 	 fclose(file);
