@@ -1,9 +1,12 @@
+2D engine written in C using SDL2.0 and additional Libraries
+
+
 # IT276-Aard
-READ THIS!!!
-Executable might not work for some reason but it works when u build and run in VS 2010
-Press space to get out of title screen at the start
+
+You play as aard, a timid spirit tasked with guiding lost spirits to the after life. The game is feels very similar to The Legend of Zelda: a Link To the Past.
+
 MIDTERM DELIVERABLES:
-All done except i made 3 skills instead of 4 
+
 -Player and Following Spirits
 
 -2x2 Panning Level Camera
@@ -28,3 +31,6 @@ FINAL
 - Editor(Check)
 - Gui (Check)
 - Add and save state (NOT CHECK)
+
+
+Assets are from The Legend of Zelda: A Link to the Past as well as some of the sounds used.
