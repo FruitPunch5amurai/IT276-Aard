@@ -16,9 +16,15 @@ Player Moves via arrow keys. Touch spirts to start guiding them and bring them b
 
 If spirits get to far from u they will wonder and your confidene(HP) will drain for each soul that is wandoring
 
-Go down to incounter the 3 enemies. Rest of level has no enemies
-
-!!!!!Take 3 spirits and bring them to the portal to unlock the 3 abilites.!!!!!!
 Q-> is a whip attack that knocks back enemies depending on way your facing  cooldown:3 secs
 W-> pulls guiding spirts near you   cooldown:3 secs
 E-> Give spirits immunity for a short time  cooldown:10 secs
+R-> Interact with objects(open chests, throw/pickup objects)
+
+FINAL
+- Added keys and doors (Check)
+- Added inventory System(Check)
+- Lantern mechanic(Check)
+- Editor(Check)
+- Gui (Check)
+- Add and save state (NOT CHECK)
